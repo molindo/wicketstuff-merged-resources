@@ -17,6 +17,11 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
+    <license>
+      <name>BSD License</name>
+      <url>http://developer.yahoo.net/yui/license.txt</url>
+      <distribution>repo</distribution>
+    </license>
   </licenses>
   <dependencies>
     <dependency>
