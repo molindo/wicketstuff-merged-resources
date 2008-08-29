@@ -15,7 +15,7 @@ public class RevisionVersionProvider implements IResourceVersionProvider {
 	
 	public int getVersion(final Class<?> scope, final String fileName) throws VersionException {
 		final String file = getResourcePath(scope, fileName);
-		final InputStream in = ClassLoader.getSystemResourceAsStream(file);
+		final InputStream in = RevisionVersionProvider.class.getClassLoader().getResourceAsStream(file);
 		if (in == null) {
 			throw new VersionException(scope, fileName, "can't find " + file);
 		}
