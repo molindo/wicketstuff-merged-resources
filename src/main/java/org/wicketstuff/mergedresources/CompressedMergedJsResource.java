@@ -14,48 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.molindo.wicket.resources;
+package org.wicketstuff.mergedresources;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Locale;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.string.JavascriptStripper;
 
-import com.yahoo.platform.yui.compressor.CssCompressor;
-
-public class CompressedMergedCssResource extends CompressedMergedResource {
+public class CompressedMergedJsResource extends CompressedMergedResource {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(CompressedMergedCssResource.class);
+			.getLogger(CompressedMergedJsResource.class);
 
-	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	public CompressedMergedJsResource(Class<?> scope, final String path,
+			final Locale locale, final String style, final Class<?>[] scopes,
+			final String[] files, int cacheDuration) {
 		super(scope, path, locale, style, scopes, files, cacheDuration);
 	}
 
 	@Override
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final Class<?>[] scopes, final String[] files) {
+	protected IResourceStream newResourceStream(final Locale locale,
+			final String style, final Class<?>[] scopes, final String[] files) {
 		return new MergedResourceStream(scopes, files, locale, style) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected String toContent(final String content) {
-				// use the JS settings for CSS
-				if (Application.get().getResourceSettings()
-						.getStripJavascriptCommentsAndWhitespace()) {
-					final StringWriter writer = new StringWriter((int) (content.length() * 0.8));
-					try {
-						new CssCompressor(new StringReader(content)).compress(writer, 0);
-					} catch (final IOException e) {
-						log.warn("Could not compress merged CSS stream, using uncompressed content", e);
+				try {
+					if (Application.get().getResourceSettings()
+							.getStripJavascriptCommentsAndWhitespace()) {
+						
+						// strip comments and whitespace
+						return JavascriptStripper
+								.stripCommentsAndWhitespace(content);
+					} else {
+						// don't strip the comments, just return original input
 						return content;
 					}
-					return writer.toString();
-				} else {
+				} catch (Exception e) {
+					log.error("Error while stripping content", e);
 					return content;
 				}
 			}

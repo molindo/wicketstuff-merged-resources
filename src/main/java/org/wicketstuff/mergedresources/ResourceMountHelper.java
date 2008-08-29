@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.molindo.wicket.resources;
+package org.wicketstuff.mergedresources;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +28,8 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.resource.ISharedResourceRequestTarget;
 import org.apache.wicket.util.string.Strings;
+import org.wicketstuff.mergedresources.IResourceVersionProvider.VersionException;
 
-import at.molindo.wicket.resources.IResourceVersionProvider.VersionException;
 
 public class ResourceMountHelper {
 	

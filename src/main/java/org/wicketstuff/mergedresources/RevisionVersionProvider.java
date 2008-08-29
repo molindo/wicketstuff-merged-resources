@@ -1,4 +1,4 @@
-package at.molindo.wicket.resources;
+package org.wicketstuff.mergedresources;
 
 import java.io.BufferedReader;
 import java.io.IOException;

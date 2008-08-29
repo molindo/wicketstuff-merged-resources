@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.molindo.wicket.resources;
+package org.wicketstuff.mergedresources;
 
-import java.io.IOException;
+import java.util.Locale;
 
-public interface IResourceVersionProvider {
-	int getVersion(Class<?> scope, String file) throws VersionException;
+import org.apache.wicket.Resource;
+
+public class CompressedMergedJsResourceReference extends MergedResourceReference {
+
+	private static final long serialVersionUID = 1L;
 	
-	public static class VersionException extends Exception {
+	public CompressedMergedJsResourceReference(String path, Locale locale, String style, Class<?>[] scopes, String[] files, int cacheDuration) {
+		super(CompressedMergedJsResourceReference.class, path, locale, style, scopes, files, cacheDuration);
+	}
 
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
-		}
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg) {
-			super(scope + ", " + fileName + ": " + msg);
-		}
-
-		private static final long serialVersionUID = 1L;
-
+	@Override
+	protected Resource newResource() {
+		return new CompressedMergedJsResource(getScope(), getName(), getLocale(), getStyle(), getMergedScopes(), getMergedFiles(), getCacheDuration());
 	}
 }
-
