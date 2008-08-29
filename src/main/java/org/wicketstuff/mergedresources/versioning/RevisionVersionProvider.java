@@ -1,4 +1,4 @@
-package org.wicketstuff.mergedresources;
+package org.wicketstuff.mergedresources.versioning;
 
 import java.io.BufferedReader;
 import java.io.IOException;

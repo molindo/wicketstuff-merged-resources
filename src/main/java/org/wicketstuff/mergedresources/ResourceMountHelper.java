@@ -28,7 +28,13 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.resource.ISharedResourceRequestTarget;
 import org.apache.wicket.util.string.Strings;
-import org.wicketstuff.mergedresources.IResourceVersionProvider.VersionException;
+import org.wicketstuff.mergedresources.resources.CompressedMergedCssResourceReference;
+import org.wicketstuff.mergedresources.resources.CompressedMergedJsResourceReference;
+import org.wicketstuff.mergedresources.resources.CompressedMergedResourceReference;
+import org.wicketstuff.mergedresources.resources.MergedResourceReference;
+import org.wicketstuff.mergedresources.util.RedirectStrategy;
+import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
+import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 
 public class ResourceMountHelper {
