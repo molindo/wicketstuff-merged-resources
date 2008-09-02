@@ -127,6 +127,35 @@ public class ResourceMountHelper {
 		});
 	}
 	
+	public ResourceReference[] mountResources(final Class<?> scope, final String mountPrefix, final boolean detectVersion, final String... files) {
+		final ResourceReference[] references = new ResourceReference[files.length];
+		for (int i = 0; i < files.length; i++) {
+			final String file = files[i];
+			references[i] = mountResource(scope, mountPrefix, detectVersion, file, file);
+		}
+		return references;
+	}
+
+	public ResourceReference mountResource(final Class<?> scope, final String mountPrefix, final boolean detectVersion, final String fileName) {
+		return mountResource(scope, mountPrefix, detectVersion, fileName, fileName);
+	}
+	
+	public ResourceReference mountResource(final Class<?> scope, final String mountPrefix, final boolean detectVersion, final String fileName, final String filePath) {
+		final String unversionedPath = mountPrefix + filePath;
+		final String versionedPath = mountPrefix
+				+ (detectVersion ? getVersionedPath(scope, fileName, filePath) : filePath);
+
+		final ResourceReference ref = getResourceReference(scope, fileName, !unversionedPath.equals(versionedPath));
+		_application.mountSharedResource(versionedPath, ref.getSharedResourceKey());
+
+		// redirect to orig page
+		if (!unversionedPath.equals(versionedPath)) {
+			_application.mount(new RedirectStrategy(unversionedPath, versionedPath));
+		}
+
+		return ref;
+	}
+	
 	public static void mountWicketResources(String mountPrefix, WebApplication application) {
 		ResourceMountHelper h = new ResourceMountHelper(application, new WicketVersionProvider(application));
 		h.mountVersionedResource(mountPrefix, WicketAjaxReference.INSTANCE);
