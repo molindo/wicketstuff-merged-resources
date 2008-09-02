@@ -16,23 +16,18 @@
  */
 package org.wicketstuff.mergedresources.versioning;
 
-import java.io.IOException;
+import org.apache.wicket.Application;
 
-public interface IResourceVersionProvider {
-	AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException;
+public class WicketVersionProvider implements IResourceVersionProvider {
+
+	private Application _application;
 	
-	public static class VersionException extends Exception {
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
-		}
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg) {
-			super(scope + ", " + fileName + ": " + msg);
-		}
-
-		private static final long serialVersionUID = 1L;
-
+	public WicketVersionProvider(Application application) {
+		_application = application;
 	}
-}
+	
+	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+		return new WicketVersion(_application);
+	}
 
+}

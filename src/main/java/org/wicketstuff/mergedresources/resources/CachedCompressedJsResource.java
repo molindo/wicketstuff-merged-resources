@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wicketstuff.mergedresources.versioning;
+package org.wicketstuff.mergedresources.resources;
 
-import java.io.IOException;
+import java.util.Locale;
 
-public interface IResourceVersionProvider {
-	AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException;
-	
-	public static class VersionException extends Exception {
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
-		}
+public class CachedCompressedJsResource extends JavascriptPackageResource {
 
-		public VersionException(final Class<?> scope, final String fileName, final String msg) {
-			super(scope + ", " + fileName + ": " + msg);
-		}
+	private static final long serialVersionUID = 1L;
+	private int _cacheDuration;
 
-		private static final long serialVersionUID = 1L;
+	public CachedCompressedJsResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration) {
+		super(scope, path, locale, style);
+		_cacheDuration = cacheDuration;
+	}
 
+	@Override
+	protected int getCacheDuration() {
+		return _cacheDuration;
 	}
 }
-

@@ -19,20 +19,17 @@ package org.wicketstuff.mergedresources.resources;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.apache.wicket.markup.html.PackageResource;
 import org.apache.wicket.util.resource.IResourceStream;
 
-public class MergedResource extends PackageResource {
+public class MergedResource extends CachedResource {
 
 	private static final long serialVersionUID = 1L;
 
 	private final MergedResourceStream _mergedResourceStream;
 
-	private int _cacheDuration;
 
 	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
-		super(scope, path, locale, style);
-		_cacheDuration = cacheDuration;
+		super(scope, path, locale, style, cacheDuration);
 		
 		if (scopes.length != files.length) {
 			throw new IllegalArgumentException("arrays must be of equal length: "
@@ -44,10 +41,5 @@ public class MergedResource extends PackageResource {
 	@Override
 	public IResourceStream getResourceStream() {
 		return _mergedResourceStream;
-	}
-
-	@Override
-	protected int getCacheDuration() {
-		return _cacheDuration;
 	}
 }

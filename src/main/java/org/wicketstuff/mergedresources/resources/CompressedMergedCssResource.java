@@ -16,22 +16,15 @@
  */
 package org.wicketstuff.mergedresources.resources;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Locale;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
-
-import com.yahoo.platform.yui.compressor.CssCompressor;
+import org.wicketstuff.mergedresources.util.YuiCompressorUtil;
 
 public class CompressedMergedCssResource extends CompressedMergedResource {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(CompressedMergedCssResource.class);
 
 	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
 		super(scope, path, locale, style, scopes, files, cacheDuration);
@@ -47,14 +40,7 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 				// use the JS settings for CSS
 				if (Application.get().getResourceSettings()
 						.getStripJavascriptCommentsAndWhitespace()) {
-					final StringWriter writer = new StringWriter((int) (content.length() * 0.8));
-					try {
-						new CssCompressor(new StringReader(content)).compress(writer, 0);
-					} catch (final IOException e) {
-						log.warn("Could not compress merged CSS stream, using uncompressed content", e);
-						return content;
-					}
-					return writer.toString();
+					return YuiCompressorUtil.compress(content);
 				} else {
 					return content;
 				}

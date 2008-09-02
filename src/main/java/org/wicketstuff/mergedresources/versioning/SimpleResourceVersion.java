@@ -16,23 +16,40 @@
  */
 package org.wicketstuff.mergedresources.versioning;
 
-import java.io.IOException;
+final class SimpleResourceVersion extends AbstractResourceVersion {
 
-public interface IResourceVersionProvider {
-	AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException;
-	
-	public static class VersionException extends Exception {
+	private static final long serialVersionUID = 1L;
+	private int _value;
 
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
-		}
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg) {
-			super(scope + ", " + fileName + ": " + msg);
-		}
-
-		private static final long serialVersionUID = 1L;
-
+	public SimpleResourceVersion(int value) {
+		setValue(value);
 	}
-}
+	
+	public int getValue() {
+		return _value;
+	}
 
+	private void setValue(int value) {
+		if (value < 0) {
+			throw new IllegalArgumentException("value must be > 0 (valid) or 0 (invalid)");
+		}
+		_value = value;
+	}
+
+	public boolean isValid() {
+		return _value > 0;
+	}
+
+	public String getVersion() {
+		return Integer.toString(_value);
+	}
+	
+	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
+		if (o instanceof SimpleResourceVersion) {
+			return ((Integer) getValue()).compareTo(((SimpleResourceVersion)o).getValue());
+		} else {
+			throw new IncompatibleVersionsException(this, o);
+		}
+	}
+	
+}

@@ -14,25 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wicketstuff.mergedresources.versioning;
+package org.wicketstuff.mergedresources.util;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 
-public interface IResourceVersionProvider {
-	AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException;
+import com.yahoo.platform.yui.compressor.CssCompressor;
+
+public class YuiCompressorUtil {
+	private static final transient org.slf4j.Logger log = org.slf4j.LoggerFactory
+			.getLogger(YuiCompressorUtil.class);
 	
-	public static class VersionException extends Exception {
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
+	private YuiCompressorUtil() {
+		// no instances
+	}
+	
+	public static String compress(final String toCompress) {
+		final StringWriter writer = new StringWriter((int) (toCompress.length() * 0.8));
+		try {
+			new CssCompressor(new StringReader(toCompress)).compress(writer, 0);
+		} catch (final IOException e) {
+			log.warn("Could not compress merged CSS stream, using uncompressed content", e);
+			return toCompress;
 		}
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg) {
-			super(scope + ", " + fileName + ": " + msg);
-		}
-
-		private static final long serialVersionUID = 1L;
-
+		return writer.toString();
 	}
 }
-

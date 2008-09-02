@@ -16,23 +16,41 @@
  */
 package org.wicketstuff.mergedresources.versioning;
 
-import java.io.IOException;
+import org.apache.wicket.Application;
 
-public interface IResourceVersionProvider {
-	AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException;
+public class WicketVersion extends AbstractResourceVersion {
+	private static final long serialVersionUID = 1L;
+
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
+			.getLogger(WicketVersion.class);
 	
-	public static class VersionException extends Exception {
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
+	private String _version;
+	
+	public WicketVersion(Application application) {
+		_version = application.getFrameworkSettings().getVersion();
+		if ("n/a".equals(_version)) {
+			log.info("failed to determine wicket framework version");
+			_version = null;
 		}
-
-		public VersionException(final Class<?> scope, final String fileName, final String msg) {
-			super(scope + ", " + fileName + ": " + msg);
-		}
-
-		private static final long serialVersionUID = 1L;
-
 	}
-}
+	
+	@Override
+	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
+		if (o instanceof WicketVersion) {
+			return 0;
+		} else {
+			throw new IncompatibleVersionsException(this, o);
+		}
+	}
 
+	@Override
+	public String getVersion() {
+		return _version;
+	}
+
+	@Override
+	public boolean isValid() {
+		return _version != null;
+	}
+
+}

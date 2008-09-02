@@ -21,19 +21,32 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.apache.wicket.IRequestTarget;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.ajax.WicketAjaxReference;
+import org.apache.wicket.markup.html.WicketEventReference;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.resource.ISharedResourceRequestTarget;
+import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 import org.apache.wicket.util.string.Strings;
+import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceReference;
+import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
+import org.wicketstuff.mergedresources.resources.CachedCompressedResourceReference;
+import org.wicketstuff.mergedresources.resources.CachedResourceReference;
 import org.wicketstuff.mergedresources.resources.CompressedMergedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CompressedMergedJsResourceReference;
 import org.wicketstuff.mergedresources.resources.CompressedMergedResourceReference;
 import org.wicketstuff.mergedresources.resources.MergedResourceReference;
 import org.wicketstuff.mergedresources.util.RedirectStrategy;
+import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
+import org.wicketstuff.mergedresources.versioning.WicketVersionProvider;
+import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.IncompatibleVersionsException;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 
@@ -61,6 +74,65 @@ public class ResourceMountHelper {
 		_versionProvider = versionProvider;
 	}
 	
+	public void mountVersionedResource(String mountPrefix, ResourceReference ref) {
+		mountVersionedResource(mountPrefix, ref, true);
+	}
+	
+	public void mountVersionedResource(String mountPrefix, ResourceReference ref, boolean versionRequired) {
+		mountPrefix = (mountPrefix.startsWith("/") ? "" : "/") + mountPrefix + (mountPrefix.endsWith("/") ? "" : "/");
+		AbstractResourceVersion version;
+		try {
+			version = _versionProvider.getVersion(ref.getScope(), ref.getName());
+		} catch (VersionException e) {
+			if (versionRequired) {
+				throw new WicketRuntimeException(e);
+			} else {
+				version = AbstractResourceVersion.NO_VERSION;
+			}
+		}
+		_application.getSharedResources().add(ref.getName(), getResourceReference(ref.getScope(), ref.getName(), version.isValid())
+				.getResource());
+		mountSharedResourceWithCaching(getVersionedPath(ref.getScope(), ref.getName(), mountPrefix + ref.getName()), ref.getSharedResourceKey(), version.isValid());
+	}
+	
+	protected void mountSharedResourceWithCaching(final String path, final String resourceKey, final boolean aggressiveCaching) {
+		_application.mount(new SharedResourceRequestTargetUrlCodingStrategy(path, resourceKey) {
+
+			@Override
+			public IRequestTarget decode(final RequestParameters requestParameters) {
+				final SharedResourceRequestTarget t = (SharedResourceRequestTarget) super
+						.decode(requestParameters);
+				if (t != null) {
+					// wrap target
+					return new IRequestTarget() {
+
+						public void detach(final RequestCycle requestCycle) {
+							t.detach(requestCycle);
+						}
+
+						public void respond(final RequestCycle requestCycle) {
+							t.respond(requestCycle);
+							final WebResponse response = (WebResponse) requestCycle.getResponse();
+							response.setDateHeader("Expires", System.currentTimeMillis()
+									+ getCacheDuration(aggressiveCaching) * 1000L);
+							response.setHeader("Cache-Control", "max-age=" + getCacheDuration(aggressiveCaching));
+						}
+					};
+				} else {
+					return null;
+				}
+
+			}
+
+		});
+	}
+	
+	public static void mountWicketResources(String mountPrefix, WebApplication application) {
+		ResourceMountHelper h = new ResourceMountHelper(application, new WicketVersionProvider(application));
+		h.mountVersionedResource(mountPrefix, WicketAjaxReference.INSTANCE);
+		h.mountVersionedResource(mountPrefix, WicketEventReference.INSTANCE);
+	}
+	
 	public ResourceReference mountMergedSharedResource(final String mountPrefix, final String path, final boolean detectVersion, final Class<?>[] scopes, final String[] files) {
 		return mountMergedSharedResource(mountPrefix, path, detectVersion, scopes, files, true);
 	}
@@ -75,26 +147,24 @@ public class ResourceMountHelper {
 		
 		final String unversionedPath = mountPrefix + path;
 		String versionedPath = unversionedPath;
-		int version = 0;
+		AbstractResourceVersion version = AbstractResourceVersion.NO_VERSION;
 		if (detectVersion) {
 			for (int i = 0; i < scopes.length; i++) {
+				AbstractResourceVersion v = getVersion(scopes[i], files[i], versionRequired);
 				try {
-					final int v = _versionProvider.getVersion(scopes[i], files[i]);
-					if (v > version) {
+					if (v.compareTo(version) > 0) {
 						version = v;
 					}
-				} catch (final VersionException e) {
-					if (versionRequired) {
-						throw new WicketRuntimeException(e);
-					}
+				} catch (IncompatibleVersionsException e) {
+					throw new WicketRuntimeException(e);
 				}
 			}
-			if (version > 0) {
+			if (version.isValid()) {
 				versionedPath = getVersionedPath(mountPrefix + path, version);
 			}
 		}
 
-		final ResourceReference ref = getResourceReference(path, scopes, files, version > 0);
+		final ResourceReference ref = getResourceReference(path, scopes, files, version.isValid());
 		
 		_application.getSharedResources()
 				.add(ref.getScope(), ref.getName(), ref.getLocale(), ref.getStyle(), ref.getResource());
@@ -137,6 +207,36 @@ public class ResourceMountHelper {
 		return ref;
 	}
 
+	private AbstractResourceVersion getVersion(Class<?> scope, String file, boolean versionRequired) {
+		try {
+			return _versionProvider.getVersion(scope, file);
+		} catch (final VersionException e) {
+			if (versionRequired) {
+				throw new WicketRuntimeException(e);
+			} else {
+				return AbstractResourceVersion.NO_VERSION;
+			}
+		}
+	}
+
+	private ResourceReference getResourceReference(Class<?> scope, final String file, boolean aggressiveCaching) {
+		final ResourceReference ref;
+		int cacheDuration = getCacheDuration(aggressiveCaching);
+		if (doCompress(file)) {
+			if (isCSS(file)) {
+				ref = new CachedCompressedCssResourceReference(scope, file, null, null, cacheDuration);
+			} else if (isJS(file)) {
+				ref = new CachedCompressedJsResourceReference(scope, file, null, null, cacheDuration);
+			} else {
+				ref = new CachedCompressedResourceReference(scope, file, null, null, cacheDuration);
+			}
+		} else {
+			ref = new CachedResourceReference(scope, file, null, null, cacheDuration);
+		}
+		ref.bind(_application);
+		return ref;
+	}
+	
 	private ResourceReference getResourceReference(final String path,
 			final Class<?>[] scopes, final String[] files, boolean aggressiveCaching) {
 		final ResourceReference ref;
@@ -158,7 +258,7 @@ public class ResourceMountHelper {
 		ref.bind(_application);
 		return ref;
 	}
-
+	
 	protected int getCacheDuration(boolean aggressiveCaching) {
 		return aggressiveCaching ? AGGRESSIVE_CACHE_DURATION : NORMAL_CACHE_DURATION;
 	}
@@ -180,8 +280,10 @@ public class ResourceMountHelper {
 		}
 	}
 
-	protected String getVersionedPath(final String filePath, final int version) {
-		return Strings.beforeLast(filePath, '.') + "-" + version + "."
+	protected String getVersionedPath(final String filePath, final AbstractResourceVersion version) {
+		String versionString = version.isValid() ? "-" + version.getVersion() : "";
+		
+		return Strings.beforeLast(filePath, '.') + versionString + "."
 				+ Strings.afterLast(filePath, '.');	}
 
 	protected boolean doCompress(final String file) {
