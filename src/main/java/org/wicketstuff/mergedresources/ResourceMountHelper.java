@@ -79,7 +79,7 @@ public class ResourceMountHelper {
 	}
 	
 	public void mountVersionedResource(String mountPrefix, ResourceReference ref, boolean versionRequired) {
-		mountPrefix = (mountPrefix.startsWith("/") ? "" : "/") + mountPrefix + (mountPrefix.endsWith("/") ? "" : "/");
+		mountPrefix = normalizeMountPrefix(mountPrefix);
 		AbstractResourceVersion version;
 		try {
 			version = _versionProvider.getVersion(ref.getScope(), ref.getName());
@@ -93,6 +93,10 @@ public class ResourceMountHelper {
 		_application.getSharedResources().add(ref.getName(), getResourceReference(ref.getScope(), ref.getName(), version.isValid())
 				.getResource());
 		mountSharedResourceWithCaching(getVersionedPath(ref.getScope(), ref.getName(), mountPrefix + ref.getName()), ref.getSharedResourceKey(), version.isValid());
+	}
+
+	private String normalizeMountPrefix(String mountPrefix) {
+		return (mountPrefix.startsWith("/") ? "" : "/") + mountPrefix + (mountPrefix.endsWith("/") ? "" : "/");
 	}
 	
 	protected void mountSharedResourceWithCaching(final String path, final String resourceKey, final boolean aggressiveCaching) {
@@ -155,6 +159,26 @@ public class ResourceMountHelper {
 
 		return ref;
 	}
+
+	public ResourceReference[] mountCachedUnversionedResources(final Class<?> scope, final String mountPrefix, final String... files) {
+		final ResourceReference[] references = new ResourceReference[files.length];
+		for (int i = 0; i < files.length; i++) {
+			final String file = files[i];
+			references[i] = mountCachedUnversionedResource(scope, mountPrefix, file, file);
+		}
+		return references;
+	}
+	
+	public ResourceReference mountCachedUnversionedResource(final Class<?> scope, final String mountPrefix, final String fileName) {
+		return mountCachedUnversionedResource(scope, mountPrefix, fileName, fileName);
+	}
+	
+	public ResourceReference mountCachedUnversionedResource(final Class<?> scope, final String mountPrefix, final String fileName, final String filePath) {
+		String path = normalizeMountPrefix(mountPrefix) + filePath;
+		final ResourceReference ref = getResourceReference(scope, fileName, true);
+		_application.mountSharedResource(path, ref.getSharedResourceKey());
+		return ref;
+	}
 	
 	public static void mountWicketResources(String mountPrefix, WebApplication application) {
 		ResourceMountHelper h = new ResourceMountHelper(application, new WicketVersionProvider(application));
@@ -172,7 +196,7 @@ public class ResourceMountHelper {
 			throw new IllegalArgumentException("arrays must not be empty and of equal size");
 		}
 
-		mountPrefix = (mountPrefix.startsWith("/") ? "" : "/") + mountPrefix + (mountPrefix.endsWith("/") ? "" : "/");
+		mountPrefix = normalizeMountPrefix(mountPrefix);
 		
 		final String unversionedPath = mountPrefix + path;
 		String versionedPath = unversionedPath;
