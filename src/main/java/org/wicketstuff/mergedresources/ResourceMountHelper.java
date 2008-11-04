@@ -34,6 +34,7 @@ import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCod
 import org.apache.wicket.request.target.resource.ISharedResourceRequestTarget;
 import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.time.Duration;
 import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedResourceReference;
@@ -55,8 +56,8 @@ public class ResourceMountHelper {
 	/**
 	 * used if resource versioning is active
 	 */
-	// don't use more than that, see https://issues.apache.org/jira/browse/WICKET-1777
-	private static int AGGRESSIVE_CACHE_DURATION = Integer.MAX_VALUE / 1000;
+	// use a year beginning from wicket 1.3.5 - see https://issues.apache.org/jira/browse/WICKET-1777
+	public static int AGGRESSIVE_CACHE_DURATION = (int) Duration.days(365).seconds();
 	
 	/**
 	 * used if versioning is disabled or no version was found
