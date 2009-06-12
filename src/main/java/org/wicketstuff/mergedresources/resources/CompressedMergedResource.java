@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.wicket.markup.html.CompressedPackageResource;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.resource.IResourceStream;
 
 public class CompressedMergedResource extends CompressedPackageResource {
@@ -53,5 +54,12 @@ public class CompressedMergedResource extends CompressedPackageResource {
 	@Override
 	public int getCacheDuration() {
 		return _cacheDuration;
+	}
+	
+	protected void setHeaders(WebResponse response)
+	{
+		super.setHeaders(response);
+		response.setHeader("Vary", "Accept-Encoding");
+		response.setHeader("Cache-control", "public");
 	}
 }

@@ -19,6 +19,7 @@ package org.wicketstuff.mergedresources.resources;
 import java.util.Locale;
 
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.protocol.http.WebResponse;
 
 public class CachedCompressedJsResource extends JavascriptPackageResource {
 
@@ -33,5 +34,12 @@ public class CachedCompressedJsResource extends JavascriptPackageResource {
 	@Override
 	protected int getCacheDuration() {
 		return _cacheDuration;
+	}
+	
+	protected void setHeaders(WebResponse response)
+	{
+		super.setHeaders(response);
+		response.setHeader("Vary", "Accept-Encoding");
+		response.setHeader("Cache-control", "public");
 	}
 }

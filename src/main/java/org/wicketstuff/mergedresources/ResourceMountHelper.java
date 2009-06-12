@@ -187,6 +187,24 @@ public class ResourceMountHelper {
 		h.mountVersionedResource(mountPrefix, WicketEventReference.INSTANCE);
 	}
 	
+	public ResourceReference mountMergedSharedResource(final String mountPrefix, final String path, final boolean detectVersion, final Class<?>... scopes) {
+		int idx = path.lastIndexOf('.');
+		String suffix = idx > 0 ? path.substring(idx) : "";
+		return mountMergedSharedResource(mountPrefix, path, suffix, detectVersion, scopes);
+	}
+	
+	public ResourceReference mountMergedSharedResource(final String mountPrefix, final String path, String suffix, final boolean detectVersion, final Class<?>... scopes) {
+		if (!suffix.equals("") && !suffix.startsWith(".")) {
+			suffix = "." + suffix;
+		}
+		
+		String[] files = new String[scopes.length];
+		for (int i = 0; i < scopes.length; i++) {
+			files[i] = scopes[i].getSimpleName() + suffix;
+		}
+		return mountMergedSharedResource(mountPrefix, path, detectVersion, scopes, files, true);
+	}
+	
 	public ResourceReference mountMergedSharedResource(final String mountPrefix, final String path, final boolean detectVersion, final Class<?>[] scopes, final String[] files) {
 		return mountMergedSharedResource(mountPrefix, path, detectVersion, scopes, files, true);
 	}

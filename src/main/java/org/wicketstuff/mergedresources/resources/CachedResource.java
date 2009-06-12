@@ -19,6 +19,7 @@ package org.wicketstuff.mergedresources.resources;
 import java.util.Locale;
 
 import org.apache.wicket.markup.html.PackageResource;
+import org.apache.wicket.protocol.http.WebResponse;
 
 public class CachedResource extends PackageResource {
 
@@ -33,5 +34,11 @@ public class CachedResource extends PackageResource {
 	@Override
 	protected int getCacheDuration() {
 		return _cacheDuration;
+	}
+	
+	protected void setHeaders(WebResponse response)
+	{
+		super.setHeaders(response);
+		response.setHeader("Cache-control", "public");
 	}
 }
