@@ -19,17 +19,26 @@ package org.wicketstuff.mergedresources.resources;
 import java.util.Locale;
 
 import org.apache.wicket.Resource;
+import org.wicketstuff.mergedresources.ResourceSpec;
 
 public class CompressedMergedCssResourceReference extends MergedResourceReference {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
+	 */
+	@Deprecated
 	public CompressedMergedCssResourceReference(String path, Locale locale, String style, Class<?>[] scopes, String[] files, int cacheDuration) {
-		super(CompressedMergedCssResourceReference.class, path, locale, style, scopes, files, cacheDuration);
+		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
 	}
 
+	public CompressedMergedCssResourceReference(String path, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
+		super(CompressedMergedCssResourceReference.class, path, locale, style, specs, cacheDuration);
+	}
+	
 	@Override
 	protected Resource newResource() {
-		return new CompressedMergedCssResource(getScope(), getName(), getLocale(), getStyle(), getMergedScopes(), getMergedFiles(), getCacheDuration());
+		return new CompressedMergedCssResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(), getCacheDuration());
 	}
 }

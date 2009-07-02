@@ -42,6 +42,12 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.4.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <version>1.4.2</version>
+	  <scope>test</scope>
+    </dependency>
 
     <!--  JUNIT DEPENDENCY FOR TESTING -->
     <dependency>

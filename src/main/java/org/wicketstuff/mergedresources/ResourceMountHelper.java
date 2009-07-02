@@ -31,7 +31,6 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.resource.ISharedResourceRequestTarget;
 import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
@@ -43,6 +42,7 @@ import org.wicketstuff.mergedresources.resources.CompressedMergedCssResourceRefe
 import org.wicketstuff.mergedresources.resources.CompressedMergedJsResourceReference;
 import org.wicketstuff.mergedresources.resources.CompressedMergedResourceReference;
 import org.wicketstuff.mergedresources.resources.MergedResourceReference;
+import org.wicketstuff.mergedresources.util.MergedResourceRequestTargetUrlCodingStrategy;
 import org.wicketstuff.mergedresources.util.RedirectStrategy;
 import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
@@ -256,20 +256,7 @@ public class ResourceMountHelper {
 			}.getSharedResourceKey());
 		}
 
-		_application.mount(new SharedResourceRequestTargetUrlCodingStrategy(versionedPath, ref.getSharedResourceKey()) {
-
-			@Override
-			public boolean matches(final IRequestTarget requestTarget) {
-				if (requestTarget instanceof ISharedResourceRequestTarget) {
-					final ISharedResourceRequestTarget target = (ISharedResourceRequestTarget) requestTarget;
-					return super.matches(requestTarget)
-							|| mergedKeys.contains(target.getResourceKey());
-				} else {
-					return false;
-				}
-			}
-
-		});
+		_application.mount(new MergedResourceRequestTargetUrlCodingStrategy(versionedPath, ref.getSharedResourceKey(), mergedKeys));
 
 		// redirect to orig page
 		if (!unversionedPath.equals(versionedPath)) {
@@ -312,20 +299,23 @@ public class ResourceMountHelper {
 	private ResourceReference getResourceReference(final String path,
 			final Class<?>[] scopes, final String[] files, boolean aggressiveCaching) {
 		final ResourceReference ref;
+		
 		int cacheDuration = getCacheDuration(aggressiveCaching);
+		ResourceSpec[] specs = ResourceSpec.toResourceSpecs(scopes, files);
+		
 		if (doCompress(path)) {
 			if (isCSS(path)) {
 				ref = new CompressedMergedCssResourceReference(path, null, null, 
-						scopes, files, cacheDuration);
+						specs, cacheDuration);
 			} else if (isJS(path)) {
 				ref = new CompressedMergedJsResourceReference(path, null, null, 
-						scopes, files, cacheDuration);
+						specs, cacheDuration);
 			} else {
 				ref = new CompressedMergedResourceReference(path, null, null, 
-						scopes, files, cacheDuration);
+						specs, cacheDuration);
 			}
 		} else {
-			ref = new MergedResourceReference(ResourceMountHelper.class, path, null, null, scopes, files, cacheDuration);
+			ref = new MergedResourceReference(path, null, null, specs, cacheDuration);
 		}
 		ref.bind(_application);
 		return ref;
@@ -356,7 +346,8 @@ public class ResourceMountHelper {
 		String versionString = version.isValid() ? "-" + version.getVersion() : "";
 		
 		return Strings.beforeLast(filePath, '.') + versionString + "."
-				+ Strings.afterLast(filePath, '.');	}
+				+ Strings.afterLast(filePath, '.');
+	}
 
 	protected boolean doCompress(final String file) {
 		return COMPRESS_SUFFIXES.contains(Strings.afterLast(file, '.'));

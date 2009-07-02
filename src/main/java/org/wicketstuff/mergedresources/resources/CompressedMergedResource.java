@@ -16,12 +16,12 @@
  */
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.wicket.markup.html.CompressedPackageResource;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.resource.IResourceStream;
+import org.wicketstuff.mergedresources.ResourceSpec;
 
 public class CompressedMergedResource extends CompressedPackageResource {
 
@@ -31,21 +31,24 @@ public class CompressedMergedResource extends CompressedPackageResource {
 
 	private int _cacheDuration;
 
+	/**
+	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
+	 */
+	@Deprecated
 	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
+	}
+
+	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, int cacheDuration) {
 		super(scope, path, locale, style);
 		_cacheDuration = cacheDuration;
-		
-		if (scopes.length != files.length) {
-			throw new IllegalArgumentException("arrays must be of equal length: "
-					+ Arrays.toString(scopes) + ", " + Arrays.toString(files));
-		}
-		_mergedResourceStream = newResourceStream(locale, style, scopes, files);
+		_mergedResourceStream = newResourceStream(locale, style, specs);
 	}
-
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final Class<?>[] scopes, final String[] files) {
-		return new MergedResourceStream(scopes, files, locale, style);
+	
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs) {
+		return new MergedResourceStream(specs, locale, style);
 	}
-
+	
 	@Override
 	protected IResourceStream getPackageResourceStream() {
 		return _mergedResourceStream;

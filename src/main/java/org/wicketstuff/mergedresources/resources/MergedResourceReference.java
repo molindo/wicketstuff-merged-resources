@@ -20,32 +20,46 @@ import java.util.Locale;
 
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
+import org.wicketstuff.mergedresources.ResourceSpec;
 
 public class MergedResourceReference extends ResourceReference {
 
 	private static final long serialVersionUID = 1L;
-	private Class<?>[] _scopes;
-	private String[] _files;
+	private final ResourceSpec[] _specs;
 	private int _cacheDuration;
 
+	@Deprecated
 	public MergedResourceReference(Class<?> scope, String path, Locale locale, String style, Class<?>[] scopes, String[] files, int cacheDuration) {
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
+	}
+
+	public MergedResourceReference(String path, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
+		this(MergedResourceReference.class, path, locale, style, specs, cacheDuration);
+	}
+	
+	public MergedResourceReference(Class<?> scope, String path, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
 		super(scope, path, locale, style);
-		_scopes = scopes;
-		_files = files;
+		_specs = specs;
 		_cacheDuration = cacheDuration;
 	}
-
+	
 	@Override
 	protected Resource newResource() {
-		return new MergedResource(getScope(), getName(), getLocale(), getStyle(), _scopes, _files, _cacheDuration);
+		return new MergedResource(getScope(), getName(), getLocale(), getStyle(), _specs, _cacheDuration);
 	}
 
+	@Deprecated
 	public Class<?>[] getMergedScopes() {
-		return _scopes;
+		return ResourceSpec.toScopes(_specs);
 	}
 
+	@Deprecated
 	public String[] getMergedFiles() {
-		return _files;
+		return ResourceSpec.toFiles(_specs);
+	}
+
+	public ResourceSpec[] getMergedSpecs() {
+		return _specs;
 	}
 
 	public int getCacheDuration() {

@@ -14,30 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wicketstuff.mergedresources.versioning;
+package org.wicketstuff.mergedresources;
 
-import java.io.IOException;
+import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.WebPage;
+import org.wicketstuff.mergedresources.components.PanelOne;
 
-public interface IResourceVersionProvider {
-	
-	/**
-	 * @return AbstractResourceVersion for this resource, never null
-	 * @throws VersionException if version can't be determined
-	 */
-	AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException;
-	
-	public static class VersionException extends Exception {
 
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
-		}
+/**
+ * Homepage
+ */
+public class HomePage extends WebPage {
 
-		public VersionException(final Class<?> scope, final String fileName, final String msg) {
-			super(scope + ", " + fileName + ": " + msg);
-		}
+	private static final long serialVersionUID = 1L;
 
-		private static final long serialVersionUID = 1L;
-
-	}
+    public HomePage(final PageParameters parameters) {
+    	add(new PanelOne("panel"));
+    }
 }
-

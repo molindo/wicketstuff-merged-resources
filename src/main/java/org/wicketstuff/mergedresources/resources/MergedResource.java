@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.wicket.util.resource.IResourceStream;
+import org.wicketstuff.mergedresources.ResourceSpec;
 
 public class MergedResource extends CachedResource {
 
@@ -27,7 +28,10 @@ public class MergedResource extends CachedResource {
 
 	private final MergedResourceStream _mergedResourceStream;
 
-
+	/**
+	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
+	 */
+	@Deprecated
 	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
 		super(scope, path, locale, style, cacheDuration);
 		
@@ -38,6 +42,11 @@ public class MergedResource extends CachedResource {
 		_mergedResourceStream = new MergedResourceStream(scopes, files, locale, style);
 	}
 
+	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, int cacheDuration) {
+		super(scope, path, locale, style, cacheDuration);
+		_mergedResourceStream = new MergedResourceStream(specs, locale, style);
+	}
+	
 	@Override
 	public IResourceStream getResourceStream() {
 		return _mergedResourceStream;

@@ -20,19 +20,27 @@ import java.util.Locale;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
+import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.util.YuiCompressorUtil;
 
 public class CompressedMergedCssResource extends CompressedMergedResource {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
+	 */
 	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
-		super(scope, path, locale, style, scopes, files, cacheDuration);
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
 	}
 
+	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, ResourceSpec[] specs, int cacheDuration) {
+		super(scope, path, locale, style, specs, cacheDuration);
+	}
+	
 	@Override
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final Class<?>[] scopes, final String[] files) {
-		return new MergedResourceStream(scopes, files, locale, style) {
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs) {
+		return new MergedResourceStream(specs, locale, style) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -44,6 +52,11 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 				} else {
 					return content;
 				}
+			}
+
+			@Override
+			public String getContentType() {
+				return "text/css";
 			}
 		};
 	}

@@ -41,6 +41,13 @@ public abstract class AbstractResourceVersion implements IClusterable {
 	};
 	public abstract boolean isValid();
 	public abstract String getVersion();
+	
+	/**
+     * @param   o the object to be compared.
+     * @return  a negative integer, zero, or a positive integer as this object
+     *		is less than, equal to, or greater than the specified object.
+	 * @throws IncompatibleVersionsException
+	 */
 	public final int compareTo(AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (!o.isValid()) {
 			return isValid() ? 1 : 0;

@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.JavascriptStripper;
+import org.wicketstuff.mergedresources.ResourceSpec;
 
 public class CompressedMergedJsResource extends CompressedMergedResource {
 
@@ -29,16 +30,25 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(CompressedMergedJsResource.class);
 
+	/**
+	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
+	 */
+	@Deprecated
 	public CompressedMergedJsResource(Class<?> scope, final String path,
 			final Locale locale, final String style, final Class<?>[] scopes,
 			final String[] files, int cacheDuration) {
-		super(scope, path, locale, style, scopes, files, cacheDuration);
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
 	}
 
+	public CompressedMergedJsResource(Class<?> scope, final String path,
+			final Locale locale, String style, final ResourceSpec[] specs, int cacheDuration) {
+		super(scope, path, locale, style, specs, cacheDuration);
+	}
+	
 	@Override
 	protected IResourceStream newResourceStream(final Locale locale,
-			final String style, final Class<?>[] scopes, final String[] files) {
-		return new MergedResourceStream(scopes, files, locale, style) {
+			final String style, final ResourceSpec[] specs) {
+		return new MergedResourceStream(specs, locale, style) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -58,6 +68,11 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 					log.error("Error while stripping content", e);
 					return content;
 				}
+			}
+			
+			@Override
+			public String getContentType() {
+				return "application/x-javascript";
 			}
 		};
 	}

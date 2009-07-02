@@ -37,25 +37,32 @@ import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.watch.ModificationWatcher;
+import org.wicketstuff.mergedresources.ResourceSpec;
 
 public class MergedResourceStream implements IResourceStream {
 	private static final long serialVersionUID = 1L;
 	private static transient final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(MergedResourceStream.class);
 
-	private final Class<?>[] _scopes;
-	private final String[] _files;
+	private final ResourceSpec[] _specs;
 	private Locale _locale;
 	private final String _style;
 	private LocalizedMergedResourceStream _localizedMergedResourceStream;
 
+	/**
+	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
+	 */
+	@Deprecated
 	public MergedResourceStream(final Class<?>[] scopes, final String[] files, final Locale locale, final String style) {
-		_scopes = scopes.clone();
-		_files = files.clone();
+		this(ResourceSpec.toResourceSpecs(scopes, files), locale, style);
+	}
+
+	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style) {
+		_specs = specs.clone();
 		_locale = locale;
 		_style = style;
 	}
-
+	
 	public void close() throws IOException {
 		if (_localizedMergedResourceStream != null) {
 			getLocalizedMergedResourceStream().close();
@@ -64,7 +71,7 @@ public class MergedResourceStream implements IResourceStream {
 	}
 
 	public String getContentType() {
-		return null;
+		return getLocalizedMergedResourceStream().getContentType();
 	}
 
 	public InputStream getInputStream() throws ResourceStreamNotFoundException {
@@ -97,18 +104,30 @@ public class MergedResourceStream implements IResourceStream {
 	private final class LocalizedMergedResourceStream implements IClusterable {
 		private static final long serialVersionUID = 1L;
 		private final String _content;
+		private final String _contentType;
 		private final Time _lastModifiedTime;
 
 		private LocalizedMergedResourceStream() {
 			Time max = null;
 			final StringWriter w = new StringWriter(4096);
-			final ArrayList<IResourceStream> resourceStreams = new ArrayList<IResourceStream>(_scopes.length);
+			final ArrayList<IResourceStream> resourceStreams = new ArrayList<IResourceStream>(_specs.length);
 
-			for (int i = 0; i < _scopes.length; i++) {
-				final Class<?> scope = _scopes[i];
-				final String fileName = _files[i];
+			String contentType = null;
+			for (int i = 0; i < _specs.length; i++) {
+				final Class<?> scope = _specs[i].getScope();
+				final String fileName = _specs[i].getFile();
 
+
+				
 				final IResourceStream resourceStream = findResourceStream(scope, fileName);
+				if (contentType != null) {
+					if (resourceStream.getContentType() != null && !contentType.equalsIgnoreCase(resourceStream.getContentType())) {
+						log.warn("content types of merged resources don't match: '" + resourceStream.getContentType() + "' and '" + contentType + "'");
+					}
+				} else {
+					contentType = resourceStream.getContentType();
+				}
+				
 				try {
 
 					final Time lastModified = resourceStream.lastModifiedTime();
@@ -132,6 +151,7 @@ public class MergedResourceStream implements IResourceStream {
 				}
 
 			}
+			_contentType = contentType;
 			_content = toContent(w.toString());
 			_lastModifiedTime = max == null ? Time.now() : max;
 			watchForChanges(resourceStreams);
@@ -207,6 +227,10 @@ public class MergedResourceStream implements IResourceStream {
 
 		public Time getLastModifiedTime() {
 			return _lastModifiedTime;
+		}
+
+		public String getContentType() {
+			return _contentType;
 		}
 	}
 
