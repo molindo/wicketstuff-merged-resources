@@ -44,7 +44,7 @@ public class ResourceMount implements Cloneable {
 	private static final Set<String> DEFAULT_MERGE_SUFFIXES = Collections
 		.unmodifiableSet(new HashSet<String>(Arrays.asList("css", "js")));
 	
-	private Integer _cacheDuration = DEFAULT_CACHE_DURATION;
+	private Integer _cacheDuration = null;
 	private String _path = null;
 	private AbstractResourceVersion _version = null;
 	private AbstractResourceVersion _minVersion = null;
@@ -63,9 +63,12 @@ public class ResourceMount implements Cloneable {
 	private Boolean _merge;
 	
 	public static void mountWicketResources(String mountPrefix, WebApplication application) {
-		ResourceMount mount = new ResourceMount()
-			.setResourceVersionProvider(new WicketVersionProvider(application))
-			.setDefaultAggresiveCacheDuration();
+		mountWicketResources(mountPrefix, application, new ResourceMount().setDefaultAggresiveCacheDuration());
+	}
+	
+	public static void mountWicketResources(String mountPrefix, WebApplication application, ResourceMount mount) {
+		mount = mount.clone()
+			.setResourceVersionProvider(new WicketVersionProvider(application));
 		
 		if (!mountPrefix.endsWith("/")) {
 			mountPrefix = mountPrefix + "/";
@@ -184,8 +187,17 @@ public class ResourceMount implements Cloneable {
 		return this;
 	}
 
+	public ResourceMount setDefaultCacheDuration() {
+		return setCacheDuration(DEFAULT_CACHE_DURATION);
+	}
+	
 	public ResourceMount setDefaultAggresiveCacheDuration() {
 		return setCacheDuration(DEFAULT_AGGRESIVE_CACHE_DURATION);
+	}
+	
+	public ResourceMount autodetectCacheDuration() {
+		_cacheDuration = null;
+		return this;
 	}
 	
 	public ResourceMount setResourceVersionProvider(IResourceVersionProvider resourceVersionProvider) {
@@ -313,7 +325,7 @@ public class ResourceMount implements Cloneable {
 			} else {
 				specsList = new ArrayList<Pair<String,ResourceSpec[]>>(_resourceSpecs.size());
 				for (ResourceSpec spec : _resourceSpecs) {
-					specsList.add(new Pair<String, ResourceSpec[]>(_resourceSpecs.size() > 1 ? spec.getFile() : null, getResourceSpecs()));
+					specsList.add(new Pair<String, ResourceSpec[]>(_resourceSpecs.size() > 1 ? spec.getFile() : null, new ResourceSpec[]{spec}));
 				}
 			} 
 			
@@ -323,8 +335,10 @@ public class ResourceMount implements Cloneable {
 				
 				ResourceSpec[] specs = p.getSecond();
 				
-				final ResourceReference ref = newResourceReference(getScope(), path, getLocale(), getStyle(), getCacheDuration(), specs);
-				ref.bind(application);
+				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
+				
+				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(), getStyle(), getCacheDuration(), specs);
+//				ref.bind(application);
 	//			application.getSharedResources()
 	//					.add(ref.getScope(), ref.getName(), ref.getLocale(), ref.getStyle(), ref.getResource());
 	
@@ -396,7 +410,7 @@ public class ResourceMount implements Cloneable {
 					+ Strings.afterLast(path, '.');
 		}
 
-		return _path;
+		return path;
 	}
 
 	protected AbstractResourceVersion getVersion() throws VersionException, IncompatibleVersionsException {
@@ -425,12 +439,12 @@ public class ResourceMount implements Cloneable {
 		return null;
 	}
 
-	protected Class<?> getScope() {
+	protected Class<?> getScope(ResourceSpec[] specs) {
 		if (_mountScope != null) {
 			return _mountScope;
 		} else {
 			Class<?> scope = null;
-			for (ResourceSpec resourceSpec : _resourceSpecs) {
+			for (ResourceSpec resourceSpec : specs) {
 				if (scope == null) {
 					scope = resourceSpec.getScope();
 				} else if (!scope.equals(resourceSpec.getScope())) {
@@ -446,19 +460,19 @@ public class ResourceMount implements Cloneable {
 		return ResourceMount.class;
 	}
 
-	protected ResourceReference newResourceReference(Class<?> scope, final String path, Locale locale, String style, int cacheDuration, ResourceSpec[] resourceSpecs) {
+	protected ResourceReference newResourceReference(Class<?> scope, final String name, Locale locale, String style, int cacheDuration, ResourceSpec[] resourceSpecs) {
 		ResourceReference ref;
 		if (resourceSpecs.length > 1) {
-			if (doCompress(path)) {
-				if (doMinifyJs(path)) {
-					ref = new CompressedMergedCssResourceReference(path, locale, style, resourceSpecs, cacheDuration);
-				} else if (doMinifyJs(path)) {
-					ref = new CompressedMergedJsResourceReference(path, locale, style, resourceSpecs, cacheDuration);
+			if (doCompress(name)) {
+				if (doMinifyJs(name)) {
+					ref = new CompressedMergedCssResourceReference(name, locale, style, resourceSpecs, cacheDuration);
+				} else if (doMinifyJs(name)) {
+					ref = new CompressedMergedJsResourceReference(name, locale, style, resourceSpecs, cacheDuration);
 				} else {
-					ref = new CompressedMergedResourceReference(path, locale, style, resourceSpecs, cacheDuration);
+					ref = new CompressedMergedResourceReference(name, locale, style, resourceSpecs, cacheDuration);
 				}
 			} else {
-				ref = new MergedResourceReference(path, locale, style, resourceSpecs, cacheDuration);
+				ref = new MergedResourceReference(name, locale, style, resourceSpecs, cacheDuration);
 			}
 		} else if (resourceSpecs.length == 1) {
 			ResourceSpec resourceSpec = resourceSpecs[0];
@@ -467,16 +481,16 @@ public class ResourceMount implements Cloneable {
 				return resourceSpec.getRef();
 			}
 			
-			if (doCompress(path)) {
-				if (doMinifyCss(path)) {
-					ref = new CachedCompressedCssResourceReference(scope, path, locale, style, cacheDuration);
-				} else if (doMinifyJs(path)) {
-					ref = new CachedCompressedJsResourceReference(scope, path, locale, style, cacheDuration);
+			if (doCompress(name)) {
+				if (doMinifyCss(name)) {
+					ref = new CachedCompressedCssResourceReference(scope, name, locale, style, cacheDuration);
+				} else if (doMinifyJs(name)) {
+					ref = new CachedCompressedJsResourceReference(scope, name, locale, style, cacheDuration);
 				} else {
-					ref = new CachedCompressedResourceReference(scope, path, locale, style, cacheDuration);
+					ref = new CachedCompressedResourceReference(scope, name, locale, style, cacheDuration);
 				}
 			} else {
-				ref = new CachedResourceReference(scope, path, locale, style, cacheDuration);
+				ref = new CachedResourceReference(scope, name, locale, style, cacheDuration);
 			}
 		} else {
 			throw new IllegalArgumentException("can't create ResourceReference without ResourceSpec");
@@ -549,11 +563,16 @@ public class ResourceMount implements Cloneable {
 			return _cacheDuration;
 		}
 		
-		int cacheDuration = DEFAULT_CACHE_DURATION;
+		Integer cacheDuration = null;
 		for (ResourceSpec spec : _resourceSpecs) {
-			if (spec.getCacheDuration() != null && spec.getCacheDuration() < cacheDuration) {
+			if (cacheDuration == null) {
+				cacheDuration = spec.getCacheDuration();
+			} else if (spec.getCacheDuration() != null && spec.getCacheDuration() < cacheDuration) {
 				cacheDuration = spec.getCacheDuration();
 			}
+		}
+		if (cacheDuration == null) {
+			cacheDuration = DEFAULT_CACHE_DURATION;
 		}
 		return cacheDuration;
 	}

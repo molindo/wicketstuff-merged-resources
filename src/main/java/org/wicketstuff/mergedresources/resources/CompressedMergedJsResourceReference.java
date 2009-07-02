@@ -33,8 +33,8 @@ public class CompressedMergedJsResourceReference extends MergedResourceReference
 		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
 	}
 
-	public CompressedMergedJsResourceReference(String path, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
-		super(CompressedMergedJsResourceReference.class, path, locale, style, specs, cacheDuration);
+	public CompressedMergedJsResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
+		super(CompressedMergedJsResourceReference.class, name, locale, style, specs, cacheDuration);
 	}
 	
 	@Override

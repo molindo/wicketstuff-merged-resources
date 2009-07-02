@@ -33,12 +33,12 @@ public class MergedResourceReference extends ResourceReference {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
 	}
 
-	public MergedResourceReference(String path, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
-		this(MergedResourceReference.class, path, locale, style, specs, cacheDuration);
+	public MergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
+		this(MergedResourceReference.class, name, locale, style, specs, cacheDuration);
 	}
 	
-	public MergedResourceReference(Class<?> scope, String path, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
-		super(scope, path, locale, style);
+	public MergedResourceReference(Class<?> scope, String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
+		super(scope, name, locale, style);
 		_specs = specs;
 		_cacheDuration = cacheDuration;
 	}
