@@ -464,7 +464,7 @@ public class ResourceMount implements Cloneable {
 		ResourceReference ref;
 		if (resourceSpecs.length > 1) {
 			if (doCompress(name)) {
-				if (doMinifyJs(name)) {
+				if (doMinifyCss(name)) {
 					ref = new CompressedMergedCssResourceReference(name, locale, style, resourceSpecs, cacheDuration);
 				} else if (doMinifyJs(name)) {
 					ref = new CompressedMergedJsResourceReference(name, locale, style, resourceSpecs, cacheDuration);

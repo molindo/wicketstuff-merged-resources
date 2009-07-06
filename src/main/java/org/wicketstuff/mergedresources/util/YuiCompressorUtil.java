@@ -16,7 +16,6 @@
  */
 package org.wicketstuff.mergedresources.util;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -34,7 +33,7 @@ public class YuiCompressorUtil {
 		final StringWriter writer = new StringWriter((int) (toCompress.length() * 0.8));
 		try {
 			new CssCompressor(new StringReader(toCompress)).compress(writer, 0);
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			log.warn("Could not compress merged CSS stream, using uncompressed content", e);
 			return toCompress;
 		}
