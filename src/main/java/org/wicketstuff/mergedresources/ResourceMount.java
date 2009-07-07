@@ -271,7 +271,7 @@ public class ResourceMount implements Cloneable {
 		}
 		if (Strings.isEmpty(suffix)) {
 			suffix = "";
-		} else if (!suffix.startsWith(".")) {
+		} else if (!suffix.startsWith(".") && !suffix.startsWith("-")) {
 			suffix = "." + suffix;
 		}
 		return setPath(prefix + name + suffix);
@@ -513,7 +513,7 @@ public class ResourceMount implements Cloneable {
 	 * @return this
 	 */
 	public ResourceMount addResourceSpecMatchingSuffix(Class<?> scope, String suffix) {
-		if (!suffix.startsWith(".")) {
+		if (!suffix.startsWith(".") && !suffix.startsWith("-")) {
 			suffix = "." + suffix;
 		}
 		return addResourceSpec(new ResourceSpec(scope, scope.getSimpleName() + suffix));
