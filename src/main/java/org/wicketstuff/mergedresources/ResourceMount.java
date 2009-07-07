@@ -255,13 +255,26 @@ public class ResourceMount implements Cloneable {
 	 * @return this
 	 */
 	public ResourceMount setPath(String prefix, ResourceReference ref, String suffix) {
+		return setPath(prefix, ref.getName(), suffix);
+	}
+	
+	/**
+	 * convenience method to use {@link #setPath(String)} use a prefix and a name
+	 * @param prefix path prefix prefix for mount, with or without leading or trailing slashes
+	 * @param name a name
+	 * @param suffix suffix to append after {@link ResourceReference#getName()}, might be null
+	 * @return this
+	 */
+	public ResourceMount setPath(String prefix, String name, String suffix) {
 		if (!prefix.endsWith("/")) {
 			prefix = prefix + "/";
 		}
-		if (suffix == null) {
+		if (Strings.isEmpty(suffix)) {
 			suffix = "";
+		} else if (!suffix.startsWith(".")) {
+			suffix = "." + suffix;
 		}
-		return setPath(prefix + ref.getName() + suffix);
+		return setPath(prefix + name + suffix);
 	}
 	
 	/**
