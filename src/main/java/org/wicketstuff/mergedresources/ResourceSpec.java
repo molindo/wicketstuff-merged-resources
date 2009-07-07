@@ -141,4 +141,49 @@ public class ResourceSpec {
 	public ResourceReference getRef() {
 		return _ref;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_file == null) ? 0 : _file.hashCode());
+		result = prime * result + ((_locale == null) ? 0 : _locale.hashCode());
+		result = prime * result + ((_scope == null) ? 0 : _scope.hashCode());
+		result = prime * result + ((_style == null) ? 0 : _style.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof ResourceSpec))
+			return false;
+		ResourceSpec other = (ResourceSpec) obj;
+		if (_file == null) {
+			if (other._file != null)
+				return false;
+		} else if (!_file.equals(other._file))
+			return false;
+		if (_locale == null) {
+			if (other._locale != null)
+				return false;
+		} else if (!_locale.equals(other._locale))
+			return false;
+		if (_scope == null) {
+			if (other._scope != null)
+				return false;
+		} else if (!_scope.equals(other._scope))
+			return false;
+		if (_style == null) {
+			if (other._style != null)
+				return false;
+		} else if (!_style.equals(other._style))
+			return false;
+		return true;
+	}
+	
+	
 }
