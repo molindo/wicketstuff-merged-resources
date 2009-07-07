@@ -578,7 +578,8 @@ public class ResourceMount implements Cloneable {
 	 */
 	public ResourceMount mount(WebApplication application) {
 		if (_resourceSpecs.size() == 0) {
-			throw new IllegalStateException("no ResourceSpecs to mount");
+			// nothing to do
+			return this;
 		}
 		try {
 			List<Pair<String, ResourceSpec[]>> specsList;
