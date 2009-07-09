@@ -90,7 +90,8 @@ public class ResourceMount implements Cloneable {
 	 */
 	public static void mountWicketResources(String mountPrefix, WebApplication application, ResourceMount mount) {
 		mount = mount.clone()
-			.setResourceVersionProvider(new WicketVersionProvider(application));
+			.setResourceVersionProvider(new WicketVersionProvider(application))
+			.setDefaultAggresiveCacheDuration();
 		
 		if (!mountPrefix.endsWith("/")) {
 			mountPrefix = mountPrefix + "/";
@@ -614,12 +615,14 @@ public class ResourceMount implements Cloneable {
 				String path = getPath(p.getFirst(), specs);
 				String unversionedPath = getPath(p.getFirst(), null);
 				
+				boolean versioned = !unversionedPath.equals(path);
+				
 				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
 				
-				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs), getStyle(specs), getCacheDuration(specs), specs);
+				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs), getStyle(specs), getCacheDuration(specs, versioned), specs);
 				application.mount(newStrategy(path, ref, merge));
 	
-				if (_mountRedirect && !unversionedPath.equals(path)) {
+				if (_mountRedirect && versioned) {
 					application.mount(newRedirectStrategy(unversionedPath, path));
 				}
 			}
@@ -925,11 +928,16 @@ public class ResourceMount implements Cloneable {
 	 * or detect it from the given resource specs. The resource will always use the lowest cache duration or {@link ResourceMount#DEFAULT_CACHE_DURATION}
 	 * if it can't be detected
 	 * @param specs the {@link ResourceSpec}s to get the cache duration for
+	 * @param if the resource is versioned. 
 	 * @return the cache duration in seconds
 	 */
-	protected int getCacheDuration(ResourceSpec[] specs) {
+	protected int getCacheDuration(ResourceSpec[] specs, boolean versioned) {
 		if (_cacheDuration != null) {
 			return _cacheDuration;
+		}
+		
+		if (versioned) {
+			return DEFAULT_AGGRESIVE_CACHE_DURATION;
 		}
 		
 		Integer cacheDuration = null;
