@@ -831,12 +831,6 @@ public class ResourceMount implements Cloneable {
 				ref = new MergedResourceReference(name, locale, style, resourceSpecs, cacheDuration);
 			}
 		} else if (resourceSpecs.length == 1) {
-			ResourceSpec resourceSpec = resourceSpecs[0];
-			if (resourceSpec.getRef() != null) {
-				// reuse existing, e.g. for mountWicketResources(...)
-				return resourceSpec.getRef();
-			}
-			
 			if (doCompress(name)) {
 				if (doMinifyCss(name)) {
 					ref = new CachedCompressedCssResourceReference(scope, name, locale, style, cacheDuration);
