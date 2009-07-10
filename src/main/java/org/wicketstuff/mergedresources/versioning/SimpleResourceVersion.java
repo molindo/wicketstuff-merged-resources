@@ -16,7 +16,7 @@
  */
 package org.wicketstuff.mergedresources.versioning;
 
-final class SimpleResourceVersion extends AbstractResourceVersion {
+public final class SimpleResourceVersion extends AbstractResourceVersion {
 
 	private static final long serialVersionUID = 1L;
 	private int _value;

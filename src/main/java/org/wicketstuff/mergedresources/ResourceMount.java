@@ -32,6 +32,8 @@ import org.wicketstuff.mergedresources.util.Pair;
 import org.wicketstuff.mergedresources.util.RedirectStrategy;
 import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
+import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
+import org.wicketstuff.mergedresources.versioning.SimpleResourceVersion;
 import org.wicketstuff.mergedresources.versioning.WicketVersionProvider;
 import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.IncompatibleVersionsException;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
@@ -193,6 +195,16 @@ public class ResourceMount implements Cloneable {
 	public ResourceMount setMinVersion(AbstractResourceVersion minVersion) {
 		_minVersion = minVersion;
 		return this;
+	}
+	
+	/**
+	 * Convenience method to use a {@link SimpleResourceVersion} as minVersion (e.g. suitable for {@link RevisionVersionProvider})
+	 * 
+	 * @param minVersionValue the minimal version
+	 * @return this
+	 */
+	public ResourceMount setMinVersion(int minVersionValue) {
+		return setMinVersion(new SimpleResourceVersion(minVersionValue));
 	}
 	
 	/**
