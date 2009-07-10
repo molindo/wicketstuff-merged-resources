@@ -22,6 +22,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.JavascriptStripper;
 import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
 public class CompressedMergedJsResource extends CompressedMergedResource {
 
@@ -37,29 +38,29 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 	public CompressedMergedJsResource(Class<?> scope, final String path,
 			final Locale locale, final String style, final Class<?>[] scopes,
 			final String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
 	public CompressedMergedJsResource(Class<?> scope, final String path,
-			final Locale locale, String style, final ResourceSpec[] specs, int cacheDuration) {
-		super(scope, path, locale, style, specs, cacheDuration);
+			final Locale locale, String style, final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, specs, cacheDuration, preProcessor);
 	}
 	
 	@Override
 	protected IResourceStream newResourceStream(final Locale locale,
-			final String style, final ResourceSpec[] specs) {
-		return new MergedResourceStream(specs, locale, style) {
+			final String style, final ResourceSpec[] specs, IResourcePreProcessor preProcessor) {
+		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected String toContent(final String content) {
+			protected byte[] toContent(final byte[] content) {
 				try {
 					if (Application.get().getResourceSettings()
 							.getStripJavascriptCommentsAndWhitespace()) {
 						
 						// strip comments and whitespace
 						return JavascriptStripper
-								.stripCommentsAndWhitespace(content);
+								.stripCommentsAndWhitespace(new String(content)).getBytes();
 					} else {
 						// don't strip the comments, just return original input
 						return content;

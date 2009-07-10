@@ -16,12 +16,11 @@
  */
 package org.wicketstuff.mergedresources.resources;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +29,7 @@ import java.util.Locale;
 import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.listener.IChangeListener;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
@@ -38,6 +38,7 @@ import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.watch.ModificationWatcher;
 import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
 public class MergedResourceStream implements IResourceStream {
 	private static final long serialVersionUID = 1L;
@@ -48,19 +49,21 @@ public class MergedResourceStream implements IResourceStream {
 	private Locale _locale;
 	private final String _style;
 	private LocalizedMergedResourceStream _localizedMergedResourceStream;
+	private IResourcePreProcessor _preProcessor;
 
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
 	public MergedResourceStream(final Class<?>[] scopes, final String[] files, final Locale locale, final String style) {
-		this(ResourceSpec.toResourceSpecs(scopes, files), locale, style);
+		this(ResourceSpec.toResourceSpecs(scopes, files), locale, style, null);
 	}
 
-	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style) {
+	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style, IResourcePreProcessor preProcessor) {
 		_specs = specs.clone();
 		_locale = locale;
 		_style = style;
+		_preProcessor = preProcessor;
 	}
 	
 	public void close() throws IOException {
@@ -83,7 +86,7 @@ public class MergedResourceStream implements IResourceStream {
 	}
 
 	public long length() {
-		return getLocalizedMergedResourceStream().getContent().length();
+		return getLocalizedMergedResourceStream().getContent().length;
 	}
 
 	public void setLocale(final Locale locale) {
@@ -103,17 +106,19 @@ public class MergedResourceStream implements IResourceStream {
 
 	private final class LocalizedMergedResourceStream implements IClusterable {
 		private static final long serialVersionUID = 1L;
-		private final String _content;
+		private final byte[] _content;
 		private final String _contentType;
 		private final Time _lastModifiedTime;
 
 		private LocalizedMergedResourceStream() {
 			Time max = null;
-			final StringWriter w = new StringWriter(4096);
+			//final StringWriter w = new StringWriter(4096);
+			ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+			
 			final ArrayList<IResourceStream> resourceStreams = new ArrayList<IResourceStream>(_specs.length);
 
 			String contentType = null;
-			for (int i = 0; i < _specs.length; i++) {
+			for (int i = 0; i < _specs.length; i++) {			
 				final Class<?> scope = _specs[i].getScope();
 				final String fileName = _specs[i].getFile();
 
@@ -134,7 +139,10 @@ public class MergedResourceStream implements IResourceStream {
 					if (max == null || lastModified != null && lastModified.after(max)) {
 						max = lastModified;
 					}
-					writeContent(w, resourceStream);
+					if (i > 0) {
+						writeFileSeparator(out);
+					}
+					writeContent(out, resourceStream);
 					resourceStreams.add(resourceStream);
 				} catch (final IOException e) {
 					throw new WicketRuntimeException("failed to read from " + resourceStream, e);
@@ -152,7 +160,8 @@ public class MergedResourceStream implements IResourceStream {
 
 			}
 			_contentType = contentType;
-			_content = toContent(w.toString());
+			
+			_content = toContent(preProcess(out.toByteArray()));
 			_lastModifiedTime = max == null ? Time.now() : max;
 			watchForChanges(resourceStreams);
 		}
@@ -180,17 +189,17 @@ public class MergedResourceStream implements IResourceStream {
 			return resourceStream;
 		}
 
-		private void writeContent(final StringWriter w, final IResourceStream resourceStream) throws ResourceStreamNotFoundException, IOException {
-			// open reader
-			final BufferedReader r = new BufferedReader(new InputStreamReader(resourceStream
-					.getInputStream()));
-			String line;
-			while ((line = r.readLine()) != null) {
-				// write
-				w.write(line);
-				w.write("\n");
-			}
-			w.write("\n\n");
+		private void writeContent(final OutputStream out, final IResourceStream resourceStream) throws ResourceStreamNotFoundException, IOException {
+			Streams.copy(resourceStream.getInputStream(), out);
+			out.flush();
+		}
+
+		private void writeFileSeparator(ByteArrayOutputStream out) throws IOException {
+			out.write(getFileSeparator());
+		}
+		
+		private byte[] getFileSeparator() {
+			return isPlainText() ? "\n\n".getBytes() : new byte[0];
 		}
 
 		private void watchForChanges(final List<IResourceStream> resourceStreams) {
@@ -218,10 +227,10 @@ public class MergedResourceStream implements IResourceStream {
 		}
 
 		public InputStream getInputStream() {
-			return new ByteArrayInputStream(getContent().getBytes());
+			return new ByteArrayInputStream(getContent());
 		}
 
-		public String getContent() {
+		public byte[] getContent() {
 			return _content;
 		}
 
@@ -234,7 +243,16 @@ public class MergedResourceStream implements IResourceStream {
 		}
 	}
 
-	protected String toContent(final String content) {
+	protected byte[] toContent(final byte[] content) {
 		return content;
+	}
+
+	public boolean isPlainText() {
+		// TODO maybe something smarter?
+		return true;
+	}
+
+	public byte[] preProcess(byte[] content) {
+		return (_preProcessor != null) ? _preProcessor.preProcess(content) : content;
 	}
 }

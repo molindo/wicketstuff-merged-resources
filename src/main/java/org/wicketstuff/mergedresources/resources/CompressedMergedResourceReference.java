@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import org.apache.wicket.Resource;
 import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
 public class CompressedMergedResourceReference extends MergedResourceReference {
 
@@ -30,15 +31,15 @@ public class CompressedMergedResourceReference extends MergedResourceReference {
 	 */
 	@Deprecated
 	public CompressedMergedResourceReference(String path, Locale locale, String style, Class<?>[] scopes, String[] files, int cacheDuration) {
-		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
+		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
-		super(CompressedMergedResourceReference.class, name, locale, style, specs, cacheDuration);
+	public CompressedMergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration,IResourcePreProcessor preProcessor) {
+		super(CompressedMergedResourceReference.class, name, locale, style, specs, cacheDuration, preProcessor);
 	}
 	
 	@Override
 	protected Resource newResource() {
-		return new CompressedMergedResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(), getCacheDuration());
+		return new CompressedMergedResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(), getCacheDuration(), getPreProcessor());
 	}
 }

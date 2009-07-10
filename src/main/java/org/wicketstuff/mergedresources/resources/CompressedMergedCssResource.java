@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 import org.wicketstuff.mergedresources.util.YuiCompressorUtil;
 
 public class CompressedMergedCssResource extends CompressedMergedResource {
@@ -31,24 +32,24 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, ResourceSpec[] specs, int cacheDuration) {
-		super(scope, path, locale, style, specs, cacheDuration);
+	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, specs, cacheDuration, preProcessor);
 	}
 	
 	@Override
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs) {
-		return new MergedResourceStream(specs, locale, style) {
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs, IResourcePreProcessor preProcessor) {
+		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected String toContent(final String content) {
+			protected byte[] toContent(final byte[] content) {
 				// use the JS settings for CSS
 				if (Application.get().getResourceSettings()
 						.getStripJavascriptCommentsAndWhitespace()) {
-					return YuiCompressorUtil.compress(content);
+					return YuiCompressorUtil.compress(new String(content)).getBytes();
 				} else {
 					return content;
 				}

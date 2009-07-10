@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.CompressedPackageResource;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
 public class CompressedMergedResource extends CompressedPackageResource {
 
@@ -36,17 +37,17 @@ public class CompressedMergedResource extends CompressedPackageResource {
 	 */
 	@Deprecated
 	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, int cacheDuration) {
+	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 		_cacheDuration = cacheDuration;
-		_mergedResourceStream = newResourceStream(locale, style, specs);
+		_mergedResourceStream = newResourceStream(locale, style, specs, preProcessor);
 	}
 	
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs) {
-		return new MergedResourceStream(specs, locale, style);
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs, IResourcePreProcessor preProcessor) {
+		return new MergedResourceStream(specs, locale, style, preProcessor);
 	}
 	
 	@Override

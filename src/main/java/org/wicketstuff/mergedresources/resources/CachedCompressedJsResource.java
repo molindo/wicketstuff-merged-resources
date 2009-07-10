@@ -18,28 +18,14 @@ package org.wicketstuff.mergedresources.resources;
 
 import java.util.Locale;
 
-import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
-public class CachedCompressedJsResource extends JavascriptPackageResource {
+public class CachedCompressedJsResource extends CompressedMergedJsResource {
 
 	private static final long serialVersionUID = 1L;
-	private int _cacheDuration;
 
-	public CachedCompressedJsResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration) {
-		super(scope, path, locale, style);
-		_cacheDuration = cacheDuration;
-	}
-
-	@Override
-	protected int getCacheDuration() {
-		return _cacheDuration;
-	}
-	
-	protected void setHeaders(WebResponse response)
-	{
-		super.setHeaders(response);
-		response.setHeader("Vary", "Accept-Encoding");
-		response.setHeader("Cache-control", "public");
+	public CachedCompressedJsResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration, IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, new ResourceSpec[] {new ResourceSpec(scope, path)}, cacheDuration, preProcessor);
 	}
 }

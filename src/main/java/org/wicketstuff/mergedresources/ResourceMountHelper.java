@@ -283,14 +283,14 @@ public class ResourceMountHelper {
 		int cacheDuration = getCacheDuration(aggressiveCaching);
 		if (doCompress(file)) {
 			if (isCSS(file)) {
-				ref = new CachedCompressedCssResourceReference(scope, file, null, null, cacheDuration);
+				ref = new CachedCompressedCssResourceReference(scope, file, null, null, cacheDuration, null);
 			} else if (isJS(file)) {
-				ref = new CachedCompressedJsResourceReference(scope, file, null, null, cacheDuration);
+				ref = new CachedCompressedJsResourceReference(scope, file, null, null, cacheDuration, null);
 			} else {
-				ref = new CachedCompressedResourceReference(scope, file, null, null, cacheDuration);
+				ref = new CachedCompressedResourceReference(scope, file, null, null, cacheDuration, null);
 			}
 		} else {
-			ref = new CachedResourceReference(scope, file, null, null, cacheDuration);
+			ref = new CachedResourceReference(scope, file, null, null, cacheDuration, null);
 		}
 		ref.bind(_application);
 		return ref;
@@ -306,16 +306,16 @@ public class ResourceMountHelper {
 		if (doCompress(path)) {
 			if (isCSS(path)) {
 				ref = new CompressedMergedCssResourceReference(path, null, null, 
-						specs, cacheDuration);
+						specs, cacheDuration, null);
 			} else if (isJS(path)) {
 				ref = new CompressedMergedJsResourceReference(path, null, null, 
-						specs, cacheDuration);
+						specs, cacheDuration, null);
 			} else {
 				ref = new CompressedMergedResourceReference(path, null, null, 
-						specs, cacheDuration);
+						specs, cacheDuration, null);
 			}
 		} else {
-			ref = new MergedResourceReference(path, null, null, specs, cacheDuration);
+			ref = new MergedResourceReference(path, null, null, specs, cacheDuration, null);
 		}
 		ref.bind(_application);
 		return ref;

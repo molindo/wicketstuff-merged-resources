@@ -18,6 +18,7 @@ import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedResourceReference;
@@ -70,6 +71,7 @@ public class ResourceMount implements Cloneable {
 	private boolean _mountRedirect = true;
 	private Class<?> _mountScope;
 	private Boolean _merge;
+	private IResourcePreProcessor _preProcessor;
 	
 	/**
 	 * Mount wicket-event.js and wicket-ajax.js using wicket's version for aggressive caching (e.g. wicket-ajax-1.3.6.js)
@@ -431,10 +433,27 @@ public class ResourceMount implements Cloneable {
 	/**
 	 * Same as passing <code>null</code> to {@link #setMountScope(Class)}. Autodetect: either use the scope that all
 	 * (merged) resources are using or use {@link ResourceMount} as mount scope.
-	 * @return
+	 * @return this
 	 */
 	public ResourceMount autodetectMountScope() {
 		return setMountScope(null);
+	}
+	
+	/**
+	 * @return the current {@link IResourcePreProcessor}
+	 */
+	public IResourcePreProcessor getPreProcessor() {
+		return _preProcessor;
+	}
+
+	/**
+	 * use an {@link IResourcePreProcessor} to modify resources (e.g. replace properties, change relative to absolute paths, ...)
+	 * @param preProcessor
+	 * @return this
+	 */
+	public ResourceMount setPreProcessor(IResourcePreProcessor preProcessor) {
+		_preProcessor = preProcessor;
+		return this;
 	}
 
 	/**
@@ -619,7 +638,7 @@ public class ResourceMount implements Cloneable {
 				
 				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
 				
-				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs), getStyle(specs), getCacheDuration(specs, versioned), specs);
+				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs), getStyle(specs), getCacheDuration(specs, versioned), specs, _preProcessor);
 				application.mount(newStrategy(path, ref, merge));
 	
 				if (_mountRedirect && versioned) {
@@ -816,31 +835,31 @@ public class ResourceMount implements Cloneable {
 	 * @param resourceSpecs resource specs
 	 * @return a new {@link ResourceReference}
 	 */
-	protected ResourceReference newResourceReference(Class<?> scope, final String name, Locale locale, String style, int cacheDuration, ResourceSpec[] resourceSpecs) {
+	protected ResourceReference newResourceReference(Class<?> scope, final String name, Locale locale, String style, int cacheDuration, ResourceSpec[] resourceSpecs, IResourcePreProcessor preProcessor) {
 		ResourceReference ref;
 		if (resourceSpecs.length > 1) {
 			if (doCompress(name)) {
 				if (doMinifyCss(name)) {
-					ref = new CompressedMergedCssResourceReference(name, locale, style, resourceSpecs, cacheDuration);
+					ref = new CompressedMergedCssResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
 				} else if (doMinifyJs(name)) {
-					ref = new CompressedMergedJsResourceReference(name, locale, style, resourceSpecs, cacheDuration);
+					ref = new CompressedMergedJsResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
 				} else {
-					ref = new CompressedMergedResourceReference(name, locale, style, resourceSpecs, cacheDuration);
+					ref = new CompressedMergedResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
 				}
 			} else {
-				ref = new MergedResourceReference(name, locale, style, resourceSpecs, cacheDuration);
+				ref = new MergedResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
 			}
 		} else if (resourceSpecs.length == 1) {
 			if (doCompress(name)) {
 				if (doMinifyCss(name)) {
-					ref = new CachedCompressedCssResourceReference(scope, name, locale, style, cacheDuration);
+					ref = new CachedCompressedCssResourceReference(scope, name, locale, style, cacheDuration, preProcessor);
 				} else if (doMinifyJs(name)) {
-					ref = new CachedCompressedJsResourceReference(scope, name, locale, style, cacheDuration);
+					ref = new CachedCompressedJsResourceReference(scope, name, locale, style, cacheDuration, preProcessor);
 				} else {
-					ref = new CachedCompressedResourceReference(scope, name, locale, style, cacheDuration);
+					ref = new CachedCompressedResourceReference(scope, name, locale, style, cacheDuration, preProcessor);
 				}
 			} else {
-				ref = new CachedResourceReference(scope, name, locale, style, cacheDuration);
+				ref = new CachedResourceReference(scope, name, locale, style, cacheDuration, preProcessor);
 			}
 		} else {
 			throw new IllegalArgumentException("can't create ResourceReference without ResourceSpec");

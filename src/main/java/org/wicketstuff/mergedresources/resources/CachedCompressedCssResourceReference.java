@@ -20,20 +20,23 @@ import java.util.Locale;
 
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
 public class CachedCompressedCssResourceReference extends ResourceReference {
 
 	private static final long serialVersionUID = 1L;
 	private int _cacheDuration;
+	private IResourcePreProcessor _preProcessor;
 
-	public CachedCompressedCssResourceReference(Class<?> scope, String path, Locale locale, String style, int cacheDuration) {
+	public CachedCompressedCssResourceReference(Class<?> scope, String path, Locale locale, String style, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 		_cacheDuration = cacheDuration;
+		_preProcessor = preProcessor;
 	}
 
 	@Override
 	protected Resource newResource() {
-		return new CachedCompressedCssResource(getScope(), getName(), getLocale(), getStyle(), _cacheDuration);
+		return new CachedCompressedCssResource(getScope(), getName(), getLocale(), getStyle(), _cacheDuration, _preProcessor);
 	}
 
 	public int getCacheDuration() {

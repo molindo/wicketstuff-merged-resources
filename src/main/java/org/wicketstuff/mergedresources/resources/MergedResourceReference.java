@@ -21,31 +21,34 @@ import java.util.Locale;
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
 public class MergedResourceReference extends ResourceReference {
 
 	private static final long serialVersionUID = 1L;
 	private final ResourceSpec[] _specs;
 	private int _cacheDuration;
+	private IResourcePreProcessor _preProcessor;
 
 	@Deprecated
 	public MergedResourceReference(Class<?> scope, String path, Locale locale, String style, Class<?>[] scopes, String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration);
+		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public MergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
-		this(MergedResourceReference.class, name, locale, style, specs, cacheDuration);
+	public MergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+		this(MergedResourceReference.class, name, locale, style, specs, cacheDuration, preProcessor);
 	}
 	
-	public MergedResourceReference(Class<?> scope, String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration) {
+	public MergedResourceReference(Class<?> scope, String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, name, locale, style);
 		_specs = specs;
 		_cacheDuration = cacheDuration;
+		_preProcessor = preProcessor;
 	}
 	
 	@Override
 	protected Resource newResource() {
-		return new MergedResource(getScope(), getName(), getLocale(), getStyle(), _specs, _cacheDuration);
+		return new MergedResource(getScope(), getName(), getLocale(), getStyle(), _specs, _cacheDuration, _preProcessor);
 	}
 
 	@Deprecated
@@ -66,5 +69,8 @@ public class MergedResourceReference extends ResourceReference {
 		return _cacheDuration;
 	}
 	
+	public IResourcePreProcessor getPreProcessor() {
+		return _preProcessor;
+	}
 	
 }
