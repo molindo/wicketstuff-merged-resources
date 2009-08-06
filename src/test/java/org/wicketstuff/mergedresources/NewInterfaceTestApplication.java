@@ -24,9 +24,12 @@ public class NewInterfaceTestApplication extends WebApplication
 	
 	
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void init() {
+		// still using deprecated property for CSS
 		getResourceSettings().setStripJavascriptCommentsAndWhitespace(strip());
+		
 		//getResourceSettings().setAddLastModifiedTimeToResourceReferenceUrl(true);
 		
 		if (merge()) {
@@ -61,7 +64,7 @@ public class NewInterfaceTestApplication extends WebApplication
 	/**
 	 * @see wicket.Application#getHomePage()
 	 */
-	public Class<?> getHomePage()
+	public Class<HomePage> getHomePage()
 	{
 		return HomePage.class;
 	}

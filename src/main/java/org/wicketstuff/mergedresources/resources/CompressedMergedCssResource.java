@@ -44,6 +44,8 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
+			// still using deprecated stripJavascriptCommentsAndWhitespace property for CSS
+			@SuppressWarnings("deprecation")
 			@Override
 			protected byte[] toContent(final byte[] content) {
 				// use the JS settings for CSS

@@ -36,7 +36,7 @@ import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
-import org.apache.wicket.util.watch.ModificationWatcher;
+import org.apache.wicket.util.watch.IModificationWatcher;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
@@ -204,7 +204,7 @@ public class MergedResourceStream implements IResourceStream {
 
 		private void watchForChanges(final List<IResourceStream> resourceStreams) {
 			// Watch file in the future
-			final ModificationWatcher watcher = Application.get().getResourceSettings()
+			final IModificationWatcher watcher = Application.get().getResourceSettings()
 					.getResourceWatcher(true);
 			if (watcher != null) {
 				final IChangeListener listener = new IChangeListener() {

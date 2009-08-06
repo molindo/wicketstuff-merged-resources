@@ -651,6 +651,7 @@ public class ResourceMount implements Cloneable {
 				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
 				
 				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs), getStyle(specs), getCacheDuration(specs, versioned), specs, _preProcessor);
+				ref.bind(application);
 				application.mount(newStrategy(path, ref, merge));
 	
 				if (_mountRedirect && versioned) {
@@ -682,7 +683,11 @@ public class ResourceMount implements Cloneable {
 
 					@Override
 					protected Resource newResource() {
-						return ref.getResource();
+						Resource r = ref.getResource();
+						if (r == null) {
+							throw new WicketRuntimeException("ResourceReference wasn't bound to application yet");
+						}
+						return r;
 					}
 
 				}.getSharedResourceKey());

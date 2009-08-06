@@ -1,6 +1,7 @@
 package org.wicketstuff.mergedresources.components;
 
-import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -10,8 +11,8 @@ public class ComponentB extends Panel {
 
 	public ComponentB(String id) {
 		super(id);
-		add(HeaderContributor.forCss(ComponentB.class, ComponentB.class.getSimpleName() + ".css"));
-		add(HeaderContributor.forJavaScript(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
+		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".css"));
+		add(JavascriptPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
 		add(new Label("label", "Wicket!"));
 	}
 

@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.string.JavascriptStripper;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
@@ -55,16 +54,7 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 			@Override
 			protected byte[] toContent(final byte[] content) {
 				try {
-					if (Application.get().getResourceSettings()
-							.getStripJavascriptCommentsAndWhitespace()) {
-						
-						// strip comments and whitespace
-						return JavascriptStripper
-								.stripCommentsAndWhitespace(new String(content)).getBytes();
-					} else {
-						// don't strip the comments, just return original input
-						return content;
-					}
+					return Application.get().getResourceSettings().getJavascriptCompressor().compress(new String(content)).getBytes();
 				} catch (Exception e) {
 					log.error("Error while stripping content", e);
 					return content;
