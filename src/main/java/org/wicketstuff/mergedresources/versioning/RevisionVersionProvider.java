@@ -30,10 +30,10 @@ public class RevisionVersionProvider implements IResourceVersionProvider {
 			.getLogger(RevisionVersionProvider.class);
 	
 	public AbstractResourceVersion getVersion(final Class<?> scope, final String fileName) throws VersionException {
-		final String file = getResourcePath(scope, fileName);
-		final InputStream in = RevisionVersionProvider.class.getClassLoader().getResourceAsStream(file);
+		final String path = getResourcePath(scope, fileName);
+		final InputStream in = newInputStream(scope, fileName, path);
 		if (in == null) {
-			throw new VersionException(scope, fileName, "can't find " + file);
+			throw new VersionException(scope, fileName, "can't find " + path);
 		}
 		final BufferedReader r = new BufferedReader(new InputStreamReader(in));
 		String line;
@@ -41,7 +41,7 @@ public class RevisionVersionProvider implements IResourceVersionProvider {
 			line = r.readLine();
 		} catch (final IOException e) {
 			throw new VersionException(scope, fileName, "failed to read line from file: "
-					+ file, e);
+					+ path, e);
 		} finally {
 			try {
 				r.close();
@@ -58,8 +58,21 @@ public class RevisionVersionProvider implements IResourceVersionProvider {
 			}
 			return new SimpleResourceVersion(value);
 		} else {
-			throw new VersionException(scope, fileName, "did not find version in " + file);
+			throw new VersionException(scope, fileName, "did not find version in " + path);
 		}
+	}
+
+	/**
+	 * @return may return null, which will cause a VersionException
+	 */
+	protected InputStream newInputStream(final Class<?> scope,
+			final String fileName, final String path) {
+		
+		InputStream in = scope.getClassLoader().getResourceAsStream(path);
+		if (in == null) {
+			in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+		}
+		return in;
 	}
 	
 	protected String getResourcePath(final Class<?> scope, final String fileName) {
