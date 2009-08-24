@@ -19,6 +19,7 @@ package org.wicketstuff.mergedresources.resources;
 import java.util.Locale;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.javascript.IJavascriptCompressor;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
@@ -54,7 +55,11 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 			@Override
 			protected byte[] toContent(final byte[] content) {
 				try {
-					return Application.get().getResourceSettings().getJavascriptCompressor().compress(new String(content)).getBytes();
+					final IJavascriptCompressor compressor = Application.get().getResourceSettings().getJavascriptCompressor();
+					if (compressor != null) {
+						return compressor.compress(new String(content)).getBytes();
+					}
+					return content;
 				} catch (Exception e) {
 					log.error("Error while stripping content", e);
 					return content;
