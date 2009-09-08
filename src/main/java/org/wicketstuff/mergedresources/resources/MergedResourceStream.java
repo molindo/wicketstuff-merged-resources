@@ -68,7 +68,7 @@ public class MergedResourceStream implements IResourceStream {
 	
 	public void close() throws IOException {
 		if (_localizedMergedResourceStream != null) {
-			getLocalizedMergedResourceStream().close();
+			_localizedMergedResourceStream.close();
 			_localizedMergedResourceStream = null;
 		}
 	}
