@@ -67,10 +67,7 @@ public class MergedResourceStream implements IResourceStream {
 	}
 	
 	public void close() throws IOException {
-		if (_localizedMergedResourceStream != null) {
-			_localizedMergedResourceStream.close();
-			_localizedMergedResourceStream = null;
-		}
+		// do nothing
 	}
 
 	public String getContentType() {
@@ -99,7 +96,11 @@ public class MergedResourceStream implements IResourceStream {
 
 	private LocalizedMergedResourceStream getLocalizedMergedResourceStream() {
 		if (_localizedMergedResourceStream == null) {
-			_localizedMergedResourceStream = new LocalizedMergedResourceStream();
+			synchronized (this) {
+				if (_localizedMergedResourceStream == null) {
+					_localizedMergedResourceStream = new LocalizedMergedResourceStream();
+				}
+			}
 		}
 		return _localizedMergedResourceStream;
 	}
@@ -210,20 +211,18 @@ public class MergedResourceStream implements IResourceStream {
 				final IChangeListener listener = new IChangeListener() {
 					public void onChange() {
 						log.info("merged resource has changed");
-						for (final IResourceStream resourceStream : resourceStreams) {
-							watcher.remove(resourceStream);
+						synchronized (MergedResourceStream.this) {
+							for (final IResourceStream resourceStream : resourceStreams) {
+								watcher.remove(resourceStream);
+							}
+							_localizedMergedResourceStream = null;
 						}
-						_localizedMergedResourceStream = null;
 					}
 				};
 				for (final IResourceStream resourceStream : resourceStreams) {
 					watcher.add(resourceStream, listener);
 				}
 			}
-		}
-
-		public void close() throws IOException {
-
 		}
 
 		public InputStream getInputStream() {
