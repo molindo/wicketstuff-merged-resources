@@ -17,6 +17,8 @@
 package org.wicketstuff.mergedresources;
 
 import junit.framework.TestCase;
+
+import org.apache.wicket.Application;
 import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.HomePage;
 import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
@@ -32,6 +34,11 @@ public class TestNewInterfaceHomePageUnmerged extends TestCase
 	public void setUp()
 	{
 		tester = new WicketTester(new NewInterfaceTestApplication() {
+			@Override
+			public String getConfigurationType() {
+				return Application.DEVELOPMENT;
+			}
+			
 			@Override
 			protected boolean merge() {
 				return false;

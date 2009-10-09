@@ -44,12 +44,6 @@ public class TestNewInterfaceHomePage extends TestCase
 			protected boolean strip() {
 				return true;
 			}
-
-			@Override
-			public String getConfigurationType() {
-				return Application.DEPLOYMENT;
-			}
-
 			
 		});
 	}

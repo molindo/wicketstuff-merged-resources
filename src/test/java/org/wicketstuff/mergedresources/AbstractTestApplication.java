@@ -1,5 +1,6 @@
 package org.wicketstuff.mergedresources;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public abstract class AbstractTestApplication extends WebApplication
@@ -45,4 +46,8 @@ public abstract class AbstractTestApplication extends WebApplication
 		return HomePage.class;
 	}
 
+	@Override
+	public String getConfigurationType() {
+		return Application.DEPLOYMENT;
+	}
 }
