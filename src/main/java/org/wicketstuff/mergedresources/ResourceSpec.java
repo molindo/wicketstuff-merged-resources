@@ -3,11 +3,16 @@ package org.wicketstuff.mergedresources;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.util.string.Strings;
 
-public class ResourceSpec {
-	private final Class<?> _scope;
+public class ResourceSpec implements IClusterable {
+	private static final long serialVersionUID = 1L;
+	
+	private final String _scopeName;
+	private transient Class<?> _scope;
 	private final String _file;
 	private ResourceReference _ref;
 	private Locale _locale;
@@ -96,6 +101,7 @@ public class ResourceSpec {
 		}
 		
 		_scope = scope;
+		_scopeName = _scope.getName();
 		_file = file;
 		_locale = locale;
 		_style = style;
@@ -104,6 +110,13 @@ public class ResourceSpec {
 	}
 	
 	public Class<?> getScope() {
+		if (_scope == null) {
+			try {
+				_scope = Class.forName(_scopeName);
+			} catch (ClassNotFoundException e) {
+				throw new WicketRuntimeException("failed to get scope class by name", e);
+			}
+		}
 		return _scope;
 	}
 
@@ -146,9 +159,9 @@ public class ResourceSpec {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((_file == null) ? 0 : _file.hashCode());
+		result = prime * result + _file.hashCode();
+		result = prime * result + _scopeName.hashCode();
 		result = prime * result + ((_locale == null) ? 0 : _locale.hashCode());
-		result = prime * result + ((_scope == null) ? 0 : _scope.hashCode());
 		result = prime * result + ((_style == null) ? 0 : _style.hashCode());
 		return result;
 	}
@@ -162,20 +175,14 @@ public class ResourceSpec {
 		if (!(obj instanceof ResourceSpec))
 			return false;
 		ResourceSpec other = (ResourceSpec) obj;
-		if (_file == null) {
-			if (other._file != null)
-				return false;
-		} else if (!_file.equals(other._file))
+		if (!_file.equals(other._file))
+			return false;
+		if (!_scopeName.equals(other._scopeName))
 			return false;
 		if (_locale == null) {
 			if (other._locale != null)
 				return false;
 		} else if (!_locale.equals(other._locale))
-			return false;
-		if (_scope == null) {
-			if (other._scope != null)
-				return false;
-		} else if (!_scope.equals(other._scope))
 			return false;
 		if (_style == null) {
 			if (other._style != null)
