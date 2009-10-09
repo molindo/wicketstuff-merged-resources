@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
@@ -18,6 +20,10 @@ import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
+import org.wicketstuff.mergedresources.annotations.ContributionInjector;
+import org.wicketstuff.mergedresources.annotations.ContributionScanner;
+import org.wicketstuff.mergedresources.annotations.CssContribution;
+import org.wicketstuff.mergedresources.annotations.JsContribution;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
@@ -39,8 +45,29 @@ import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.Incomp
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 public class ResourceMount implements Cloneable {
+	private static final MetaDataKey<Boolean> ANNOTATIONS_ENABLED_KEY = new MetaDataKey<Boolean>() {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		
+	};
+	
+	/**
+	 * default cache duration is 1 hour
+	 */
 	public static final int DEFAULT_CACHE_DURATION = (int) Duration.hours(1).seconds();
-	public static final int DEFAULT_AGGRESIVE_CACHE_DURATION = (int) Duration.days(365).seconds();
+	
+	/**
+	 * default aggressive cache duration is 1 year
+	 */
+	public static final int DEFAULT_AGGRESSIVE_CACHE_DURATION = (int) Duration.days(365).seconds();
+	
+	/**
+	 * @deprecated typo in name, it's aggressive with ss, use {@link #DEFAULT_AGGRESSIVE_CACHE_DURATION} instead
+	 */
+	public static final int DEFAULT_AGGRESIVE_CACHE_DURATION = DEFAULT_AGGRESSIVE_CACHE_DURATION;
 	
 	/**
 	 * file suffixes to be compressed by default ("css", "js", "html", "xml"). For instance, there is no sense in 
@@ -109,6 +136,84 @@ public class ResourceMount implements Cloneable {
 				.setPath(path)
 				.addResourceSpec(ref)
 				.mount(application);
+		}
+	}
+	
+	/**
+	 * enable annotation based adding of resources and make sure that the component instantiation listener is only
+	 * added once
+	 * 
+	 * @param application
+	 * @see JsContribution
+	 * @see CssContribution
+	 */
+	public static void enableAnnotations(WebApplication application) {
+		Boolean enabled = application.getMetaData(ANNOTATIONS_ENABLED_KEY);
+		if (enabled != Boolean.TRUE) {
+			try {
+				Class.forName("org.springframework.core.io.support.PathMatchingResourcePatternResolver");
+			} catch (ClassNotFoundException e) {
+				throw new WicketRuntimeException("in order to enable wicketstuff-merged-resources' annotation support, "+
+						"wicketstuff-annotations and spring-core must be on the path "+
+						"(see http://wicketstuff.org/confluence/display/STUFFWIKI/wicketstuff-annotation for details)");
+			}
+			application.addComponentInstantiationListener(new ContributionInjector());
+			application.setMetaData(ANNOTATIONS_ENABLED_KEY, Boolean.TRUE);
+		}
+	}
+	
+	/**
+	 * @see #mountAnnotatedPackageResources(ResourceMount, String, String, WebApplication)
+	 */
+	public static void mountAnnotatedPackageResources(ResourceMount mount, String pathPrefix, Class<?> scope, WebApplication application) {
+		mountAnnotatedPackageResources(mount, pathPrefix, scope.getPackage(), application);
+	}
+	
+	/**
+	 * @see #mountAnnotatedPackageResources(ResourceMount, String, String, WebApplication)
+	 */
+	public static void mountAnnotatedPackageResources(ResourceMount mount, String pathPrefix, Package pkg, WebApplication application) {
+		mountAnnotatedPackageResources(mount,  pathPrefix, pkg.getName(), application);
+	}
+	
+	/**
+	 * mount annotated resources from the given package. resources are mounted beyond the given pathPrefix if resource
+	 * scope doesn't start with / itself.
+	 * 
+	 * @param mount a preconfigured ResourceMount, won't be changed
+	 * @param pathPrefix pathPrefix to mount resources
+	 * @param packageName the scanned package
+	 * @param application
+	 * 
+	 * @see JsContribution
+	 * @see CssContribution
+	 */
+	public static void mountAnnotatedPackageResources(ResourceMount mount, String pathPrefix, String packageName, WebApplication application) {
+		enableAnnotations(application);
+
+		if (Strings.isEmpty(pathPrefix)) {
+			pathPrefix = "/";
+		}
+		if (!pathPrefix.endsWith("/")) {
+			pathPrefix += "/";
+		}
+		if (!pathPrefix.startsWith("/")) {
+			pathPrefix = "/" + pathPrefix;
+		}
+		
+		for (Map.Entry<String, Set<ResourceSpec>> e : new ContributionScanner(packageName).getContributions().entrySet()) {
+			String path = e.getKey();
+			if (Strings.isEmpty(path)) {
+				throw new WicketRuntimeException("path must not be empty");
+			}
+			Set<ResourceSpec> specs = e.getValue();
+			
+			if (specs.size() > 0) {
+				ResourceMount m = mount.clone();
+				m.setPath(path.startsWith("/") ? path : pathPrefix + path);
+				m.addResourceSpecs(specs);
+				m.mount(application);
+			}
 		}
 	}
 	
@@ -362,11 +467,20 @@ public class ResourceMount implements Cloneable {
 	}
 	
 	/**
-	 * Same as passing {@link ResourceMount#DEFAULT_AGGRESIVE_CACHE_DURATION} to {@link #setCacheDuration(int)}
+	 * Same as passing {@link ResourceMount#DEFAULT_AGGRESSIVE_CACHE_DURATION} to {@link #setCacheDuration(int)}
 	 * @return this
 	 */
+	public ResourceMount setDefaultAggressiveCacheDuration() {
+		return setCacheDuration(DEFAULT_AGGRESSIVE_CACHE_DURATION);
+	}
+	
+	/**
+	 * @deprecated typo in name, it's aggressive with ss
+	 * @see #setDefaultAggressiveCacheDuration()
+	 */
+	@Deprecated
 	public ResourceMount setDefaultAggresiveCacheDuration() {
-		return setCacheDuration(DEFAULT_AGGRESIVE_CACHE_DURATION);
+		return setCacheDuration(DEFAULT_AGGRESSIVE_CACHE_DURATION);
 	}
 	
 	/**
@@ -967,7 +1081,7 @@ public class ResourceMount implements Cloneable {
 		}
 		
 		if (versioned) {
-			return DEFAULT_AGGRESIVE_CACHE_DURATION;
+			return DEFAULT_AGGRESSIVE_CACHE_DURATION;
 		}
 		
 		Integer cacheDuration = null;
@@ -1055,7 +1169,7 @@ public class ResourceMount implements Cloneable {
 	public Set<String> getMergedSuffixes() {
 		return _mergedSuffixes;
 	}
-
+	
 	/**
 	 * a copy of the resource mount, with unfolded collections of compressed suffixes, merged suffices and {@link ResourceSpec}s
 	 */

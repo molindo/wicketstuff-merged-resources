@@ -4,7 +4,12 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.wicketstuff.mergedresources.AnnotationTestApplication;
+import org.wicketstuff.mergedresources.annotations.CssContribution;
+import org.wicketstuff.mergedresources.annotations.JsContribution;
 
+@JsContribution(path = AnnotationTestApplication.ALL_JS)
+@CssContribution(path = AnnotationTestApplication.ALL_CSS)
 public class ComponentB extends Panel {
 
 	private static final long serialVersionUID = 1L;

@@ -1,9 +1,6 @@
 package org.wicketstuff.mergedresources;
 
 import org.apache.wicket.protocol.http.WebApplication;
-import org.wicketstuff.mergedresources.components.ComponentB;
-import org.wicketstuff.mergedresources.components.MyForm;
-import org.wicketstuff.mergedresources.components.PanelOne;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
 import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
 
@@ -13,12 +10,15 @@ import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
  * 
  * @see wicket.myproject.Start#main(String[])
  */
-public class NewInterfaceTestApplication extends WebApplication
+public class AnnotationTestApplication extends WebApplication
 {    
+	public static final String ALL_JS = "all.js";
+	public static final String ALL_CSS = "/css/all.css";
+	
     /**
      * Constructor
      */
-	public NewInterfaceTestApplication()
+	public AnnotationTestApplication()
 	{
 	}
 	
@@ -41,15 +41,7 @@ public class NewInterfaceTestApplication extends WebApplication
 				.setResourceVersionProvider(p)
 				.setDefaultAggressiveCacheDuration();
 			
-			mount.clone()
-				.setPath("/style/all.css")
-				.addResourceSpecsMatchingSuffix(PanelOne.class, ComponentB.class, MyForm.class)
-				.mount(this);
-
-			mount.clone()
-				.setPath("/script/all.js")
-				.addResourceSpecsMatchingSuffix(PanelOne.class, ComponentB.class, MyForm.class)
-				.mount(this);
+			ResourceMount.mountAnnotatedPackageResources(mount, "/r", this.getClass(), this);
 		}
 	}
 

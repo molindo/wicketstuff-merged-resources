@@ -35,7 +35,12 @@
 			<version>6.1.11</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-annotation</artifactId>
+			<version>1.1</version>
+			<scope>optional</scope>
+		</dependency>
 		<!-- LOGGING DEPENDENCIES -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -57,6 +62,18 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>wicket-snaps</id>
+			<url>http://wicketstuff.org/maven/repository</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
 	<build>
 		<resources>
 			<resource>
