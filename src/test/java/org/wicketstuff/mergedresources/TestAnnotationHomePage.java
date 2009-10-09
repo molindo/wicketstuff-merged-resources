@@ -21,6 +21,8 @@ import junit.framework.TestCase;
 import org.apache.wicket.Application;
 import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.HomePage;
+import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
+import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
 
 
 /**
@@ -32,10 +34,8 @@ public class TestAnnotationHomePage extends TestCase
 
 	public void setUp()
 	{
-		tester = new WicketTester(new AnnotationTestApplication() {
+		tester = new WicketTester(new AbstractTestApplication() {		
 			
-			
-			@Override
 			protected boolean merge() {
 				return true;
 			}
@@ -48,6 +48,19 @@ public class TestAnnotationHomePage extends TestCase
 			@Override
 			public String getConfigurationType() {
 				return Application.DEPLOYMENT;
+			}
+
+			@Override
+			protected void mountResources() {
+				ResourceMount.mountWicketResources("script", this);
+				
+				IResourceVersionProvider p = new RevisionVersionProvider();
+
+				ResourceMount mount = new ResourceMount()
+					.setResourceVersionProvider(p)
+					.setDefaultAggressiveCacheDuration();
+				
+				ResourceMount.mountAnnotatedPackageResources(mount, "/files", this.getClass(), this);
 			}
 
 			
@@ -64,8 +77,8 @@ public class TestAnnotationHomePage extends TestCase
 		//assert rendered page class
 		tester.assertRenderedPage(HomePage.class);
 		
-		assertFalse(tester.ifContains("css/all-[0-9]+\\.css").wasFailed());
-		assertFalse(tester.ifContains("r/all-[0-9]+\\.js").wasFailed());
+		assertFalse(tester.ifContains("files/all-[0-9]+\\.css").wasFailed());
+		assertFalse(tester.ifContains("files/all-[0-9]+\\.js").wasFailed());
 		System.out.println(tester.getServletResponse().getDocument());
 		assertTrue(tester.ifContains("resources/").wasFailed());
 		// does anybody know how to check resources?

@@ -7,12 +7,11 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.Model;
-import org.wicketstuff.mergedresources.AnnotationTestApplication;
 import org.wicketstuff.mergedresources.annotations.CssContribution;
 import org.wicketstuff.mergedresources.annotations.JsContribution;
 
-@JsContribution(path = AnnotationTestApplication.ALL_JS)
-@CssContribution(path = AnnotationTestApplication.ALL_CSS)
+@JsContribution
+@CssContribution
 public class MyForm extends Form<Object> {
 
 	private static final long serialVersionUID = 1L;

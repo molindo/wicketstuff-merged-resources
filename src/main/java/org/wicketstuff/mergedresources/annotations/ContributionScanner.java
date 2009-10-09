@@ -17,6 +17,9 @@ import org.wicketstuff.mergedresources.ResourceSpec;
  */
 public class ContributionScanner {
 
+	private static final String DEFAULT_PATH_JS = "all.js";
+	private static final String DEFAULT_PATH_CSS = "all.css";
+	
 	private final Map<String, Set<ResourceSpec>> _contributions;
 	
 	public ContributionScanner(String packageName) {
@@ -38,7 +41,7 @@ public class ContributionScanner {
 						file = cls.getSimpleName() + ".js";
 					}
 
-					String path = Strings.isEmpty(a.path()) ? file : a.path();
+					String path = Strings.isEmpty(a.path()) ? DEFAULT_PATH_JS : a.path();
 					Set<ResourceSpec> specs = contributions.get(path);
 					if (specs == null) {
 						specs = new HashSet<ResourceSpec>();
@@ -58,7 +61,7 @@ public class ContributionScanner {
 						file = cls.getSimpleName() + ".css";
 					}
 
-					String path = Strings.isEmpty(a.path()) ? file : a.path();
+					String path = Strings.isEmpty(a.path()) ? DEFAULT_PATH_CSS : a.path();
 					Set<ResourceSpec> specs = contributions.get(path);
 					if (specs == null) {
 						specs = new HashSet<ResourceSpec>();
