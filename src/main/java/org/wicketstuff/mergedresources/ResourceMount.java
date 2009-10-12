@@ -151,6 +151,7 @@ public class ResourceMount implements Cloneable {
 		Boolean enabled = application.getMetaData(ANNOTATIONS_ENABLED_KEY);
 		if (enabled != Boolean.TRUE) {
 			try {
+				Class.forName("org.wicketstuff.config.MatchingResources");
 				Class.forName("org.springframework.core.io.support.PathMatchingResourcePatternResolver");
 			} catch (ClassNotFoundException e) {
 				throw new WicketRuntimeException("in order to enable wicketstuff-merged-resources' annotation support, "+
