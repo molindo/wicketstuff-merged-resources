@@ -60,7 +60,7 @@ public class TestAnnotationHomePage extends TestCase
 					.setResourceVersionProvider(p)
 					.setDefaultAggressiveCacheDuration();
 				
-				ResourceMount.mountAnnotatedPackageResources(mount, "/files", this.getClass(), this);
+				ResourceMount.mountAnnotatedPackageResources("/files", this.getClass(), this, mount);
 			}
 
 			

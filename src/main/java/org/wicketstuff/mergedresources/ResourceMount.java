@@ -109,7 +109,7 @@ public class ResourceMount implements Cloneable {
 	 * @param application the application
 	 */
 	public static void mountWicketResources(String mountPrefix, WebApplication application) {
-		mountWicketResources(mountPrefix, application, new ResourceMount().setDefaultAggresiveCacheDuration());
+		mountWicketResources(mountPrefix, application, new ResourceMount().setDefaultAggressiveCacheDuration());
 	}
 	
 	/**
@@ -122,7 +122,7 @@ public class ResourceMount implements Cloneable {
 	public static void mountWicketResources(String mountPrefix, WebApplication application, ResourceMount mount) {
 		mount = mount.clone()
 			.setResourceVersionProvider(new WicketVersionProvider(application))
-			.setDefaultAggresiveCacheDuration();
+			.setDefaultAggressiveCacheDuration();
 		
 		if (!mountPrefix.endsWith("/")) {
 			mountPrefix = mountPrefix + "/";
