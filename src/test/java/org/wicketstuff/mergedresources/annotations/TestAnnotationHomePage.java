@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wicketstuff.mergedresources;
+package org.wicketstuff.mergedresources.annotations;
 
 import junit.framework.TestCase;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.util.tester.WicketTester;
-import org.wicketstuff.mergedresources.HomePage;
+import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
 import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
 
@@ -34,7 +34,7 @@ public class TestAnnotationHomePage extends TestCase
 
 	public void setUp()
 	{
-		tester = new WicketTester(new AbstractTestApplication() {		
+		tester = new WicketTester(new AbstractAnnotationTestApplication() {
 			
 			protected boolean merge() {
 				return true;
@@ -60,7 +60,7 @@ public class TestAnnotationHomePage extends TestCase
 					.setResourceVersionProvider(p)
 					.setDefaultAggressiveCacheDuration();
 				
-				ResourceMount.mountAnnotatedPackageResources("/files", this.getClass(), this, mount);
+				ResourceMount.mountAnnotatedPackageResources("/files", TestAnnotationHomePage.this.getClass(), this, mount);
 			}
 
 			
@@ -72,15 +72,18 @@ public class TestAnnotationHomePage extends TestCase
 		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(), Application.DEPLOYMENT);
 		
 		//start and render the test page
-		tester.startPage(HomePage.class);
+		tester.startPage(tester.getApplication().getHomePage());
 
 		//assert rendered page class
-		tester.assertRenderedPage(HomePage.class);
-		
-		assertFalse(tester.ifContains("files/all-[0-9]+\\.css").wasFailed());
-		assertFalse(tester.ifContains("files/all-[0-9]+\\.js").wasFailed());
+		tester.assertRenderedPage(tester.getApplication().getHomePage());
+
 		System.out.println(tester.getServletResponse().getDocument());
 		assertTrue(tester.ifContains("resources/").wasFailed());
+		assertFalse(tester.ifContains("files/all-[0-9]+\\.css").wasFailed());
+		assertFalse(tester.ifContains("files/all-[0-9]+\\.js").wasFailed());
+		assertFalse(tester.ifContains("files/print-[0-9]+\\.css").wasFailed());
+		assertFalse(tester.ifContains("files/forms-[0-9]+\\.js").wasFailed());
+		assertFalse(tester.ifContains("files/forms-[0-9]+\\.css").wasFailed());
 		// does anybody know how to check resources?
 	}
 }

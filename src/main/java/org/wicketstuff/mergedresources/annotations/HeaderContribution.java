@@ -11,46 +11,47 @@ import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.util.string.Strings;
 
 public class HeaderContribution extends AbstractHeaderContributor {
-
+	
 	private static final long serialVersionUID = 1L;
 	
-	private final String[] _scripts;
-	private final String[] _stylesheets;
-	private final String _stylesheetsMedia;
-
-	private List<IHeaderContributor> _headerContributors;
+	private List<IHeaderContributor> _headerContributors = new ArrayList<IHeaderContributor>(5);
 	
 	/**
 	 * Reads contributions from {@link JsContribution} and {@link CssContribution} annotations.
 	 */
 	public HeaderContribution(Class<? extends Component> scope) {
-		JsContribution js = scope.getAnnotation(JsContribution.class);
-		if (js == null) {
-			_scripts = new String[0];
-		} else {
-			_scripts = replaceDefault(js.value(), scope.getSimpleName() + ".js");
-		}
+		addJsContributions(scope, scope.getAnnotation(JsContribution.class));
+		addCssContributions(scope, scope.getAnnotation(CssContribution.class));
 		
-		CssContribution css = scope.getAnnotation(CssContribution.class);
-		if (css == null) {
-			_stylesheets = new String[0];
-			_stylesheetsMedia = null;
-		} else {
-			_stylesheets = replaceDefault(css.value(), scope.getSimpleName() + ".css");
-			_stylesheetsMedia = Strings.isEmpty(css.media()) ? null : css.media();
-		}
-		
-		_headerContributors = new ArrayList<IHeaderContributor>();
-		for (String stylesheet : _stylesheets) {
-			if (_stylesheetsMedia == null) {
-				_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet));
-			} else {
-				_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet, _stylesheetsMedia));
+		CssContributions cssMulti = scope.getAnnotation(CssContributions.class);
+		if (cssMulti != null) {
+			for (CssContribution css : cssMulti.value()) {
+				addCssContributions(scope, css);
 			}
 		}
-		
-		for(String script : _scripts) {
-			_headerContributors.add(JavascriptPackageResource.getHeaderContribution(scope, script));
+	}
+
+	private void addCssContributions(Class<? extends Component> scope,
+			CssContribution css) {
+		if (css != null) {
+			String[] stylesheets = replaceDefault(css.value(), ContributionScanner.getDefaultCssFile(scope.getSimpleName(), css.media()));
+			String stylesheetsMedia = Strings.isEmpty(css.media()) ? null : css.media();
+			for (String stylesheet : stylesheets) {
+				if (stylesheetsMedia == null) {
+					_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet));
+				} else {
+					_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet, stylesheetsMedia));
+				}
+			}
+		}
+	}
+
+	private void addJsContributions(Class<? extends Component> scope, JsContribution js) {
+		if (js != null){
+			String[] scripts = replaceDefault(js.value(), scope.getSimpleName() + ".js");
+			for(String script : scripts) {
+				_headerContributors.add(JavascriptPackageResource.getHeaderContribution(scope, script));
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 package org.wicketstuff.mergedresources;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public abstract class AbstractTestApplication extends WebApplication
@@ -41,7 +42,7 @@ public abstract class AbstractTestApplication extends WebApplication
 	/**
 	 * @see wicket.Application#getHomePage()
 	 */
-	public Class<HomePage> getHomePage()
+	public Class<? extends WebPage> getHomePage()
 	{
 		return HomePage.class;
 	}
