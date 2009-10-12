@@ -164,17 +164,17 @@ public class ResourceMount implements Cloneable {
 	}
 	
 	/**
-	 * @see #mountAnnotatedPackageResources(ResourceMount, String, String, WebApplication)
+	 * @see #mountAnnotatedPackageResources(String, String, WebApplication, ResourceMount)
 	 */
-	public static void mountAnnotatedPackageResources(ResourceMount mount, String pathPrefix, Class<?> scope, WebApplication application) {
-		mountAnnotatedPackageResources(mount, pathPrefix, scope.getPackage(), application);
+	public static void mountAnnotatedPackageResources(String mountPrefix, Class<?> scope, WebApplication application, ResourceMount mount) {
+		mountAnnotatedPackageResources(mountPrefix, scope.getPackage(), application, mount);
 	}
 	
 	/**
-	 * @see #mountAnnotatedPackageResources(ResourceMount, String, String, WebApplication)
+	 * @see #mountAnnotatedPackageResources(String, String, WebApplication, ResourceMount)
 	 */
-	public static void mountAnnotatedPackageResources(ResourceMount mount, String pathPrefix, Package pkg, WebApplication application) {
-		mountAnnotatedPackageResources(mount,  pathPrefix, pkg.getName(), application);
+	public static void mountAnnotatedPackageResources(String mountPrefix, Package pkg, WebApplication application, ResourceMount mount) {
+		mountAnnotatedPackageResources(mountPrefix, pkg.getName(), application, mount);
 	}
 	
 	/**
@@ -189,17 +189,17 @@ public class ResourceMount implements Cloneable {
 	 * @see JsContribution
 	 * @see CssContribution
 	 */
-	public static void mountAnnotatedPackageResources(ResourceMount mount, String pathPrefix, String packageName, WebApplication application) {
+	public static void mountAnnotatedPackageResources(String mountPrefix, String packageName, WebApplication application, ResourceMount mount) {
 		enableAnnotations(application);
 
-		if (Strings.isEmpty(pathPrefix)) {
-			pathPrefix = "/";
+		if (Strings.isEmpty(mountPrefix)) {
+			mountPrefix = "/";
 		}
-		if (!pathPrefix.endsWith("/")) {
-			pathPrefix += "/";
+		if (!mountPrefix.endsWith("/")) {
+			mountPrefix += "/";
 		}
-		if (!pathPrefix.startsWith("/")) {
-			pathPrefix = "/" + pathPrefix;
+		if (!mountPrefix.startsWith("/")) {
+			mountPrefix = "/" + mountPrefix;
 		}
 		
 		for (Map.Entry<String, Set<ResourceSpec>> e : new ContributionScanner(packageName).getContributions().entrySet()) {
@@ -211,7 +211,7 @@ public class ResourceMount implements Cloneable {
 			
 			if (specs.size() > 0) {
 				ResourceMount m = mount.clone();
-				m.setPath(path.startsWith("/") ? path : pathPrefix + path);
+				m.setPath(path.startsWith("/") ? path : mountPrefix + path);
 				m.addResourceSpecs(specs);
 				m.mount(application);
 			}
