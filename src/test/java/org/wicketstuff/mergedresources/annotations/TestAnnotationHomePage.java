@@ -19,8 +19,12 @@ package org.wicketstuff.mergedresources.annotations;
 import junit.framework.TestCase;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.util.tester.WicketTester;
+import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.WicketAjaxReference;
+import org.apache.wicket.markup.html.WicketEventReference;
 import org.wicketstuff.mergedresources.ResourceMount;
+import org.wicketstuff.mergedresources.annotations.components.PanelOne;
+import org.wicketstuff.mergedresources.util.WicketResourceTester;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
 import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
 
@@ -30,11 +34,11 @@ import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
  */
 public class TestAnnotationHomePage extends TestCase
 {
-	private WicketTester tester;
+	private WicketResourceTester tester;
 
 	public void setUp()
 	{
-		tester = new WicketTester(new AbstractAnnotationTestApplication() {
+		tester = new WicketResourceTester(new AbstractAnnotationTestApplication() {
 			
 			protected boolean merge() {
 				return true;
@@ -85,5 +89,11 @@ public class TestAnnotationHomePage extends TestCase
 		assertFalse(tester.ifContains("files/forms-[0-9]+\\.js").wasFailed());
 		assertFalse(tester.ifContains("files/forms-[0-9]+\\.css").wasFailed());
 		// does anybody know how to check resources?
+		
+		assertTrue(tester.urlFor(WicketAjaxReference.INSTANCE).matches("script/wicket-ajax.*\\.js"));
+		assertTrue(tester.urlFor(WicketEventReference.INSTANCE).matches("script/wicket-event.*\\.js"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne.css")).matches("files/all-[0-9]+\\.css"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne-print.css")).matches("files/print-[0-9]+\\.css"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "functions.js")).matches("files/all-[0-9]+\\.js"));
 	}
 }
