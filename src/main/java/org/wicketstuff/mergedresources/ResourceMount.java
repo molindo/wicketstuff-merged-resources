@@ -211,6 +211,7 @@ public class ResourceMount implements Cloneable {
 			
 			if (specs.size() > 0) {
 				ResourceMount m = mount.clone();
+				m.setRequireVersion(false); // TODO do something smarter to allow images etc
 				m.setPath(path.startsWith("/") ? path : mountPrefix + path);
 				m.addResourceSpecs(specs);
 				m.mount(application);

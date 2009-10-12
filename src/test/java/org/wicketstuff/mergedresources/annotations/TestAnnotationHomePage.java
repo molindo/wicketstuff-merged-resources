@@ -95,5 +95,6 @@ public class TestAnnotationHomePage extends TestCase
 		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne.css")).matches("files/all-[0-9]+\\.css"));
 		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne-print.css")).matches("files/print-[0-9]+\\.css"));
 		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "functions.js")).matches("files/all-[0-9]+\\.js"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "accept.png")).matches("img/accept.png"));
 	}
 }
