@@ -12,7 +12,8 @@ import java.lang.annotation.Target;
  * 
  * @author stf
  *
- * Use CssMultiContribution if you need to add CssContributions for different scopes
+ * Use CssMultiContribution if you need to add CssContributions for different
+ * media types for instance
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

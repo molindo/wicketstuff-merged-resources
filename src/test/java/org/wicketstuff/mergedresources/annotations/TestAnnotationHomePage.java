@@ -22,11 +22,8 @@ import org.apache.wicket.Application;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.markup.html.WicketEventReference;
-import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.annotations.components.PanelOne;
 import org.wicketstuff.mergedresources.util.WicketResourceTester;
-import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
-import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
 
 
 /**
@@ -38,37 +35,7 @@ public class TestAnnotationHomePage extends TestCase
 
 	public void setUp()
 	{
-		tester = new WicketResourceTester(new AbstractAnnotationTestApplication() {
-			
-			protected boolean merge() {
-				return true;
-			}
-
-			@Override
-			protected boolean strip() {
-				return true;
-			}
-
-			@Override
-			public String getConfigurationType() {
-				return Application.DEPLOYMENT;
-			}
-
-			@Override
-			protected void mountResources() {
-				ResourceMount.mountWicketResources("script", this);
-				
-				IResourceVersionProvider p = new RevisionVersionProvider();
-
-				ResourceMount mount = new ResourceMount()
-					.setResourceVersionProvider(p)
-					.setDefaultAggressiveCacheDuration();
-				
-				ResourceMount.mountAnnotatedPackageResources("/files", TestAnnotationHomePage.this.getClass(), this, mount);
-			}
-
-			
-		});
+		tester = new WicketResourceTester(new AnnotationTestApplication());
 	}
 
 	public void testRenderMyPage()

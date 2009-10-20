@@ -7,7 +7,7 @@ import org.wicketstuff.mergedresources.annotations.JsContribution;
 import org.wicketstuff.mergedresources.annotations.ResourceContribution;
 
 @JsContribution({"", "functions.js"})
-@CssContributions({@CssContribution, @CssContribution(media = "print")})
+@CssContributions({@CssContribution(order = Integer.MIN_VALUE), @CssContribution(media = "print")})
 @ResourceContribution(value = "accept.png", path = "/img/accept.png")
 public class PanelOne extends Panel {
 

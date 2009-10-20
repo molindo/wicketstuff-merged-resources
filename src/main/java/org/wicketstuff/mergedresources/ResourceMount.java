@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.MetaDataKey;
@@ -26,6 +27,7 @@ import org.wicketstuff.mergedresources.annotations.ContributionInjector;
 import org.wicketstuff.mergedresources.annotations.ContributionScanner;
 import org.wicketstuff.mergedresources.annotations.CssContribution;
 import org.wicketstuff.mergedresources.annotations.JsContribution;
+import org.wicketstuff.mergedresources.annotations.ContributionScanner.WeightedResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
@@ -204,12 +206,12 @@ public class ResourceMount implements Cloneable {
 			mountPrefix = "/" + mountPrefix;
 		}
 		
-		for (Map.Entry<String, Set<ResourceSpec>> e : new ContributionScanner(packageName).getContributions().entrySet()) {
+		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : new ContributionScanner(packageName).getContributions().entrySet()) {
 			String path = e.getKey();
 			if (Strings.isEmpty(path)) {
 				throw new WicketRuntimeException("path must not be empty");
 			}
-			Set<ResourceSpec> specs = e.getValue();
+			SortedSet<WeightedResourceSpec> specs = e.getValue();
 			
 			if (specs.size() > 0) {
 				ResourceMount m = mount.clone();
@@ -648,7 +650,7 @@ public class ResourceMount implements Cloneable {
 	 * @param resourceSpecs {@link Iterable} of {@link ResourceSpec}s to add
 	 * @return this
 	 */
-	public ResourceMount addResourceSpecs(Iterable<ResourceSpec> resourceSpecs) {
+	public ResourceMount addResourceSpecs(Iterable<? extends ResourceSpec> resourceSpecs) {
 		for (ResourceSpec resourceSpec : resourceSpecs) {
 			addResourceSpec(resourceSpec);
 		}
