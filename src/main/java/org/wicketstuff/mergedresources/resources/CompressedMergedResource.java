@@ -18,6 +18,7 @@ package org.wicketstuff.mergedresources.resources;
 
 import java.util.Locale;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.CompressedPackageResource;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -63,7 +64,10 @@ public class CompressedMergedResource extends CompressedPackageResource {
 	protected void setHeaders(WebResponse response)
 	{
 		super.setHeaders(response);
-		response.setHeader("Vary", "Accept-Encoding");
+		if (!Application.get().getResourceSettings().getDisableGZipCompression())
+		{
+			response.setHeader("Vary", "Accept-Encoding");
+		}
 		response.setHeader("Cache-control", "public");
 	}
 }
