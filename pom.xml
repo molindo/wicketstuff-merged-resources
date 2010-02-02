@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.2</version>
+			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -168,6 +168,6 @@
 		<url>http://wicketstuff.org/teamcity</url>
 	</ciManagement>
 	<properties>
-		<wicket.version>1.4.0</wicket.version>
+		<wicket.version>1.4.6</wicket.version>
 	</properties>
 </project>

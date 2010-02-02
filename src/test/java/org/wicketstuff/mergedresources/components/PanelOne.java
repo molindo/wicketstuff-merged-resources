@@ -11,6 +11,7 @@ public class PanelOne extends Panel {
 	public PanelOne(String id) {
 		super(id);
 		add(CSSPackageResource.getHeaderContribution(PanelOne.class, PanelOne.class.getSimpleName() + ".css"));
+		add(CSSPackageResource.getHeaderContribution(PanelOne.class, PanelOne.class.getSimpleName() + "-print.css", "print"));
 		add(JavascriptPackageResource.getHeaderContribution(PanelOne.class, PanelOne.class.getSimpleName() + ".js"));
 		add(new MyForm("myForm"));
 		add(new ComponentB("componentB"));

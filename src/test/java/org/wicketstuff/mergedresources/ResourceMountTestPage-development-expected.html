@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Faster Wicket with merged resources!</title>
+    <link rel="stylesheet" type="text/css" href="static/styles.css/PanelOne.css" />
+<link rel="stylesheet" type="text/css" href="static/styles-print.css/PanelOne-print.css" media="print" />
+<script type="text/javascript" src="static/scripts.js/PanelOne.js"></script>
+<link rel="stylesheet" type="text/css" href="static/styles.css/MyForm.css" />
+<script type="text/javascript" src="static/scripts.js/MyForm.js"></script>
+<script type="text/javascript" src="wicket/wicket-event-1.4.6.js"></script>
+<script type="text/javascript" src="wicket/wicket-ajax-1.4.6.js"></script>
+<script type="text/javascript" src="resources/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/wicket-ajax-debug.js"></script>
+<script type="text/javascript" id="wicket-ajax-debug-enable"><!--/*--><![CDATA[/*><!--*/
+wicketAjaxDebugEnable=true;
+/*-->]]>*/</script>
+
+<link rel="stylesheet" type="text/css" href="static/styles.css/ComponentB.css" />
+<link rel="stylesheet" type="text/css" href="static/styles-print.css/ComponentB-print.css" media="print" />
+<script type="text/javascript" src="static/scripts.js/ComponentB.js"></script>
+</head>
+    <body>
+        <div wicket:id="panel"><wicket:panel>
+<div class="panelOne">
+	<div wicket:id="componentB"><wicket:panel>
+<h1 class="componentB" wicket:id="label">Wicket!</h1>
+</wicket:panel></div>
+	<form wicket:id="myForm" action="?wicket:interface=:0:panel:myForm::IFormSubmitListener::" method="post" id="myForm1" onsubmit="return validateMyForm()" onclick="var wcall=wicketSubmitFormById('myForm1', '?wicket:interface=:0:panel:myForm::IActivePageBehaviorListener:3:&amp;wicket:ignoreIfNotActive=true', null,null,null, function() {return Wicket.$$(this)&amp;&amp;Wicket.$$('myForm1')}.bind(this));;"><div style="display:none"><input type="hidden" name="myForm1_hf_0" id="myForm1_hf_0" /></div>
+		<input type="submit" value="Click!" />
+	</form>
+</div>
+</wicket:panel></div>
+    </body>
+</html>
+

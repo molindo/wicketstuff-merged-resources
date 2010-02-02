@@ -16,6 +16,7 @@ import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.WicketAjaxReference;
+import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.markup.html.WicketEventReference;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
@@ -37,6 +38,7 @@ import org.wicketstuff.mergedresources.resources.CompressedMergedCssResourceRefe
 import org.wicketstuff.mergedresources.resources.CompressedMergedJsResourceReference;
 import org.wicketstuff.mergedresources.resources.CompressedMergedResourceReference;
 import org.wicketstuff.mergedresources.resources.MergedResourceReference;
+import org.wicketstuff.mergedresources.util.MergedHeaderContributor;
 import org.wicketstuff.mergedresources.util.MergedResourceRequestTargetUrlCodingStrategy;
 import org.wicketstuff.mergedresources.util.Pair;
 import org.wicketstuff.mergedresources.util.RedirectStrategy;
@@ -227,9 +229,24 @@ public class ResourceMount implements Cloneable {
 	 * Create a new ResourceMount with default settings
 	 */
 	public ResourceMount() {
-
+		this(false);
 	}
 
+	/**
+	 * If dCreate a new ResourceMount with default settings
+	 * 
+	 * @param development <code>true</code> if ResourceMount should be configured with
+	 * 	developer-friendly defaults: no caching, no merging, no minify
+	 */
+	public ResourceMount(boolean development) {
+		if (development) {
+			setCacheDuration(0);
+			setMerged(false);
+			setMinifyCss(false);
+			setMinifyJs(false);
+		}
+	}
+	
 	/**
 	 * @param compressed whether this resources should be compressed. default is autodetect
 	 * @return this
@@ -742,9 +759,22 @@ public class ResourceMount implements Cloneable {
 	 * @return this
 	 */
 	public ResourceMount mount(WebApplication application) {
+		build(application);
+		return this;
+	}
+
+	/**
+	 * same as {@link #mount(WebApplication)}, but returns an
+	 * {@link AbstractHeaderContributor} to use in components
+	 * 
+	 * @param application
+	 *            the application
+	 * @return {@link AbstractHeaderContributor} to be used in componets
+	 */
+	public AbstractHeaderContributor build(final WebApplication application) {
 		if (_resourceSpecs.size() == 0) {
 			// nothing to do
-			return this;
+			return null;
 		}
 		try {
 			List<Pair<String, ResourceSpec[]>> specsList;
@@ -760,6 +790,8 @@ public class ResourceMount implements Cloneable {
 				}
 			} 
 			
+			final List<ResourceReference> refs = new ArrayList<ResourceReference>(
+					specsList.size());
 			for (Pair<String, ResourceSpec[]> p : specsList) {
 				ResourceSpec[] specs = p.getSecond();
 				
@@ -771,6 +803,7 @@ public class ResourceMount implements Cloneable {
 				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
 				
 				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs), getStyle(specs), getCacheDuration(specs, versioned), specs, _preProcessor);
+				refs.add(ref);
 				ref.bind(application);
 				application.mount(newStrategy(path, ref, merge));
 	
@@ -780,13 +813,23 @@ public class ResourceMount implements Cloneable {
 				
 				initResource(ref);
 			}
-			return this;
+			return newHeaderContributor(refs);
 		} catch (Exception e) {
 			throw new WicketRuntimeException("failed to mount resource ('" + _path
 					+ "')", e);
 		}
 	}
 
+	/**
+	 * @param refs a list of ResourceReferences
+	 * @return an {@link AbstractHeaderContributor} that renders references to all CSS and JS
+	 * resources contained in refs
+	 */
+	protected AbstractHeaderContributor newHeaderContributor(
+			final List<ResourceReference> refs) {
+		return new MergedHeaderContributor(refs);
+	}
+	
 	/**
 	 * load resource stream once in order to load it into memory
 	 * 
