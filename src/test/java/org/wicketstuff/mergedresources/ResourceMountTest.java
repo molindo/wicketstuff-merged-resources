@@ -30,6 +30,7 @@ import org.apache.wicket.util.string.StringList;
 import org.apache.wicket.util.tester.WicketTester;
 
 import org.junit.Test;
+import org.wicketstuff.mergedresources.ResourceMount.SuffixMismatchStrategy;
 import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.ComponentB;
 import org.wicketstuff.mergedresources.components.PanelOne;
@@ -142,7 +143,7 @@ public class ResourceMountTest
     	ResourceMount b = new ResourceMount();
         b.addResourceSpec(CSS_COMPONENT_B);
         b.mount(new WicketTester().getApplication());
-        fail("build must throw exception");
+        fail("mount must throw exception");
     }
 
     /**
@@ -155,6 +156,37 @@ public class ResourceMountTest
     	ResourceMount b = new ResourceMount();
         b.setPath("/styles/all.css");
         assertNull(b.build(new WicketTester().getApplication()));
+    }
+    
+    @Test
+    public void testGetSuffix() {
+    	assertEquals("js", ResourceMount.getSuffix("/foo.js"));
+    	assertEquals("css", ResourceMount.getSuffix("foo.css"));
+    	assertNull(ResourceMount.getSuffix(".htaccess"));
+    	assertEquals("css", ResourceMount.getSuffix("...strange.css"));
+    	assertNull(ResourceMount.getSuffix("/foo.bar/baz"));
+    	assertNull(ResourceMount.getSuffix("/foo/."));
+    	assertNull(ResourceMount.getSuffix("/"));
+    	assertNull(ResourceMount.getSuffix("/foo"));
+    	assertNull(ResourceMount.getSuffix("/foo/bar"));
+    }
+    
+    @Test(expected = WicketRuntimeException.class)
+    public void testSuffixMismatch() {
+    	new ResourceMount()
+    		.setPath("/foo.css")
+        	.addResourceSpecs(CSS_COMPONENT_B, JS_COMPONENT_B)
+        	.mount(new WicketTester().getApplication());
+        fail("mount must throw exception");
+    }
+    
+    @Test
+    public void testIgnoredSuffixMismatch() {
+    	new ResourceMount()
+			.setPath("/foo.css")
+    		.setSuffixMismatchStrategy(SuffixMismatchStrategy.IGNORE)
+    		.addResourceSpecs(CSS_COMPONENT_B, JS_COMPONENT_B)
+    		.mount(new WicketTester().getApplication());
     }
     
     /**

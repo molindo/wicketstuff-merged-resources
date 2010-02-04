@@ -24,6 +24,8 @@ import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCod
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wicketstuff.mergedresources.annotations.ContributionInjector;
 import org.wicketstuff.mergedresources.annotations.ContributionScanner;
 import org.wicketstuff.mergedresources.annotations.CssContribution;
@@ -51,6 +53,12 @@ import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.Incomp
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 public class ResourceMount implements Cloneable {
+	
+	public enum SuffixMismatchStrategy {
+		IGNORE, WARN, EXCEPTION;
+	}
+
+	private static final Logger LOG = LoggerFactory.getLogger(ResourceMount.class);
 	
 	private static final MetaDataKey<Boolean> ANNOTATIONS_ENABLED_KEY = new MetaDataKey<Boolean>() {
 
@@ -108,6 +116,7 @@ public class ResourceMount implements Cloneable {
 	private Class<?> _mountScope;
 	private Boolean _merge;
 	private IResourcePreProcessor _preProcessor;
+	private SuffixMismatchStrategy _suffixMismatchStrategy = SuffixMismatchStrategy.EXCEPTION;
 	
 	/**
 	 * Mount wicket-event.js and wicket-ajax.js using wicket's version for aggressive caching (e.g. wicket-ajax-1.3.6.js)
@@ -224,6 +233,29 @@ public class ResourceMount implements Cloneable {
 				m.mount(application);
 			}
 		}
+	}
+	
+	/**
+	 * @param path
+	 * @return everything after last dot '.', ignoring anything before last slash '/' and leading dots '.'  ; <code>null</code> if suffix is empty
+	 */
+	public static String getSuffix(String path) {
+		if (path == null) {
+			return null;
+		}
+		int slash = path.lastIndexOf('/');
+		if (slash >= 0) {
+			path = path.substring(slash + 1);
+		}
+		while (path.startsWith(".")) {
+			path = path.substring(1);
+		}
+		
+		int dot = path.lastIndexOf('.');
+		if (dot >= 0 && dot < path.length() - 1) {
+			return path.substring(dot + 1);
+		}
+		return null;
 	}
 	
 	/**
@@ -606,6 +638,26 @@ public class ResourceMount implements Cloneable {
 		return this;
 	}
 
+	
+	/**
+	 * @return current suffixMismatchStrategy
+	 */
+	public SuffixMismatchStrategy getSuffixMismatchStrategy() {
+		return _suffixMismatchStrategy;
+	}
+
+	/**
+	 * @param suffixMismatchStrategy the new strategy
+	 * @return this
+	 */
+	public ResourceMount setSuffixMismatchStrategy(SuffixMismatchStrategy suffixMismatchStrategy) {
+		if (suffixMismatchStrategy == null) {
+			throw new NullPointerException("suffixMismatchStrategy");
+		}
+		_suffixMismatchStrategy = suffixMismatchStrategy;
+		return this;
+	}
+
 	/**
 	 * @param resourceSpec add a new {@link ResourceSpec}
 	 * @return this
@@ -721,7 +773,7 @@ public class ResourceMount implements Cloneable {
 		if (_path == null) {
 			throw new IllegalStateException("unversionPath must be set for this method to work");
 		}
-		String suffix = Strings.afterLast(_path, '.');
+		String suffix = getSuffix(_path);
 		if (Strings.isEmpty(suffix) || suffix.contains("/")) {
 			throw new IllegalStateException("unversionPath does not have a valid suffix (i.e. does not contain a '.' followed by characterers and no '/')");
 		}
@@ -787,12 +839,15 @@ public class ResourceMount implements Cloneable {
 	 * rendered with passed cssMediaType 
 	 */
 	public AbstractHeaderContributor build(final WebApplication application, String cssMediaType) {
-			
 		if (_resourceSpecs.size() == 0) {
 			// nothing to do
 			return null;
 		}
+		
+		checkSuffixes(_path, _resourceSpecs);
+		
 		try {
+			
 			List<Pair<String, ResourceSpec[]>> specsList;
 
 			boolean merge = doMerge();
@@ -813,7 +868,7 @@ public class ResourceMount implements Cloneable {
 				
 				String path = getPath(p.getFirst(), specs);
 				String unversionedPath = getPath(p.getFirst(), null);
-				
+
 				boolean versioned = !unversionedPath.equals(path);
 				
 				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
@@ -1196,7 +1251,7 @@ public class ResourceMount implements Cloneable {
 	 * @see #getCompressedSuffixes()
 	 */
 	protected boolean doCompress(final String file) {
-		return _compressed == null ? _compressedSuffixes.contains(Strings.afterLast(file, '.')) : _compressed;
+		return _compressed == null ? _compressedSuffixes.contains(getSuffix(file)) : _compressed;
 	}
 
 	/**
@@ -1226,7 +1281,7 @@ public class ResourceMount implements Cloneable {
 	 * @see #getMergedSuffixes()
 	 */
 	protected boolean doMerge() {
-		return _merge == null ? _resourceSpecs.size() > 1 && _mergedSuffixes.contains(Strings.afterLast(_path, '.')) : _merge;
+		return _merge == null ? _resourceSpecs.size() > 1 && _mergedSuffixes.contains(getSuffix(_path)) : _merge;
 	}
 	
 	/**
@@ -1252,6 +1307,39 @@ public class ResourceMount implements Cloneable {
 	 */
 	public Set<String> getMergedSuffixes() {
 		return _mergedSuffixes;
+	}
+	
+	/**
+	 * check if suffixes of path and each RespurceSpec file match
+	 * @throws WicketRuntimeException if suffixes don't match and strategy is {@link SuffixMismatchStrategy#EXCEPTION}
+	 */
+	protected void checkSuffixes(String path, Iterable<ResourceSpec> specs) {
+		if (_suffixMismatchStrategy != SuffixMismatchStrategy.IGNORE) {
+			String suffix = getSuffix(path);
+			for (ResourceSpec spec : specs) {
+				if (!Strings.isEqual(suffix, getSuffix(spec.getFile()))) {
+					onSuffixMismatch(path, spec.getFile());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * apply {@link SuffixMismatchStrategy} without further checking, arguments are for logging only
+	 * @throws WicketRuntimeException if suffixes don't match and strategy is {@link SuffixMismatchStrategy#EXCEPTION}
+	 */
+	protected void onSuffixMismatch(String resource, String path) {
+		switch(_suffixMismatchStrategy) {
+		case EXCEPTION: 
+			throw new WicketRuntimeException(String.format("Suffixes don't match: %s %s", resource, path));
+		case WARN: 
+			LOG.warn(String.format("Suffixes don't match: %s %s", resource, path));
+			break;
+		case IGNORE:
+			break;
+		default:
+			throw new RuntimeException(String.format("unimplemented suffixMismatchStrategy: %s", _suffixMismatchStrategy));
+		}
 	}
 	
 	/**
