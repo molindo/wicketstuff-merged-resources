@@ -838,8 +838,6 @@ public class ResourceMount implements Cloneable {
 			// nothing to do
 			return null;
 		}
-
-		checkSuffixes(_path, _resourceSpecs);
 		
 		try {
 			List<Pair<String, ResourceSpec[]>> specsList;
@@ -863,6 +861,8 @@ public class ResourceMount implements Cloneable {
 				String path = getPath(p.getFirst(), specs);
 				String unversionedPath = getPath(p.getFirst(), null);
 
+				checkSuffixes(unversionedPath, Arrays.asList(specs));
+				
 				boolean versioned = !unversionedPath.equals(path);
 				
 				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
@@ -1308,8 +1308,8 @@ public class ResourceMount implements Cloneable {
 	 * @throws WicketRuntimeException if suffixes don't match and strategy is {@link SuffixMismatchStrategy#EXCEPTION}
 	 */
 	protected void checkSuffixes(String path, Iterable<ResourceSpec> specs) {
-		if (_suffixMismatchStrategy != SuffixMismatchStrategy.IGNORE) {
-			String suffix = getSuffix(path);
+		String suffix;
+		if (_suffixMismatchStrategy != SuffixMismatchStrategy.IGNORE && (suffix = getSuffix(path)) != null) {
 			for (ResourceSpec spec : specs) {
 				if (!Strings.isEqual(suffix, getSuffix(spec.getFile()))) {
 					onSuffixMismatch(path, spec.getFile());

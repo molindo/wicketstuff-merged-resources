@@ -189,6 +189,15 @@ public class ResourceMountTest
     		.mount(new WicketTester().getApplication());
     }
     
+    @Test
+    public void testNonMergedSuffixMismatch() {
+    	new ResourceMount()
+			.setPath("/img")
+			.setNoVersion()
+    		.addResourceSpec(HomePage.class, "test.png")
+    		.mount(new WicketTester().getApplication());
+    }
+    
     /**
      * Render the HomePage in either
      * DEVELOPMENT or DEPLOYMENT mode.
