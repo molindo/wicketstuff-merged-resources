@@ -61,12 +61,7 @@ public class ResourceMount implements Cloneable {
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceMount.class);
 	
 	private static final MetaDataKey<Boolean> ANNOTATIONS_ENABLED_KEY = new MetaDataKey<Boolean>() {
-
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
-		
 	};
 	
 	/**
@@ -279,7 +274,7 @@ public class ResourceMount implements Cloneable {
 			setMinifyJs(false);
 		}
 	}
-	
+
 	/**
 	 * @param compressed whether this resources should be compressed. default is autodetect
 	 * @return this
@@ -843,11 +838,10 @@ public class ResourceMount implements Cloneable {
 			// nothing to do
 			return null;
 		}
-		
+
 		checkSuffixes(_path, _resourceSpecs);
 		
 		try {
-			
 			List<Pair<String, ResourceSpec[]>> specsList;
 
 			boolean merge = doMerge();

@@ -191,6 +191,28 @@ public class ResourceSpec implements IClusterable {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ResourceSpec [");
+		if (_ref != null) {
+			builder.append("ref=").append(_ref);
+		} else {
+			builder.append("file=").append(_file).append(", ");
+			builder.append("scopeName=").append(_scopeName).append(", ");
+			if (_locale != null)
+				builder.append("locale=").append(_locale).append(", ");
+			if (_style != null)
+				builder.append("style=").append(_style).append(", ");
+			if (_cacheDuration != null)
+				builder.append("cacheDuration=").append(_cacheDuration).append(
+						", ");
+			
+			builder.setLength(builder.length() - 2);
+			builder.append("]");
+		}
+		return builder.toString();
+	}
 	
 }
