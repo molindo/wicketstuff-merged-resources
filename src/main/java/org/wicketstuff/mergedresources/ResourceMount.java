@@ -51,6 +51,7 @@ import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.Incomp
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 public class ResourceMount implements Cloneable {
+	
 	private static final MetaDataKey<Boolean> ANNOTATIONS_ENABLED_KEY = new MetaDataKey<Boolean>() {
 
 		/**
@@ -769,9 +770,24 @@ public class ResourceMount implements Cloneable {
 	 * 
 	 * @param application
 	 *            the application
-	 * @return {@link AbstractHeaderContributor} to be used in componets
+	 * @return {@link AbstractHeaderContributor} to be used in components
 	 */
 	public AbstractHeaderContributor build(final WebApplication application) {
+		return build(application, null);
+	}
+	
+	/**
+	 * same as {@link #mount(WebApplication)}, but returns an
+	 * {@link AbstractHeaderContributor} to use in components
+	 * 
+	 * @param application
+	 *            the application
+	 * @param cssMediaType CSS media type, e.g. "print" or <code>null</code> for no media type
+	 * @return {@link AbstractHeaderContributor} to be used in components, all files ending with '.css' will be
+	 * rendered with passed cssMediaType 
+	 */
+	public AbstractHeaderContributor build(final WebApplication application, String cssMediaType) {
+			
 		if (_resourceSpecs.size() == 0) {
 			// nothing to do
 			return null;
@@ -813,7 +829,7 @@ public class ResourceMount implements Cloneable {
 				
 				initResource(ref);
 			}
-			return newHeaderContributor(refs);
+			return newHeaderContributor(refs, cssMediaType);
 		} catch (Exception e) {
 			throw new WicketRuntimeException("failed to mount resource ('" + _path
 					+ "')", e);
@@ -826,8 +842,8 @@ public class ResourceMount implements Cloneable {
 	 * resources contained in refs
 	 */
 	protected AbstractHeaderContributor newHeaderContributor(
-			final List<ResourceReference> refs) {
-		return new MergedHeaderContributor(refs);
+			final List<ResourceReference> refs, String cssMediaType) {
+		return new MergedHeaderContributor(refs, cssMediaType);
 	}
 	
 	/**

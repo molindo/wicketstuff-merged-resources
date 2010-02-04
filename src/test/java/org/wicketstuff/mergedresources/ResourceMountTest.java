@@ -141,7 +141,7 @@ public class ResourceMountTest
     {
     	ResourceMount b = new ResourceMount();
         b.addResourceSpec(CSS_COMPONENT_B);
-        b.build(new WicketTester().getApplication());
+        b.mount(new WicketTester().getApplication());
         fail("build must throw exception");
     }
 

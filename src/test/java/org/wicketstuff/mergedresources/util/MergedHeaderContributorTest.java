@@ -17,9 +17,9 @@ public class MergedHeaderContributorTest {
 					
 				});
 		
-        tester.startPage(JsContributorPage.class);
-        tester.assertRenderedPage(JsContributorPage.class);
-		tester.assertResultPage(JsContributorPage.class,
-				"JsContributorPage-expected.html");
+        tester.startPage(MergedContributorPage.class);
+        tester.assertRenderedPage(MergedContributorPage.class);
+		tester.assertResultPage(MergedContributorPage.class,
+				"MergedContributorPage-expected.html");
 	}
 }
