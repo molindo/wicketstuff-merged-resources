@@ -278,7 +278,7 @@ public class ResourceMountTest
             ResourceMount mount = new ResourceMount(Application.DEVELOPMENT.equals(getConfigurationType()));
             mount.setMinifyCss(false).setMinifyJs(false);
             
-            ResourceMount.mountWicketResources("/wicket", this, mount);
+            ResourceMount.mountWicketResourcesMerged("/wicket", this, mount);
             
             mount.clone().setPath("/static/styles.css")
                                        .addResourceSpecs(MERGED_CSS)

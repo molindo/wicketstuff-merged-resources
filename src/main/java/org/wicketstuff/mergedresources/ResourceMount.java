@@ -149,6 +149,42 @@ public class ResourceMount implements Cloneable {
 				.mount(application);
 		}
 	}
+
+	/**
+	 * Mount wicket-event.js and wicket-ajax.js merged using wicket's version for aggressive caching (e.g. wicket-1.4.7.js)
+	 * 
+	 * @param mountPrefix e.g. "script" for "/script/wicket-1.4.7.js
+	 * @param application the application
+	 */
+	public static void mountWicketResourcesMerged(String mountPrefix, WebApplication application) {
+		mountWicketResourcesMerged(mountPrefix, application, new ResourceMount().setDefaultAggressiveCacheDuration());
+	}
+	
+	/**
+	 * Mount wicket-event.js and wicket-ajax.js merged using wicket's version (e.g. wicket-1.4.7.js). 
+	 * 
+	 * @param mountPrefix e.g. "script" for "/script/wicket-1.4.7.js
+	 * @param application the application
+	 * @param mount pre-configured resource mount to use. ResourceVersionProvider and Merged will be overridden
+	 */
+	public static void mountWicketResourcesMerged(String mountPrefix, WebApplication application, ResourceMount mount) {
+		if (!mountPrefix.endsWith("/")) {
+			mountPrefix = mountPrefix + "/";
+		}
+
+		mount = mount.clone()
+			.setResourceVersionProvider(new WicketVersionProvider(application))
+			.setPath(mountPrefix + "wicket.js")
+			.setMerged(true);
+		
+		for (ResourceReference ref : new ResourceReference[]{WicketEventReference.INSTANCE, WicketAjaxReference.INSTANCE}) {
+			mount.addResourceSpec(ref);
+		}
+		
+		mount
+			.mount(application);
+	}
+	
 	
 	/**
 	 * enable annotation based adding of resources and make sure that the component instantiation listener is only
