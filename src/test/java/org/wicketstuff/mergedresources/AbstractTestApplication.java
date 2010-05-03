@@ -3,6 +3,8 @@ package org.wicketstuff.mergedresources;
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.wicketstuff.mergedresources.resources.UncompressedCssCompressor;
+import org.wicketstuff.mergedresources.resources.YuiCssCompressor;
 
 public abstract class AbstractTestApplication extends WebApplication
 {    
@@ -15,11 +17,9 @@ public abstract class AbstractTestApplication extends WebApplication
 	
 	
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void init() {
-		// still using deprecated property for CSS
-		getResourceSettings().setStripJavascriptCommentsAndWhitespace(strip());
+		ResourceMount.setCssCompressor(this, strip() ? new YuiCssCompressor() : new UncompressedCssCompressor());
 		
 		//getResourceSettings().setAddLastModifiedTimeToResourceReferenceUrl(true);
 		

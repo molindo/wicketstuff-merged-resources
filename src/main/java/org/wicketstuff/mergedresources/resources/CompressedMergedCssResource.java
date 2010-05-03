@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
+import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 import org.wicketstuff.mergedresources.util.YuiCompressorUtil;
@@ -48,10 +49,14 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 			@SuppressWarnings("deprecation")
 			@Override
 			protected byte[] toContent(final byte[] content) {
-				// use the JS settings for CSS
-				if (Application.get().getResourceSettings()
+				
+				ICssCompressor compressor = ResourceMount.getCssCompressor(Application.get());
+				if (compressor != null) {
+					return compressor.compress(content, ICssCompressor.UTF_8);
+				} else if (Application.get().getResourceSettings()
+						// use the JS settings for CSS - deprecated as of WMR 3.1
 						.getStripJavascriptCommentsAndWhitespace()) {
-					return YuiCompressorUtil.compress(new String(content)).getBytes();
+					return YuiCompressorUtil.compress(content, ICssCompressor.UTF_8);
 				} else {
 					return content;
 				}

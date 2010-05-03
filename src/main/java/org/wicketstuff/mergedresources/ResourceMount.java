@@ -36,9 +36,11 @@ import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceRefe
 import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedResourceReference;
+import org.wicketstuff.mergedresources.resources.CompressedMergedCssResource;
 import org.wicketstuff.mergedresources.resources.CompressedMergedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CompressedMergedJsResourceReference;
 import org.wicketstuff.mergedresources.resources.CompressedMergedResourceReference;
+import org.wicketstuff.mergedresources.resources.ICssCompressor;
 import org.wicketstuff.mergedresources.resources.MergedResourceReference;
 import org.wicketstuff.mergedresources.util.MergedHeaderContributor;
 import org.wicketstuff.mergedresources.util.MergedResourceRequestTargetUrlCodingStrategy;
@@ -92,6 +94,14 @@ public class ResourceMount implements Cloneable {
 	 */
 	public static final Set<String> DEFAULT_MERGE_SUFFIXES = Collections
 		.unmodifiableSet(new HashSet<String>(Arrays.asList("css", "js")));
+
+	/**
+	 * MetaDataKey used for {@link CompressedMergedCssResource}
+	 */
+	public static final MetaDataKey<ICssCompressor> CSS_COMPRESSOR_KEY = new MetaDataKey<ICssCompressor>() {
+
+		private static final long serialVersionUID = 1L;
+	};
 	
 	private Integer _cacheDuration = null;
 	private String _path = null;
@@ -287,6 +297,25 @@ public class ResourceMount implements Cloneable {
 			return path.substring(dot + 1);
 		}
 		return null;
+	}
+	
+	/**
+	 * set {@link ICssCompressor} used by {@link CompressedMergedCssResource}
+	 * 
+	 * @param application
+	 * @param compressor
+	 */
+	public static void setCssCompressor(Application application, ICssCompressor compressor) {
+		application.setMetaData(CSS_COMPRESSOR_KEY, compressor);
+	}
+	
+	/**
+	 * get {@link ICssCompressor} used by {@link CompressedMergedCssResource}
+	 * 
+	 * @param application
+	 */
+	public static ICssCompressor getCssCompressor(Application application) {
+		return application.getMetaData(CSS_COMPRESSOR_KEY);
 	}
 	
 	/**

@@ -16,8 +16,13 @@
  */
 package org.wicketstuff.mergedresources.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
@@ -38,5 +43,20 @@ public class YuiCompressorUtil {
 			return toCompress;
 		}
 		return writer.toString();
+	}
+	
+	public static byte[] compress(final byte[] toCompress, Charset charset) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream(toCompress.length);
+		
+		final OutputStreamWriter writer = new OutputStreamWriter(out);
+		try {
+			new CssCompressor(new InputStreamReader(new ByteArrayInputStream(toCompress), charset)).compress(writer, 0);
+			writer.flush();
+			writer.close();
+		} catch (final Exception e) {
+			log.warn("Could not compress merged CSS stream, using uncompressed content", e);
+			return toCompress;
+		}
+		return out.toByteArray();
 	}
 }
