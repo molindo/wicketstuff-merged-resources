@@ -37,8 +37,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wicketstuff</groupId>
-			<artifactId>wicketstuff-annotation</artifactId>
-			<version>1.1</version>
+			<artifactId>annotation</artifactId>
+			<version>1.4.7-SNAPSHOT</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>

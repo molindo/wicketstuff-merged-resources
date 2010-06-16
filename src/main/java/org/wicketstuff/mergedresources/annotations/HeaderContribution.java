@@ -1,5 +1,6 @@
 package org.wicketstuff.mergedresources.annotations;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +20,25 @@ public class HeaderContribution extends AbstractHeaderContributor {
 	/**
 	 * Reads contributions from {@link JsContribution} and {@link CssContribution} annotations.
 	 */
+	@SuppressWarnings("unchecked")
 	public HeaderContribution(Class<? extends Component> scope) {
-		addJsContributions(scope, scope.getAnnotation(JsContribution.class));
-		addCssContributions(scope, scope.getAnnotation(CssContribution.class));
+		List<Class<?>> jsClasses = getClassesWithAnnotation(scope, JsContribution.class);
+		for (Class<?> clz : jsClasses) {
+			addJsContributions((Class<? extends Component>) clz, clz.getAnnotation(JsContribution.class));
+		}
 		
-		CssContributions cssMulti = scope.getAnnotation(CssContributions.class);
-		if (cssMulti != null) {
-			for (CssContribution css : cssMulti.value()) {
-				addCssContributions(scope, css);
+		List<Class<?>> cssClasses = getClassesWithAnnotation(scope, CssContribution.class);
+		for (Class<?> clz : cssClasses) {
+			addCssContributions((Class<? extends Component>) clz, clz.getAnnotation(CssContribution.class));
+		}
+
+		List<Class<?>> cssMultiClasses = getClassesWithAnnotation(scope, CssContributions.class);
+		for (Class<?> clz : cssMultiClasses) {
+			CssContributions cssMulti = clz.getAnnotation(CssContributions.class);
+			if (cssMulti != null) {
+				for (CssContribution css : cssMulti.value()) {
+					addCssContributions(scope, css);
+				}
 			}
 		}
 	}
@@ -67,6 +79,21 @@ public class HeaderContribution extends AbstractHeaderContributor {
 	@Override
 	public IHeaderContributor[] getHeaderContributors() {
 		return _headerContributors.toArray(new IHeaderContributor[_headerContributors.size()]);
+	}
+
+	private List<Class<?>> getClassesWithAnnotation(Class<?> clz, Class<? extends Annotation> annotation) {
+		return getClassesWithAnnotation(new ArrayList<Class<?>>(1), clz, annotation);
+	}
+
+	private List<Class<?>> getClassesWithAnnotation(List<Class<?>> matchedList, Class<?> clz, Class<? extends Annotation> annotation) {
+		if (clz == null) {
+			return matchedList;
+		}
+
+		if (clz.isAnnotationPresent(annotation)) {
+			matchedList.add(clz);
+		}
+		return getClassesWithAnnotation(matchedList, clz.getSuperclass(), annotation);
 	}
 	
 }

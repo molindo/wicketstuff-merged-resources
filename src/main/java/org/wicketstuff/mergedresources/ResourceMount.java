@@ -28,9 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.mergedresources.annotations.ContributionInjector;
 import org.wicketstuff.mergedresources.annotations.ContributionScanner;
+import org.wicketstuff.mergedresources.annotations.ContributionScanner.WeightedResourceSpec;
 import org.wicketstuff.mergedresources.annotations.CssContribution;
 import org.wicketstuff.mergedresources.annotations.JsContribution;
-import org.wicketstuff.mergedresources.annotations.ContributionScanner.WeightedResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
@@ -47,12 +47,12 @@ import org.wicketstuff.mergedresources.util.MergedResourceRequestTargetUrlCoding
 import org.wicketstuff.mergedresources.util.Pair;
 import org.wicketstuff.mergedresources.util.RedirectStrategy;
 import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion;
+import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.IncompatibleVersionsException;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
+import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
 import org.wicketstuff.mergedresources.versioning.SimpleResourceVersion;
 import org.wicketstuff.mergedresources.versioning.WicketVersionProvider;
-import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.IncompatibleVersionsException;
-import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 public class ResourceMount implements Cloneable {
 	
@@ -79,6 +79,7 @@ public class ResourceMount implements Cloneable {
 	/**
 	 * @deprecated typo in name, it's aggressive with ss, use {@link #DEFAULT_AGGRESSIVE_CACHE_DURATION} instead
 	 */
+	@Deprecated
 	public static final int DEFAULT_AGGRESIVE_CACHE_DURATION = DEFAULT_AGGRESSIVE_CACHE_DURATION;
 	
 	/**
@@ -194,17 +195,17 @@ public class ResourceMount implements Cloneable {
 		mount
 			.mount(application);
 	}
-	
-	
+
 	/**
-	 * enable annotation based adding of resources and make sure that the component instantiation listener is only
-	 * added once
+	 * enable annotation based adding of resources and make sure that the component instantiation listener is only added
+	 * once
 	 * 
 	 * @param application
+	 * @param contributionScanner
 	 * @see JsContribution
 	 * @see CssContribution
 	 */
-	public static void enableAnnotations(WebApplication application) {
+	public static void enableAnnotations(WebApplication application, ContributionScanner contributionScanner) {
 		Boolean enabled = application.getMetaData(ANNOTATIONS_ENABLED_KEY);
 		if (enabled != Boolean.TRUE) {
 			try {
@@ -215,7 +216,7 @@ public class ResourceMount implements Cloneable {
 						"wicketstuff-annotations and spring-core must be on the path "+
 						"(see http://wicketstuff.org/confluence/display/STUFFWIKI/wicketstuff-annotation for details)");
 			}
-			application.addComponentInstantiationListener(new ContributionInjector());
+			application.addComponentInstantiationListener(new ContributionInjector(contributionScanner));
 			application.setMetaData(ANNOTATIONS_ENABLED_KEY, Boolean.TRUE);
 		}
 	}
@@ -247,7 +248,8 @@ public class ResourceMount implements Cloneable {
 	 * @see CssContribution
 	 */
 	public static void mountAnnotatedPackageResources(String mountPrefix, String packageName, WebApplication application, ResourceMount mount) {
-		enableAnnotations(application);
+		ContributionScanner contributionScanner = new ContributionScanner(packageName);
+		enableAnnotations(application, contributionScanner);
 
 		if (Strings.isEmpty(mountPrefix)) {
 			mountPrefix = "/";
@@ -259,7 +261,7 @@ public class ResourceMount implements Cloneable {
 			mountPrefix = "/" + mountPrefix;
 		}
 		
-		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : new ContributionScanner(packageName).getContributions().entrySet()) {
+		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : contributionScanner.getContributions().entrySet()) {
 			String path = e.getKey();
 			if (Strings.isEmpty(path)) {
 				throw new WicketRuntimeException("path must not be empty");
