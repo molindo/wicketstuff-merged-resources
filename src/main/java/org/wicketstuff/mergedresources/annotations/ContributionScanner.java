@@ -1,18 +1,12 @@
 package org.wicketstuff.mergedresources.annotations;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.util.string.Strings;
 import org.wicketstuff.config.MatchingResources;
@@ -29,49 +23,36 @@ public class ContributionScanner {
 	private static final String DEFAULT_PATH_CSS = "all.css";
 	
 	private final Map<String, SortedSet<WeightedResourceSpec>> _contributions;
-	private final Set<String> _enabledClassNames;
 	
 	public ContributionScanner(String packageName) {
 		MatchingResources resources = new MatchingResources(getPatternForPackage(packageName));
-		_enabledClassNames = new HashSet<String>();
+		
 		_contributions = scan(resources);
 	}
 	
 	private Map<String, SortedSet<WeightedResourceSpec>> scan(MatchingResources resources) {
 		Map<String, SortedSet<WeightedResourceSpec>> contributions = new HashMap<String, SortedSet<WeightedResourceSpec>>();
 		
-		for (Class<?> cls : resources.getAnnotatedMatches(JsContribution.class, true)) {
+		for (Class<?> cls : resources.getAnnotatedMatches(JsContribution.class)) {
 			JsContribution a = cls.getAnnotation(JsContribution.class);
-			_enabledClassNames.add(cls.getName());
-			if (a != null) {
-				addJsContributions(cls, a, contributions);
-			}
+			addJsContributions(cls, a, contributions);
 		}
 	
-		for (Class<?> cls : resources.getAnnotatedMatches(CssContribution.class, true)) {
+		for (Class<?> cls : resources.getAnnotatedMatches(CssContribution.class)) {
 			CssContribution a = cls.getAnnotation(CssContribution.class);
-			_enabledClassNames.add(cls.getName());
-			if (a != null) {
-				addCssContributions(cls, a, contributions);
-			}
+			addCssContributions(cls, a, contributions);
 		}
 	
-		for (Class<?> cls : resources.getAnnotatedMatches(CssContributions.class, true)) {
+		for (Class<?> cls : resources.getAnnotatedMatches(CssContributions.class)) {
 			CssContributions cssMulti = cls.getAnnotation(CssContributions.class);
-			_enabledClassNames.add(cls.getName());
-			if (cssMulti != null) {
-				for (CssContribution css : cssMulti.value()) {
-					addCssContributions(cls, css, contributions);
-				}
+			for (CssContribution css : cssMulti.value()) {
+				addCssContributions(cls, css, contributions);
 			}
 		}
 		
-		for (Class<?> cls : resources.getAnnotatedMatches(ResourceContribution.class, true)) {
+		for (Class<?> cls : resources.getAnnotatedMatches(ResourceContribution.class)) {
 			ResourceContribution resource = cls.getAnnotation(ResourceContribution.class);
-			_enabledClassNames.add(cls.getName());
-			if (resource != null) {
-				addResourceContributions(cls, resource, contributions);
-			}
+			addResourceContributions(cls, resource, contributions);
 		}
 		
 		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : contributions.entrySet()) {
@@ -82,9 +63,7 @@ public class ContributionScanner {
 	}
 
 	private void addJsContributions(Class<?> scope, JsContribution js, Map<String, SortedSet<WeightedResourceSpec>> contributions) {
-		String[] values = js.value();
-		for (int i = 0; i < values.length; i++) {
-			String file = values[i];
+		for (String file : js.value()) {
 			if (Strings.isEmpty(file)) {
 				file = scope.getSimpleName() + ".js";
 			}
@@ -95,16 +74,14 @@ public class ContributionScanner {
 				specs = new TreeSet<WeightedResourceSpec>(WeightedResourceSpecComparator.INSTANCE);
 				contributions.put(path, specs);
 			}
-			if (!specs.add(new WeightedResourceSpec(scope, file, js.order(), values.length - i))) {
-				throw new WicketRuntimeException("duplicate resource contribution: " + js + ", scope=" + scope);
+			if (!specs.add(new WeightedResourceSpec(scope, file, js.order()))) {
+				throw new WicketRuntimeException("duplicate resource contribution: " + js + ", scope="+scope);
 			}
 		}
 	}
 
 	private void addCssContributions(Class<?> scope, CssContribution css, Map<String, SortedSet<WeightedResourceSpec>> contributions) {
-		String[] values = css.value();
-		for (int i = 0; i < values.length; i++) {
-			String file = values[i];
+		for (String file : css.value()) {
 			if (Strings.isEmpty(file)) {
 				file = getDefaultCssFile(scope.getSimpleName(), css.media());
 			}
@@ -115,7 +92,7 @@ public class ContributionScanner {
 				specs = new TreeSet<WeightedResourceSpec>(WeightedResourceSpecComparator.INSTANCE);
 				contributions.put(path, specs);
 			}
-			if (!specs.add(new WeightedResourceSpec(scope, file, css.order(), values.length - i))) {
+			if (!specs.add(new WeightedResourceSpec(scope, file, css.order()))) {
 				throw new WicketRuntimeException("duplicate resource contribution: " + css + ", scope="+scope);
 			}
 		}
@@ -180,56 +157,21 @@ public class ContributionScanner {
 		return "classpath*:" + packageName + "**/*.class";
 	}
 
-	private List<String> mergeAnnontations(Class<?> scope, List<JsContribution> contribs) {
-		Collections.sort(contribs, new Comparator<JsContribution>() {
-			public int compare(JsContribution o1, JsContribution o2) {
-				return o1.order() - o2.order();
-			}
-		});
-		List<String> ret = new ArrayList<String>();
-		for (JsContribution jsContribution : contribs) {
-			String[] values = jsContribution.value();
-			for (String val : values) {
-				ret.add(val);
-			}
-		}
-		return ret;
-	}
-
-	private <T extends Annotation> List<T> getAllMatchingAnnotations(Class<?> clz, Class<T> annotation) {
-		return getAllMatchingAnnotations(new ArrayList<T>(1), clz, annotation);
-	}
-
-	private <T extends Annotation> List<T> getAllMatchingAnnotations(List<T> matchedList, Class<?> clz, Class<T> annotation) {
-		if (clz == null) {
-			return matchedList;
-		}
-
-		if (clz.isAnnotationPresent(annotation)) {
-			matchedList.add(clz.getAnnotation(annotation));
-		}
-		return getAllMatchingAnnotations(matchedList, clz.getSuperclass(), annotation);
-	}
-
 	public static final class WeightedResourceSpec extends ResourceSpec {
 
 		private static final long serialVersionUID = 1L;
 		
 		private int _weight;
 
-		private int _minorWeight;
-
-		public WeightedResourceSpec(Class<?> scope, String file, int weight, int minorWeight) {
+		public WeightedResourceSpec(Class<?> scope, String file, int weight) {
 			super(scope, file);
 			_weight = weight;
-			_minorWeight = minorWeight;
 		}
 
 		public WeightedResourceSpec(Class<?> scope, String file) {
-			this(scope, file, 0, 0);
+			this(scope, file, 0);
 		}
 		
-		@Override
 		public String toString() {
 			return super.toString() + " (weight="+_weight+")";
 		}
@@ -253,10 +195,6 @@ public class ContributionScanner {
 			if (val != 0) {
 				return val;
 			}
-			val = Integer.valueOf(o2._minorWeight).compareTo(o1._minorWeight);
-			if (val != 0) {
-				return val;
-			}
 			val = o1.getFile().compareTo(o2.getFile());
 			if (val != 0) {
 				return val;
@@ -264,9 +202,5 @@ public class ContributionScanner {
 			return o1.getScope().getName().compareTo(o2.getScope().getName());
 		}
 		
-	}
-
-	public boolean hasContribution(Component component) {
-		return _enabledClassNames.contains(component.getClass().getName());
 	}
 }
