@@ -32,29 +32,33 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
-	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style,
+			final Class<?>[] scopes, final String[] files, int cacheDuration) {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style, ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style,
+			ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style, specs, cacheDuration, preProcessor);
 	}
-	
+
 	@Override
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs, IResourcePreProcessor preProcessor) {
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
+			IResourcePreProcessor preProcessor) {
 		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
-			// still using deprecated stripJavascriptCommentsAndWhitespace property for CSS
+			// still using deprecated stripJavascriptCommentsAndWhitespace
+			// property for CSS
 			@SuppressWarnings("deprecation")
 			@Override
 			protected byte[] toContent(final byte[] content) {
-				
+
 				ICssCompressor compressor = ResourceMount.getCssCompressor(Application.get());
 				if (compressor != null) {
 					return compressor.compress(content, ICssCompressor.UTF_8);
 				} else if (Application.get().getResourceSettings()
-						// use the JS settings for CSS - deprecated as of WMR 3.1
+				// use the JS settings for CSS - deprecated as of WMR 3.1
 						.getStripJavascriptCommentsAndWhitespace()) {
 					return YuiCompressorUtil.compress(content, ICssCompressor.UTF_8);
 				} else {

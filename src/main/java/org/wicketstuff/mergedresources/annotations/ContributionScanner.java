@@ -13,7 +13,8 @@ import org.wicketstuff.config.MatchingResources;
 import org.wicketstuff.mergedresources.ResourceSpec;
 
 /**
- * Gather page resources to merge, depends on {@link CssContribution} and {@link JsContribution} annotations.
+ * Gather page resources to merge, depends on {@link CssContribution} and
+ * {@link JsContribution} annotations.
  * 
  * Helper to make using wicketstuff-merged-resources easier.
  */
@@ -21,48 +22,49 @@ public class ContributionScanner {
 
 	private static final String DEFAULT_PATH_JS = "all.js";
 	private static final String DEFAULT_PATH_CSS = "all.css";
-	
+
 	private final Map<String, SortedSet<WeightedResourceSpec>> _contributions;
-	
+
 	public ContributionScanner(String packageName) {
 		MatchingResources resources = new MatchingResources(getPatternForPackage(packageName));
-		
+
 		_contributions = scan(resources);
 	}
-	
+
 	private Map<String, SortedSet<WeightedResourceSpec>> scan(MatchingResources resources) {
 		Map<String, SortedSet<WeightedResourceSpec>> contributions = new HashMap<String, SortedSet<WeightedResourceSpec>>();
-		
+
 		for (Class<?> cls : resources.getAnnotatedMatches(JsContribution.class)) {
 			JsContribution a = cls.getAnnotation(JsContribution.class);
 			addJsContributions(cls, a, contributions);
 		}
-	
+
 		for (Class<?> cls : resources.getAnnotatedMatches(CssContribution.class)) {
 			CssContribution a = cls.getAnnotation(CssContribution.class);
 			addCssContributions(cls, a, contributions);
 		}
-	
+
 		for (Class<?> cls : resources.getAnnotatedMatches(CssContributions.class)) {
 			CssContributions cssMulti = cls.getAnnotation(CssContributions.class);
 			for (CssContribution css : cssMulti.value()) {
 				addCssContributions(cls, css, contributions);
 			}
 		}
-		
+
 		for (Class<?> cls : resources.getAnnotatedMatches(ResourceContribution.class)) {
 			ResourceContribution resource = cls.getAnnotation(ResourceContribution.class);
 			addResourceContributions(cls, resource, contributions);
 		}
-		
+
 		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : contributions.entrySet()) {
 			e.setValue(Collections.unmodifiableSortedSet(e.getValue()));
 		}
-		
+
 		return Collections.unmodifiableMap(contributions);
 	}
 
-	private void addJsContributions(Class<?> scope, JsContribution js, Map<String, SortedSet<WeightedResourceSpec>> contributions) {
+	private void addJsContributions(Class<?> scope, JsContribution js,
+			Map<String, SortedSet<WeightedResourceSpec>> contributions) {
 		for (String file : js.value()) {
 			if (Strings.isEmpty(file)) {
 				file = scope.getSimpleName() + ".js";
@@ -75,12 +77,13 @@ public class ContributionScanner {
 				contributions.put(path, specs);
 			}
 			if (!specs.add(new WeightedResourceSpec(scope, file, js.order()))) {
-				throw new WicketRuntimeException("duplicate resource contribution: " + js + ", scope="+scope);
+				throw new WicketRuntimeException("duplicate resource contribution: " + js + ", scope=" + scope);
 			}
 		}
 	}
 
-	private void addCssContributions(Class<?> scope, CssContribution css, Map<String, SortedSet<WeightedResourceSpec>> contributions) {
+	private void addCssContributions(Class<?> scope, CssContribution css,
+			Map<String, SortedSet<WeightedResourceSpec>> contributions) {
 		for (String file : css.value()) {
 			if (Strings.isEmpty(file)) {
 				file = getDefaultCssFile(scope.getSimpleName(), css.media());
@@ -93,7 +96,7 @@ public class ContributionScanner {
 				contributions.put(path, specs);
 			}
 			if (!specs.add(new WeightedResourceSpec(scope, file, css.order()))) {
-				throw new WicketRuntimeException("duplicate resource contribution: " + css + ", scope="+scope);
+				throw new WicketRuntimeException("duplicate resource contribution: " + css + ", scope=" + scope);
 			}
 		}
 	}
@@ -112,10 +115,12 @@ public class ContributionScanner {
 		return DEFAULT_PATH_CSS;
 	}
 
-	private void addResourceContributions(Class<?> scope, ResourceContribution resource, Map<String, SortedSet<WeightedResourceSpec>> contributions) {
+	private void addResourceContributions(Class<?> scope, ResourceContribution resource,
+			Map<String, SortedSet<WeightedResourceSpec>> contributions) {
 		for (String file : resource.value()) {
 			if (Strings.isEmpty(file)) {
-				throw new WicketRuntimeException("empty file name not allowed for @ResourceContributions at class " + scope.getName());
+				throw new WicketRuntimeException("empty file name not allowed for @ResourceContributions at class "
+						+ scope.getName());
 			}
 
 			// don't merge resources by default
@@ -126,11 +131,11 @@ public class ContributionScanner {
 				contributions.put(path, specs);
 			}
 			if (!specs.add(new WeightedResourceSpec(scope, file))) {
-				throw new WicketRuntimeException("duplicate resource contribution: " + resource + ", scope="+scope);
+				throw new WicketRuntimeException("duplicate resource contribution: " + resource + ", scope=" + scope);
 			}
 		}
 	}
-	
+
 	/**
 	 * @return an unmodifiable map of contributions mapped by scope
 	 */
@@ -160,7 +165,7 @@ public class ContributionScanner {
 	public static final class WeightedResourceSpec extends ResourceSpec {
 
 		private static final long serialVersionUID = 1L;
-		
+
 		private int _weight;
 
 		public WeightedResourceSpec(Class<?> scope, String file, int weight) {
@@ -171,12 +176,12 @@ public class ContributionScanner {
 		public WeightedResourceSpec(Class<?> scope, String file) {
 			this(scope, file, 0);
 		}
-		
+
 		public String toString() {
-			return super.toString() + " (weight="+_weight+")";
+			return super.toString() + " (weight=" + _weight + ")";
 		}
 	}
-	
+
 	public enum WeightedResourceSpecComparator implements Comparator<WeightedResourceSpec> {
 		INSTANCE;
 
@@ -189,7 +194,7 @@ public class ContributionScanner {
 			if (o1.equals(o2)) {
 				return 0;
 			}
-			
+
 			// from highest to lowest - avoid overflow
 			int val = Integer.valueOf(o2._weight).compareTo(o1._weight);
 			if (val != 0) {
@@ -201,6 +206,6 @@ public class ContributionScanner {
 			}
 			return o1.getScope().getName().compareTo(o2.getScope().getName());
 		}
-		
+
 	}
 }

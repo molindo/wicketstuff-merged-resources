@@ -9,7 +9,7 @@ import org.apache.wicket.application.IComponentInstantiationListener;
 public class ContributionInjector implements IComponentInstantiationListener {
 
 	private HashMap<Class<? extends Component>, HeaderContribution> _contributions = new HashMap<Class<? extends Component>, HeaderContribution>();
-	
+
 	public void onInstantiation(Component component) {
 		if (eligible(component)) {
 			asMarkupContainer(component).add(getHeaderContribution(component.getClass()));
@@ -32,11 +32,12 @@ public class ContributionInjector implements IComponentInstantiationListener {
 	}
 
 	private boolean hasResourceAnnotation(Component component) {
-		return component.getClass().getAnnotation(JsContribution.class) != null || component.getClass().getAnnotation(CssContribution.class) != null;
+		return component.getClass().getAnnotation(JsContribution.class) != null
+				|| component.getClass().getAnnotation(CssContribution.class) != null;
 	}
 
 	private boolean eligible(Component component) {
 		return MarkupContainer.class.isAssignableFrom(component.getClass()) && hasResourceAnnotation(component);
 	}
-	
+
 }

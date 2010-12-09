@@ -12,7 +12,8 @@ public class ComponentB extends Panel {
 	public ComponentB(String id) {
 		super(id);
 		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".css"));
-		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css", "print"));
+		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css",
+				"print"));
 		add(JavascriptPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
 		add(new Label("label", "Wicket!"));
 	}

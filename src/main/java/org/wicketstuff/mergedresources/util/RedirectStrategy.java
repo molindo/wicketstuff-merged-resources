@@ -24,10 +24,8 @@ import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.basic.RedirectRequestTarget;
 import org.apache.wicket.request.target.coding.BookmarkablePageRequestTargetUrlCodingStrategy;
 
-public class RedirectStrategy extends
-		BookmarkablePageRequestTargetUrlCodingStrategy {
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(RedirectStrategy.class);
+public class RedirectStrategy extends BookmarkablePageRequestTargetUrlCodingStrategy {
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RedirectStrategy.class);
 
 	private final String _redirectPath;
 
@@ -46,8 +44,7 @@ public class RedirectStrategy extends
 			final WebRequest r = (WebRequest) RequestCycle.get().getRequest();
 			final String ref = r.getHttpServletRequest().getHeader("Referer");
 			final String requested = r.getURL();
-			log.debug("redirecting request coming from " + ref + " to "
-					+ requested + " to " + _redirectPath);
+			log.debug("redirecting request coming from " + ref + " to " + requested + " to " + _redirectPath);
 		}
 
 		return new RedirectRequestTarget(_redirectPath);

@@ -20,7 +20,6 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.wicketstuff.mergedresources.annotations.components.PanelOne;
 
-
 /**
  * Homepage
  */
@@ -28,7 +27,7 @@ public class AnnotationHomePage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 
-    public AnnotationHomePage(final PageParameters parameters) {
-    	add(new PanelOne("panel"));
-    }
+	public AnnotationHomePage(final PageParameters parameters) {
+		add(new PanelOne("panel"));
+	}
 }

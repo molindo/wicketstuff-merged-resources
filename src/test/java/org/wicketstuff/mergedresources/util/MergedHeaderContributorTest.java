@@ -8,18 +8,16 @@ import org.wicketstuff.mergedresources.ResourceMount;
 public class MergedHeaderContributorTest {
 	@Test
 	public void renderJsContributorPage() throws Exception {
-		WicketTester tester = new WicketTester(
-				new NewInterfaceTestApplication() {
+		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
 
-					protected void initMount(ResourceMount mount) {
-						mount.setMerged(false);
-					}
-					
-				});
-		
-        tester.startPage(MergedContributorPage.class);
-        tester.assertRenderedPage(MergedContributorPage.class);
-		tester.assertResultPage(MergedContributorPage.class,
-				"MergedContributorPage-expected.html");
+			protected void initMount(ResourceMount mount) {
+				mount.setMerged(false);
+			}
+
+		});
+
+		tester.startPage(MergedContributorPage.class);
+		tester.assertRenderedPage(MergedContributorPage.class);
+		tester.assertResultPage(MergedContributorPage.class, "MergedContributorPage-expected.html");
 	}
 }

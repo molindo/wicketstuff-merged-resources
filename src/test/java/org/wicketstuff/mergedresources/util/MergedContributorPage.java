@@ -6,8 +6,8 @@ import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
 public class MergedContributorPage extends WebPage {
 
 	public MergedContributorPage() {
-		add(((NewInterfaceTestApplication)getApplication()).getJsContributor());
-		add(((NewInterfaceTestApplication)getApplication()).getCssContributor());
-		add(((NewInterfaceTestApplication)getApplication()).getCssPrintContributor());
+		add(((NewInterfaceTestApplication) getApplication()).getJsContributor());
+		add(((NewInterfaceTestApplication) getApplication()).getCssContributor());
+		add(((NewInterfaceTestApplication) getApplication()).getCssPrintContributor());
 	}
 }

@@ -20,7 +20,7 @@ import org.apache.wicket.IClusterable;
 
 public abstract class AbstractResourceVersion implements IClusterable {
 	private static final long serialVersionUID = 1L;
-	
+
 	public static AbstractResourceVersion NO_VERSION = new AbstractResourceVersion() {
 
 		private static final long serialVersionUID = 1L;
@@ -37,15 +37,18 @@ public abstract class AbstractResourceVersion implements IClusterable {
 			// shouldn't ever be called
 			return -1;
 		}
-		
+
 	};
+
 	public abstract boolean isValid();
+
 	public abstract String getVersion();
-	
+
 	/**
-     * @param   o the object to be compared.
-     * @return  a negative integer, zero, or a positive integer as this object
-     *		is less than, equal to, or greater than the specified object.
+	 * @param o
+	 *            the object to be compared.
+	 * @return a negative integer, zero, or a positive integer as this object is
+	 *         less than, equal to, or greater than the specified object.
 	 * @throws IncompatibleVersionsException
 	 */
 	public final int compareTo(AbstractResourceVersion o) throws IncompatibleVersionsException {
@@ -54,17 +57,18 @@ public abstract class AbstractResourceVersion implements IClusterable {
 		} else {
 			return isValid() ? compareValid(o) : -1;
 		}
-		
+
 	}
+
 	protected abstract int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException;
-	
+
 	public static final class IncompatibleVersionsException extends Exception {
 
-		public IncompatibleVersionsException(AbstractResourceVersion v1,AbstractResourceVersion v2) {
+		public IncompatibleVersionsException(AbstractResourceVersion v1, AbstractResourceVersion v2) {
 			super(v1 + " and " + v2 + " are incompatible");
 		}
 
 		private static final long serialVersionUID = 1L;
-		
+
 	}
 }

@@ -23,27 +23,24 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.HomePage;
 import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
 
-
 /**
  * Simple test using the WicketTester
  */
-public class TestNewInterfaceHomePageUnmerged extends TestCase
-{
+public class TestNewInterfaceHomePageUnmerged extends TestCase {
 	private WicketTester tester;
 
-	public void setUp()
-	{
+	public void setUp() {
 		tester = new WicketTester(new NewInterfaceTestApplication() {
 			@Override
 			public String getConfigurationType() {
 				return Application.DEVELOPMENT;
 			}
-			
+
 			@Override
 			protected boolean merge() {
 				return false;
 			}
-			
+
 			@Override
 			protected boolean strip() {
 				return true;
@@ -51,18 +48,17 @@ public class TestNewInterfaceHomePageUnmerged extends TestCase
 		});
 	}
 
-	public void testRenderMyPage()
-	{
-		//start and render the test page
+	public void testRenderMyPage() {
+		// start and render the test page
 		tester.startPage(HomePage.class);
 
-		//assert rendered page class
+		// assert rendered page class
 		tester.assertRenderedPage(HomePage.class);
-		
+
 		assertTrue(tester.ifContains("style/all-[0-9]+\\.css").wasFailed());
 		assertTrue(tester.ifContains("script/all-[0-9]+\\.js").wasFailed());
 		assertFalse(tester.ifContains("resources/").wasFailed());
-		
+
 		// does anybody know how to check resources?
 	}
 }

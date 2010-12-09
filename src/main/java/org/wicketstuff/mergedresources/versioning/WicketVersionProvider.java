@@ -21,11 +21,11 @@ import org.apache.wicket.Application;
 public class WicketVersionProvider implements IResourceVersionProvider {
 
 	private Application _application;
-	
+
 	public WicketVersionProvider(Application application) {
 		_application = application;
 	}
-	
+
 	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
 		return new WicketVersion(_application);
 	}

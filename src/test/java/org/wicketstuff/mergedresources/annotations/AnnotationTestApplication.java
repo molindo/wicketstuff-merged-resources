@@ -7,23 +7,20 @@ import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
 import org.wicketstuff.mergedresources.versioning.StaticResourceVersionProvider;
 
-public class AnnotationTestApplication extends AbstractTestApplication
-{    
-    /**
-     * Constructor
-     */
-	public AnnotationTestApplication()
-	{
+public class AnnotationTestApplication extends AbstractTestApplication {
+	/**
+	 * Constructor
+	 */
+	public AnnotationTestApplication() {
 	}
 
 	/**
 	 * @see wicket.Application#getHomePage()
 	 */
-	public Class<? extends WebPage> getHomePage()
-	{
+	public Class<? extends WebPage> getHomePage() {
 		return AnnotationHomePage.class;
 	}
-	
+
 	protected boolean merge() {
 		return true;
 	}
@@ -47,8 +44,6 @@ public class AnnotationTestApplication extends AbstractTestApplication
 
 	protected ResourceMount newResourceMount() {
 		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
-		return new ResourceMount()
-			.setResourceVersionProvider(p)
-			.setDefaultAggressiveCacheDuration();
+		return new ResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
 	}
 }

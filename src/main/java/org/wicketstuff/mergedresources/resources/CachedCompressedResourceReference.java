@@ -28,7 +28,8 @@ public class CachedCompressedResourceReference extends ResourceReference {
 	private int _cacheDuration;
 	private IResourcePreProcessor _preProcessor;
 
-	public CachedCompressedResourceReference(Class<?> scope, String path, Locale locale, String style, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CachedCompressedResourceReference(Class<?> scope, String path, Locale locale, String style,
+			int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 		_cacheDuration = cacheDuration;
 		_preProcessor = preProcessor;
@@ -36,12 +37,12 @@ public class CachedCompressedResourceReference extends ResourceReference {
 
 	@Override
 	protected Resource newResource() {
-		return new CachedCompressedResource(getScope(), getName(), getLocale(), getStyle(), _cacheDuration, _preProcessor);
+		return new CachedCompressedResource(getScope(), getName(), getLocale(), getStyle(), _cacheDuration,
+				_preProcessor);
 	}
 
 	public int getCacheDuration() {
 		return _cacheDuration;
 	}
-	
-	
+
 }

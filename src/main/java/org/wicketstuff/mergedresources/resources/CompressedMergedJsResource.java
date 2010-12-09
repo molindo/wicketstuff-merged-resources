@@ -28,34 +28,33 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(CompressedMergedJsResource.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CompressedMergedJsResource.class);
 
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public CompressedMergedJsResource(Class<?> scope, final String path,
-			final Locale locale, final String style, final Class<?>[] scopes,
-			final String[] files, int cacheDuration) {
+	public CompressedMergedJsResource(Class<?> scope, final String path, final Locale locale, final String style,
+			final Class<?>[] scopes, final String[] files, int cacheDuration) {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedJsResource(Class<?> scope, final String path,
-			final Locale locale, String style, final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedJsResource(Class<?> scope, final String path, final Locale locale, String style,
+			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style, specs, cacheDuration, preProcessor);
 	}
-	
+
 	@Override
-	protected IResourceStream newResourceStream(final Locale locale,
-			final String style, final ResourceSpec[] specs, IResourcePreProcessor preProcessor) {
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
+			IResourcePreProcessor preProcessor) {
 		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected byte[] toContent(final byte[] content) {
 				try {
-					final IJavascriptCompressor compressor = Application.get().getResourceSettings().getJavascriptCompressor();
+					final IJavascriptCompressor compressor = Application.get().getResourceSettings()
+							.getJavascriptCompressor();
 					if (compressor != null) {
 						return compressor.compress(new String(content)).getBytes();
 					}
@@ -65,7 +64,7 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 					return content;
 				}
 			}
-			
+
 			@Override
 			public String getContentType() {
 				return "application/x-javascript";

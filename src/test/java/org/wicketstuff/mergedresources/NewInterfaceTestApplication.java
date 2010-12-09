@@ -19,23 +19,19 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 
 		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
 
-		ResourceMount mount = new ResourceMount().setResourceVersionProvider(p)
-				.setDefaultAggressiveCacheDuration();
+		ResourceMount mount = new ResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
 
 		initMount(mount);
 
 		_cssContributor = mount.clone().setPath("/style/all.css")
-				.addResourceSpecsMatchingSuffix(PanelOne.class,
-						ComponentB.class, MyForm.class).build(this);
+				.addResourceSpecsMatchingSuffix(PanelOne.class, ComponentB.class, MyForm.class).build(this);
 
 		_cssPrintContributor = mount.clone().setPath("/style/print.css")
 				.addResourceSpec(ComponentB.class, "ComponentB-print.css")
-				.addResourceSpec(PanelOne.class, "PanelOne-print.css").build(
-						this, "print");
+				.addResourceSpec(PanelOne.class, "PanelOne-print.css").build(this, "print");
 
 		_jsContributor = mount.clone().setPath("/script/all.js")
-				.addResourceSpecsMatchingSuffix(PanelOne.class,
-						ComponentB.class, MyForm.class).build(this);
+				.addResourceSpecsMatchingSuffix(PanelOne.class, ComponentB.class, MyForm.class).build(this);
 	}
 
 	protected void initMount(ResourceMount mount) {

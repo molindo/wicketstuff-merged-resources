@@ -25,9 +25,10 @@ public class CachedResource extends MergedResource {
 
 	private static final long serialVersionUID = 1L;
 
-	public CachedResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration, IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style, new ResourceSpec[] {new ResourceSpec(scope, path)}, cacheDuration, preProcessor);
+	public CachedResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
+			IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration,
+				preProcessor);
 	}
-
 
 }

@@ -24,7 +24,7 @@ public final class SimpleResourceVersion extends AbstractResourceVersion {
 	public SimpleResourceVersion(int value) {
 		setValue(value);
 	}
-	
+
 	public int getValue() {
 		return _value;
 	}
@@ -43,13 +43,13 @@ public final class SimpleResourceVersion extends AbstractResourceVersion {
 	public String getVersion() {
 		return Integer.toString(_value);
 	}
-	
+
 	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (o instanceof SimpleResourceVersion) {
-			return ((Integer) getValue()).compareTo(((SimpleResourceVersion)o).getValue());
+			return ((Integer) getValue()).compareTo(((SimpleResourceVersion) o).getValue());
 		} else {
 			throw new IncompatibleVersionsException(this, o);
 		}
 	}
-	
+
 }

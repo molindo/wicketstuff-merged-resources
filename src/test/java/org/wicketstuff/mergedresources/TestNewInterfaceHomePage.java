@@ -22,19 +22,15 @@ import org.apache.wicket.Application;
 import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.HomePage;
 
-
 /**
  * Simple test using the WicketTester
  */
-public class TestNewInterfaceHomePage extends TestCase
-{
+public class TestNewInterfaceHomePage extends TestCase {
 	private WicketTester tester;
 
-	public void setUp()
-	{
+	public void setUp() {
 		tester = new WicketTester(new NewInterfaceTestApplication() {
-			
-			
+
 			@Override
 			protected boolean merge() {
 				return true;
@@ -44,20 +40,20 @@ public class TestNewInterfaceHomePage extends TestCase
 			protected boolean strip() {
 				return true;
 			}
-			
+
 		});
 	}
 
-	public void testRenderMyPage()
-	{
-		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(), Application.DEPLOYMENT);
-		
-		//start and render the test page
+	public void testRenderMyPage() {
+		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(),
+				Application.DEPLOYMENT);
+
+		// start and render the test page
 		tester.startPage(HomePage.class);
 
-		//assert rendered page class
+		// assert rendered page class
 		tester.assertRenderedPage(HomePage.class);
-		
+
 		assertFalse(tester.ifContains("style/all-[0-9]+\\.css").wasFailed());
 		assertFalse(tester.ifContains("script/all-[0-9]+\\.js").wasFailed());
 		System.out.println(tester.getServletResponse().getDocument());

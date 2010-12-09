@@ -21,11 +21,10 @@ import org.apache.wicket.Application;
 public class WicketVersion extends AbstractResourceVersion {
 	private static final long serialVersionUID = 1L;
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(WicketVersion.class);
-	
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WicketVersion.class);
+
 	private String _version;
-	
+
 	public WicketVersion(Application application) {
 		_version = application.getFrameworkSettings().getVersion();
 		if ("n/a".equals(_version)) {
@@ -33,7 +32,7 @@ public class WicketVersion extends AbstractResourceVersion {
 			_version = null;
 		}
 	}
-	
+
 	@Override
 	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (o instanceof WicketVersion) {

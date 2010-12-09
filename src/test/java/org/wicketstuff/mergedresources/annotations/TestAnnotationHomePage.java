@@ -25,27 +25,24 @@ import org.apache.wicket.markup.html.WicketEventReference;
 import org.wicketstuff.mergedresources.annotations.components.PanelOne;
 import org.wicketstuff.mergedresources.util.WicketResourceTester;
 
-
 /**
  * Simple test using the WicketTester
  */
-public class TestAnnotationHomePage extends TestCase
-{
+public class TestAnnotationHomePage extends TestCase {
 	private WicketResourceTester tester;
 
-	public void setUp()
-	{
+	public void setUp() {
 		tester = new WicketResourceTester(new AnnotationTestApplication());
 	}
 
-	public void testRenderMyPage()
-	{
-		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(), Application.DEPLOYMENT);
-		
-		//start and render the test page
+	public void testRenderMyPage() {
+		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(),
+				Application.DEPLOYMENT);
+
+		// start and render the test page
 		tester.startPage(tester.getApplication().getHomePage());
 
-		//assert rendered page class
+		// assert rendered page class
 		tester.assertRenderedPage(tester.getApplication().getHomePage());
 
 		System.out.println(tester.getServletResponse().getDocument());
@@ -56,12 +53,16 @@ public class TestAnnotationHomePage extends TestCase
 		assertFalse(tester.ifContains("files/forms-[0-9]+\\.js").wasFailed());
 		assertFalse(tester.ifContains("files/forms-[0-9]+\\.css").wasFailed());
 		// does anybody know how to check resources?
-		
+
 		assertTrue(tester.urlFor(WicketAjaxReference.INSTANCE).matches("script/wicket-ajax.*\\.js"));
 		assertTrue(tester.urlFor(WicketEventReference.INSTANCE).matches("script/wicket-event.*\\.js"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne.css")).matches("files/all-[0-9]+\\.css"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne-print.css")).matches("files/print-[0-9]+\\.css"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "functions.js")).matches("files/all-[0-9]+\\.js"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "accept.png")).matches("img/accept-[0-9]+\\.png"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne.css")).matches(
+				"files/all-[0-9]+\\.css"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne-print.css")).matches(
+				"files/print-[0-9]+\\.css"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "functions.js"))
+				.matches("files/all-[0-9]+\\.js"));
+		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "accept.png"))
+				.matches("img/accept-[0-9]+\\.png"));
 	}
 }

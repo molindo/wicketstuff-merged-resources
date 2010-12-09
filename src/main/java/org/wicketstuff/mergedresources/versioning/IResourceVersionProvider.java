@@ -17,13 +17,14 @@
 package org.wicketstuff.mergedresources.versioning;
 
 public interface IResourceVersionProvider {
-	
+
 	/**
 	 * @return AbstractResourceVersion for this resource, never null
-	 * @throws VersionException if version can't be determined
+	 * @throws VersionException
+	 *             if version can't be determined
 	 */
 	AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException;
-	
+
 	public static class VersionException extends Exception {
 
 		public VersionException(final Class<?> scope, final String fileName, final String msg, final Throwable cause) {
@@ -41,9 +42,8 @@ public interface IResourceVersionProvider {
 		public VersionException(String msg, Throwable cause) {
 			super(msg, cause);
 		}
-		
+
 		private static final long serialVersionUID = 1L;
 
 	}
 }
-

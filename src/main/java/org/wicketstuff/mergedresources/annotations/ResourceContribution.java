@@ -12,5 +12,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ResourceContribution {
 	String[] value() default "";
+
 	String path() default "";
 }

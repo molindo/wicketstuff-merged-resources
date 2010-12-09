@@ -10,7 +10,7 @@ import org.apache.wicket.util.string.Strings;
 
 public class ResourceSpec implements IClusterable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final String _scopeName;
 	private transient Class<?> _scope;
 	private final String _file;
@@ -18,11 +18,11 @@ public class ResourceSpec implements IClusterable {
 	private Locale _locale;
 	private String _style;
 	private Integer _cacheDuration;
-	
+
 	public static ResourceSpec[] toResourceSpecs(Class<?>[] scopes, String[] files) {
 		if (scopes.length != files.length) {
-			throw new IllegalArgumentException("arrays must be of equal length: "
-					+ Arrays.toString(scopes) + ", " + Arrays.toString(files));
+			throw new IllegalArgumentException("arrays must be of equal length: " + Arrays.toString(scopes) + ", "
+					+ Arrays.toString(files));
 		}
 		ResourceSpec[] resourceSpecs = new ResourceSpec[scopes.length];
 		for (int i = 0; i < scopes.length; i++) {
@@ -30,7 +30,7 @@ public class ResourceSpec implements IClusterable {
 		}
 		return resourceSpecs;
 	}
-	
+
 	public static Class<?>[] toScopes(ResourceSpec[] specs) {
 		Class<?>[] scopes = new Class<?>[specs.length];
 		for (int i = 0; i < specs.length; i++) {
@@ -38,7 +38,7 @@ public class ResourceSpec implements IClusterable {
 		}
 		return scopes;
 	}
-	
+
 	public static String[] toFiles(ResourceSpec[] specs) {
 		String[] files = new String[specs.length];
 		for (int i = 0; i < specs.length; i++) {
@@ -46,7 +46,7 @@ public class ResourceSpec implements IClusterable {
 		}
 		return files;
 	}
-	
+
 	public ResourceSpec(Class<?> scope, String file) {
 		this(scope, file, null, null, null, null);
 	}
@@ -54,15 +54,15 @@ public class ResourceSpec implements IClusterable {
 	public ResourceSpec(Class<?> scope, String file, Locale locale) {
 		this(scope, file, locale, null, null, null);
 	}
-	
+
 	public ResourceSpec(Class<?> scope, String file, String style) {
 		this(scope, file, null, style, null, null);
 	}
-	
+
 	public ResourceSpec(Class<?> scope, String file, Locale locale, String style) {
 		this(scope, file, locale, style, null, null);
 	}
-	
+
 	public ResourceSpec(Class<?> scope, String file, Integer cacheDuration) {
 		this(scope, file, null, null, cacheDuration, null);
 	}
@@ -70,15 +70,15 @@ public class ResourceSpec implements IClusterable {
 	public ResourceSpec(Class<?> scope, String file, Locale locale, Integer cacheDuration) {
 		this(scope, file, locale, null, cacheDuration, null);
 	}
-	
+
 	public ResourceSpec(Class<?> scope, String file, String style, Integer cacheDuration) {
 		this(scope, file, null, style, cacheDuration, null);
 	}
-	
+
 	public ResourceSpec(Class<?> scope, String file, Locale locale, String style, Integer cacheDuration) {
 		this(scope, file, locale, style, cacheDuration, null);
 	}
-	
+
 	public ResourceSpec(ResourceReference ref) {
 		this(ref.getScope(), ref.getName(), ref.getLocale(), ref.getStyle(), null, ref);
 		if (ref == null) {
@@ -86,7 +86,8 @@ public class ResourceSpec implements IClusterable {
 		}
 	}
 
-	private ResourceSpec(Class<?> scope, String file, Locale locale, String style, Integer cacheDuration, ResourceReference ref) {
+	private ResourceSpec(Class<?> scope, String file, Locale locale, String style, Integer cacheDuration,
+			ResourceReference ref) {
 		if (scope == null) {
 			throw new NullPointerException("scope");
 		}
@@ -99,7 +100,7 @@ public class ResourceSpec implements IClusterable {
 		if (Strings.isEmpty(file)) {
 			throw new IllegalArgumentException("file must not be empty");
 		}
-		
+
 		_scope = scope;
 		_scopeName = _scope.getName();
 		_file = file;
@@ -108,7 +109,7 @@ public class ResourceSpec implements IClusterable {
 		_cacheDuration = cacheDuration;
 		_ref = ref;
 	}
-	
+
 	public Class<?> getScope() {
 		if (_scope == null) {
 			try {
@@ -121,7 +122,7 @@ public class ResourceSpec implements IClusterable {
 	}
 
 	/**
-	 * @return file name, never starting with 
+	 * @return file name, never starting with
 	 */
 	public String getFile() {
 		return _file;
@@ -133,7 +134,7 @@ public class ResourceSpec implements IClusterable {
 	public Locale getLocale() {
 		return _locale;
 	}
-	
+
 	/**
 	 * @return might return null
 	 */
@@ -149,7 +150,8 @@ public class ResourceSpec implements IClusterable {
 	}
 
 	/**
-	 * @return {@link ResourceReference} that was used to construct this spec or null
+	 * @return {@link ResourceReference} that was used to construct this spec or
+	 *         null
 	 */
 	public ResourceReference getRef() {
 		return _ref;
@@ -206,13 +208,12 @@ public class ResourceSpec implements IClusterable {
 			if (_style != null)
 				builder.append("style=").append(_style).append(", ");
 			if (_cacheDuration != null)
-				builder.append("cacheDuration=").append(_cacheDuration).append(
-						", ");
-			
+				builder.append("cacheDuration=").append(_cacheDuration).append(", ");
+
 			builder.setLength(builder.length() - 2);
 			builder.append("]");
 		}
 		return builder.toString();
 	}
-	
+
 }

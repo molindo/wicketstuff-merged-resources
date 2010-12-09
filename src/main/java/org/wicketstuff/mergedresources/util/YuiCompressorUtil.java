@@ -27,13 +27,12 @@ import java.nio.charset.Charset;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
 public class YuiCompressorUtil {
-	private static final transient org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(YuiCompressorUtil.class);
-	
+	private static final transient org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(YuiCompressorUtil.class);
+
 	private YuiCompressorUtil() {
 		// no instances
 	}
-	
+
 	public static String compress(final String toCompress) {
 		final StringWriter writer = new StringWriter((int) (toCompress.length() * 0.8));
 		try {
@@ -44,10 +43,10 @@ public class YuiCompressorUtil {
 		}
 		return writer.toString();
 	}
-	
+
 	public static byte[] compress(final byte[] toCompress, Charset charset) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream(toCompress.length);
-		
+
 		final OutputStreamWriter writer = new OutputStreamWriter(out);
 		try {
 			new CssCompressor(new InputStreamReader(new ByteArrayInputStream(toCompress), charset)).compress(writer, 0);

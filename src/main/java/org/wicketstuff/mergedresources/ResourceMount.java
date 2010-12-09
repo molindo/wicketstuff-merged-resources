@@ -55,45 +55,47 @@ import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.Incomp
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 public class ResourceMount implements Cloneable {
-	
+
 	public enum SuffixMismatchStrategy {
 		IGNORE, WARN, EXCEPTION;
 	}
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceMount.class);
-	
+
 	private static final MetaDataKey<Boolean> ANNOTATIONS_ENABLED_KEY = new MetaDataKey<Boolean>() {
 		private static final long serialVersionUID = 1L;
 	};
-	
+
 	/**
 	 * default cache duration is 1 hour
 	 */
 	public static final int DEFAULT_CACHE_DURATION = (int) Duration.hours(1).seconds();
-	
+
 	/**
 	 * default aggressive cache duration is 1 year
 	 */
 	public static final int DEFAULT_AGGRESSIVE_CACHE_DURATION = (int) Duration.days(365).seconds();
-	
+
 	/**
-	 * @deprecated typo in name, it's aggressive with ss, use {@link #DEFAULT_AGGRESSIVE_CACHE_DURATION} instead
+	 * @deprecated typo in name, it's aggressive with ss, use
+	 *             {@link #DEFAULT_AGGRESSIVE_CACHE_DURATION} instead
 	 */
 	public static final int DEFAULT_AGGRESIVE_CACHE_DURATION = DEFAULT_AGGRESSIVE_CACHE_DURATION;
-	
+
 	/**
-	 * file suffixes to be compressed by default ("css", "js", "html", "xml"). For instance, there is no sense in 
-	 * gzipping images
+	 * file suffixes to be compressed by default ("css", "js", "html", "xml").
+	 * For instance, there is no sense in gzipping images
 	 */
-	public static final Set<String> DEFAULT_COMPRESS_SUFFIXES = Collections
-			.unmodifiableSet(new HashSet<String>(Arrays.asList("html", "css", "js", "xml")));
-	
+	public static final Set<String> DEFAULT_COMPRESS_SUFFIXES = Collections.unmodifiableSet(new HashSet<String>(Arrays
+			.asList("html", "css", "js", "xml")));
+
 	/**
-	 * file suffixes to be merged by default ("css" and "js"). For instance, there is no sense in merging
-	 * xml files into a single one by default (you don't want multiple root elements)
+	 * file suffixes to be merged by default ("css" and "js"). For instance,
+	 * there is no sense in merging xml files into a single one by default (you
+	 * don't want multiple root elements)
 	 */
-	public static final Set<String> DEFAULT_MERGE_SUFFIXES = Collections
-		.unmodifiableSet(new HashSet<String>(Arrays.asList("css", "js")));
+	public static final Set<String> DEFAULT_MERGE_SUFFIXES = Collections.unmodifiableSet(new HashSet<String>(Arrays
+			.asList("css", "js")));
 
 	/**
 	 * MetaDataKey used for {@link CompressedMergedCssResource}
@@ -102,7 +104,7 @@ public class ResourceMount implements Cloneable {
 
 		private static final long serialVersionUID = 1L;
 	};
-	
+
 	private Integer _cacheDuration = null;
 	private String _path = null;
 	private AbstractResourceVersion _version = null;
@@ -122,83 +124,92 @@ public class ResourceMount implements Cloneable {
 	private Boolean _merge;
 	private IResourcePreProcessor _preProcessor;
 	private SuffixMismatchStrategy _suffixMismatchStrategy = SuffixMismatchStrategy.EXCEPTION;
-	
+
 	/**
-	 * Mount wicket-event.js and wicket-ajax.js using wicket's version for aggressive caching (e.g. wicket-ajax-1.3.6.js)
+	 * Mount wicket-event.js and wicket-ajax.js using wicket's version for
+	 * aggressive caching (e.g. wicket-ajax-1.3.6.js)
 	 * 
-	 * @param mountPrefix e.g. "script" for "/script/wicket-ajax-1.3.6.js
-	 * @param application the application
+	 * @param mountPrefix
+	 *            e.g. "script" for "/script/wicket-ajax-1.3.6.js
+	 * @param application
+	 *            the application
 	 */
 	public static void mountWicketResources(String mountPrefix, WebApplication application) {
 		mountWicketResources(mountPrefix, application, new ResourceMount().setDefaultAggressiveCacheDuration());
 	}
-	
+
 	/**
-	 * Mount wicket-event.js and wicket-ajax.js using wicket's version (e.g. wicket-ajax-1.3.6.js). 
+	 * Mount wicket-event.js and wicket-ajax.js using wicket's version (e.g.
+	 * wicket-ajax-1.3.6.js).
 	 * 
-	 * @param mountPrefix e.g. "script" for "/script/wicket-ajax-1.3.6.js
-	 * @param application the application
-	 * @param mount pre-configured resource mount to use. ResourceVersionProvider will be overriden
+	 * @param mountPrefix
+	 *            e.g. "script" for "/script/wicket-ajax-1.3.6.js
+	 * @param application
+	 *            the application
+	 * @param mount
+	 *            pre-configured resource mount to use. ResourceVersionProvider
+	 *            will be overriden
 	 */
 	public static void mountWicketResources(String mountPrefix, WebApplication application, ResourceMount mount) {
-		mount = mount.clone()
-			.setResourceVersionProvider(new WicketVersionProvider(application))
-			.setDefaultAggressiveCacheDuration();
-		
+		mount = mount.clone().setResourceVersionProvider(new WicketVersionProvider(application))
+				.setDefaultAggressiveCacheDuration();
+
 		if (!mountPrefix.endsWith("/")) {
 			mountPrefix = mountPrefix + "/";
 		}
-		
-		for (ResourceReference ref : new ResourceReference[]{WicketAjaxReference.INSTANCE, WicketEventReference.INSTANCE}) {
+
+		for (ResourceReference ref : new ResourceReference[] { WicketAjaxReference.INSTANCE,
+				WicketEventReference.INSTANCE }) {
 			String path = mountPrefix + ref.getName();
-			
-			mount
-				.clone()
-				.setPath(path)
-				.addResourceSpec(ref)
-				.mount(application);
+
+			mount.clone().setPath(path).addResourceSpec(ref).mount(application);
 		}
 	}
 
 	/**
-	 * Mount wicket-event.js and wicket-ajax.js merged using wicket's version for aggressive caching (e.g. wicket-1.4.7.js)
+	 * Mount wicket-event.js and wicket-ajax.js merged using wicket's version
+	 * for aggressive caching (e.g. wicket-1.4.7.js)
 	 * 
-	 * @param mountPrefix e.g. "script" for "/script/wicket-1.4.7.js
-	 * @param application the application
+	 * @param mountPrefix
+	 *            e.g. "script" for "/script/wicket-1.4.7.js
+	 * @param application
+	 *            the application
 	 */
 	public static void mountWicketResourcesMerged(String mountPrefix, WebApplication application) {
 		mountWicketResourcesMerged(mountPrefix, application, new ResourceMount().setDefaultAggressiveCacheDuration());
 	}
-	
+
 	/**
-	 * Mount wicket-event.js and wicket-ajax.js merged using wicket's version (e.g. wicket-1.4.7.js). 
+	 * Mount wicket-event.js and wicket-ajax.js merged using wicket's version
+	 * (e.g. wicket-1.4.7.js).
 	 * 
-	 * @param mountPrefix e.g. "script" for "/script/wicket-1.4.7.js
-	 * @param application the application
-	 * @param mount pre-configured resource mount to use. ResourceVersionProvider and Merged will be overridden
+	 * @param mountPrefix
+	 *            e.g. "script" for "/script/wicket-1.4.7.js
+	 * @param application
+	 *            the application
+	 * @param mount
+	 *            pre-configured resource mount to use. ResourceVersionProvider
+	 *            and Merged will be overridden
 	 */
 	public static void mountWicketResourcesMerged(String mountPrefix, WebApplication application, ResourceMount mount) {
 		if (!mountPrefix.endsWith("/")) {
 			mountPrefix = mountPrefix + "/";
 		}
 
-		mount = mount.clone()
-			.setResourceVersionProvider(new WicketVersionProvider(application))
-			.setPath(mountPrefix + "wicket.js")
-			.setMerged(true);
-		
-		for (ResourceReference ref : new ResourceReference[]{WicketEventReference.INSTANCE, WicketAjaxReference.INSTANCE}) {
+		mount = mount.clone().setResourceVersionProvider(new WicketVersionProvider(application))
+				.setPath(mountPrefix + "wicket.js").setMerged(true);
+
+		for (ResourceReference ref : new ResourceReference[] { WicketEventReference.INSTANCE,
+				WicketAjaxReference.INSTANCE }) {
 			mount.addResourceSpec(ref);
 		}
-		
-		mount
-			.mount(application);
+
+		mount.mount(application);
 	}
-	
-	
+
 	/**
-	 * enable annotation based adding of resources and make sure that the component instantiation listener is only
-	 * added once
+	 * enable annotation based adding of resources and make sure that the
+	 * component instantiation listener is only added once
 	 * 
 	 * @param application
 	 * @see JsContribution
@@ -211,42 +222,52 @@ public class ResourceMount implements Cloneable {
 				Class.forName("org.wicketstuff.config.MatchingResources");
 				Class.forName("org.springframework.core.io.support.PathMatchingResourcePatternResolver");
 			} catch (ClassNotFoundException e) {
-				throw new WicketRuntimeException("in order to enable wicketstuff-merged-resources' annotation support, "+
-						"wicketstuff-annotations and spring-core must be on the path "+
-						"(see http://wicketstuff.org/confluence/display/STUFFWIKI/wicketstuff-annotation for details)");
+				throw new WicketRuntimeException(
+						"in order to enable wicketstuff-merged-resources' annotation support, "
+								+ "wicketstuff-annotations and spring-core must be on the path "
+								+ "(see http://wicketstuff.org/confluence/display/STUFFWIKI/wicketstuff-annotation for details)");
 			}
 			application.addComponentInstantiationListener(new ContributionInjector());
 			application.setMetaData(ANNOTATIONS_ENABLED_KEY, Boolean.TRUE);
 		}
 	}
-	
+
 	/**
-	 * @see #mountAnnotatedPackageResources(String, String, WebApplication, ResourceMount)
+	 * @see #mountAnnotatedPackageResources(String, String, WebApplication,
+	 *      ResourceMount)
 	 */
-	public static void mountAnnotatedPackageResources(String mountPrefix, Class<?> scope, WebApplication application, ResourceMount mount) {
+	public static void mountAnnotatedPackageResources(String mountPrefix, Class<?> scope, WebApplication application,
+			ResourceMount mount) {
 		mountAnnotatedPackageResources(mountPrefix, scope.getPackage(), application, mount);
 	}
-	
+
 	/**
-	 * @see #mountAnnotatedPackageResources(String, String, WebApplication, ResourceMount)
+	 * @see #mountAnnotatedPackageResources(String, String, WebApplication,
+	 *      ResourceMount)
 	 */
-	public static void mountAnnotatedPackageResources(String mountPrefix, Package pkg, WebApplication application, ResourceMount mount) {
+	public static void mountAnnotatedPackageResources(String mountPrefix, Package pkg, WebApplication application,
+			ResourceMount mount) {
 		mountAnnotatedPackageResources(mountPrefix, pkg.getName(), application, mount);
 	}
-	
+
 	/**
-	 * mount annotated resources from the given package. resources are mounted beyond the given pathPrefix if resource
-	 * scope doesn't start with / itself.
+	 * mount annotated resources from the given package. resources are mounted
+	 * beyond the given pathPrefix if resource scope doesn't start with /
+	 * itself.
 	 * 
-	 * @param mount a preconfigured ResourceMount, won't be changed
-	 * @param pathPrefix pathPrefix to mount resources
-	 * @param packageName the scanned package
+	 * @param mount
+	 *            a preconfigured ResourceMount, won't be changed
+	 * @param pathPrefix
+	 *            pathPrefix to mount resources
+	 * @param packageName
+	 *            the scanned package
 	 * @param application
 	 * 
 	 * @see JsContribution
 	 * @see CssContribution
 	 */
-	public static void mountAnnotatedPackageResources(String mountPrefix, String packageName, WebApplication application, ResourceMount mount) {
+	public static void mountAnnotatedPackageResources(String mountPrefix, String packageName,
+			WebApplication application, ResourceMount mount) {
 		enableAnnotations(application);
 
 		if (Strings.isEmpty(mountPrefix)) {
@@ -258,27 +279,31 @@ public class ResourceMount implements Cloneable {
 		if (!mountPrefix.startsWith("/")) {
 			mountPrefix = "/" + mountPrefix;
 		}
-		
-		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : new ContributionScanner(packageName).getContributions().entrySet()) {
+
+		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : new ContributionScanner(packageName)
+				.getContributions().entrySet()) {
 			String path = e.getKey();
 			if (Strings.isEmpty(path)) {
 				throw new WicketRuntimeException("path must not be empty");
 			}
 			SortedSet<WeightedResourceSpec> specs = e.getValue();
-			
+
 			if (specs.size() > 0) {
 				ResourceMount m = mount.clone();
-				m.setRequireVersion(false); // TODO do something smarter to allow images etc
+				m.setRequireVersion(false); // TODO do something smarter to
+											// allow images etc
 				m.setPath(path.startsWith("/") ? path : mountPrefix + path);
 				m.addResourceSpecs(specs);
 				m.mount(application);
 			}
 		}
 	}
-	
+
 	/**
 	 * @param path
-	 * @return everything after last dot '.', ignoring anything before last slash '/' and leading dots '.'  ; <code>null</code> if suffix is empty
+	 * @return everything after last dot '.', ignoring anything before last
+	 *         slash '/' and leading dots '.' ; <code>null</code> if suffix is
+	 *         empty
 	 */
 	public static String getSuffix(String path) {
 		if (path == null) {
@@ -291,14 +316,14 @@ public class ResourceMount implements Cloneable {
 		while (path.startsWith(".")) {
 			path = path.substring(1);
 		}
-		
+
 		int dot = path.lastIndexOf('.');
 		if (dot >= 0 && dot < path.length() - 1) {
 			return path.substring(dot + 1);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * set {@link ICssCompressor} used by {@link CompressedMergedCssResource}
 	 * 
@@ -308,7 +333,7 @@ public class ResourceMount implements Cloneable {
 	public static void setCssCompressor(Application application, ICssCompressor compressor) {
 		application.setMetaData(CSS_COMPRESSOR_KEY, compressor);
 	}
-	
+
 	/**
 	 * get {@link ICssCompressor} used by {@link CompressedMergedCssResource}
 	 * 
@@ -317,7 +342,7 @@ public class ResourceMount implements Cloneable {
 	public static ICssCompressor getCssCompressor(Application application) {
 		return application.getMetaData(CSS_COMPRESSOR_KEY);
 	}
-	
+
 	/**
 	 * Create a new ResourceMount with default settings
 	 */
@@ -328,8 +353,9 @@ public class ResourceMount implements Cloneable {
 	/**
 	 * If dCreate a new ResourceMount with default settings
 	 * 
-	 * @param development <code>true</code> if ResourceMount should be configured with
-	 * 	developer-friendly defaults: no caching, no merging, no minify
+	 * @param development
+	 *            <code>true</code> if ResourceMount should be configured with
+	 *            developer-friendly defaults: no caching, no merging, no minify
 	 */
 	public ResourceMount(boolean development) {
 		if (development) {
@@ -341,7 +367,9 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param compressed whether this resources should be compressed. default is autodetect
+	 * @param compressed
+	 *            whether this resources should be compressed. default is
+	 *            autodetect
 	 * @return this
 	 * @see ResourceMount#autodetectCompression()
 	 */
@@ -349,9 +377,12 @@ public class ResourceMount implements Cloneable {
 		_compressed = compressed;
 		return this;
 	}
-	
+
 	/**
-	 * autodetect whether this resource should be compressed using suffix of file name (e.g. ".css") Behavior might be overriden in {@link #doCompress(String)}
+	 * autodetect whether this resource should be compressed using suffix of
+	 * file name (e.g. ".css") Behavior might be overriden in
+	 * {@link #doCompress(String)}
+	 * 
 	 * @return this
 	 * @see ResourceMount#setCompressed(boolean)
 	 */
@@ -359,9 +390,11 @@ public class ResourceMount implements Cloneable {
 		_compressed = null;
 		return this;
 	}
-	
+
 	/**
-	 * @param merge whether all {@link ResourceSpec}s should be merged to a single resource. default is autodetect
+	 * @param merge
+	 *            whether all {@link ResourceSpec}s should be merged to a single
+	 *            resource. default is autodetect
 	 * @return this
 	 * @see ResourceMount#autodetectMerging()
 	 */
@@ -369,9 +402,11 @@ public class ResourceMount implements Cloneable {
 		_merge = merge;
 		return this;
 	}
-	
+
 	/**
-	 * autodetect whether this resource should be merged using suffix of file name (e.g. ".js")
+	 * autodetect whether this resource should be merged using suffix of file
+	 * name (e.g. ".js")
+	 * 
 	 * @return this
 	 * @see #setMerged(boolean)
 	 */
@@ -381,8 +416,12 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * force a resource version, any {@link IResourceVersionProvider} ({@link #setResourceVersionProvider(IResourceVersionProvider)}) will be ignored. default is <code>null</code>
-	 * @param version version
+	 * force a resource version, any {@link IResourceVersionProvider} (
+	 * {@link #setResourceVersionProvider(IResourceVersionProvider)}) will be
+	 * ignored. default is <code>null</code>
+	 * 
+	 * @param version
+	 *            version
 	 * @return this
 	 */
 	public ResourceMount setVersion(AbstractResourceVersion version) {
@@ -391,25 +430,30 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * same as passing {@link AbstractResourceVersion#NO_VERSION} to {@link #setVersion(AbstractResourceVersion)}
+	 * same as passing {@link AbstractResourceVersion#NO_VERSION} to
+	 * {@link #setVersion(AbstractResourceVersion)}
+	 * 
 	 * @return this
 	 * @see #setVersion(AbstractResourceVersion)
 	 */
 	public ResourceMount setNoVersion() {
 		return setVersion(AbstractResourceVersion.NO_VERSION);
 	}
-	
+
 	/**
-	 * same as passing <code>null</code> to  {@link #setVersion(AbstractResourceVersion)}
+	 * same as passing <code>null</code> to
+	 * {@link #setVersion(AbstractResourceVersion)}
+	 * 
 	 * @return this
 	 * @see #setVersion(AbstractResourceVersion)
 	 */
 	public ResourceMount autodetectVersion() {
 		return setVersion(null);
 	}
-	
+
 	/**
 	 * force a minimal version. default is <code>null</code>
+	 * 
 	 * @param minVersion
 	 * @return this
 	 */
@@ -417,29 +461,37 @@ public class ResourceMount implements Cloneable {
 		_minVersion = minVersion;
 		return this;
 	}
-	
+
 	/**
-	 * Convenience method to use a {@link SimpleResourceVersion} as minVersion (e.g. suitable for {@link RevisionVersionProvider})
+	 * Convenience method to use a {@link SimpleResourceVersion} as minVersion
+	 * (e.g. suitable for {@link RevisionVersionProvider})
 	 * 
-	 * @param minVersionValue the minimal version
+	 * @param minVersionValue
+	 *            the minimal version
 	 * @return this
 	 */
 	public ResourceMount setMinVersion(int minVersionValue) {
 		return setMinVersion(new SimpleResourceVersion(minVersionValue));
 	}
-	
+
 	/**
-	 * unset minimal version, same as passing <code>null</code> to {@link #setMinVersion(AbstractResourceVersion)}
+	 * unset minimal version, same as passing <code>null</code> to
+	 * {@link #setMinVersion(AbstractResourceVersion)}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount unsetMinVersion() {
 		return setMinVersion(null);
 	}
-	
+
 	/**
-	 * {@link IResourceVersionProvider} might not always be able to detect the version of a resource. This might be ignored or cause an error depending.
+	 * {@link IResourceVersionProvider} might not always be able to detect the
+	 * version of a resource. This might be ignored or cause an error depending.
 	 * default is to cause an error (<code>true</code>)
-	 * @param requireVersion whether version is required (<code>true</code>) or not (<code>false</code>). default is <code>true</code>
+	 * 
+	 * @param requireVersion
+	 *            whether version is required (<code>true</code>) or not
+	 *            (<code>false</code>). default is <code>true</code>
 	 * @return this
 	 */
 	public ResourceMount setRequireVersion(boolean requireVersion) {
@@ -448,12 +500,16 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * the path to user for mounting. this might either be a prefix if multiple resources are mounted or the full name. if used as prefix,
+	 * the path to user for mounting. this might either be a prefix if multiple
+	 * resources are mounted or the full name. if used as prefix,
 	 * {@link ResourceSpec#getFile()} is appended
-	 * @param path name or prefix for mount, with or without leading or trailing slashes
+	 * 
+	 * @param path
+	 *            name or prefix for mount, with or without leading or trailing
+	 *            slashes
 	 * @return this
 	 */
-	public ResourceMount setPath(String path) {	
+	public ResourceMount setPath(String path) {
 		if (path != null) {
 			path = path.trim();
 			if ("".equals(path) || "/".equals(path)) {
@@ -471,9 +527,14 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * convenience method to use {@link #setPath(String)} use a prefix and {@link ResourceReference#getName()}.
-	 * @param prefix path prefix prefix for mount, with or without leading or trailing slashes
-	 * @param ref a {@link ResourceReference}
+	 * convenience method to use {@link #setPath(String)} use a prefix and
+	 * {@link ResourceReference#getName()}.
+	 * 
+	 * @param prefix
+	 *            path prefix prefix for mount, with or without leading or
+	 *            trailing slashes
+	 * @param ref
+	 *            a {@link ResourceReference}
 	 * @return this
 	 */
 	public ResourceMount setPath(String prefix, ResourceReference ref) {
@@ -482,23 +543,37 @@ public class ResourceMount implements Cloneable {
 		}
 		return setPath(prefix + ref.getName());
 	}
-	
+
 	/**
-	 * convenience method to use {@link #setPath(String)} use a prefix and {@link ResourceReference#getName()}.
-	 * @param prefix path prefix prefix for mount, with or without leading or trailing slashes
-	 * @param ref a {@link ResourceReference}
-	 * @param suffix suffix to append after {@link ResourceReference#getName()}, might be null
+	 * convenience method to use {@link #setPath(String)} use a prefix and
+	 * {@link ResourceReference#getName()}.
+	 * 
+	 * @param prefix
+	 *            path prefix prefix for mount, with or without leading or
+	 *            trailing slashes
+	 * @param ref
+	 *            a {@link ResourceReference}
+	 * @param suffix
+	 *            suffix to append after {@link ResourceReference#getName()},
+	 *            might be null
 	 * @return this
 	 */
 	public ResourceMount setPath(String prefix, ResourceReference ref, String suffix) {
 		return setPath(prefix, ref.getName(), suffix);
 	}
-	
+
 	/**
-	 * convenience method to use {@link #setPath(String)} use a prefix and a name
-	 * @param prefix path prefix prefix for mount, with or without leading or trailing slashes
-	 * @param name a name
-	 * @param suffix suffix to append after {@link ResourceReference#getName()}, might be null
+	 * convenience method to use {@link #setPath(String)} use a prefix and a
+	 * name
+	 * 
+	 * @param prefix
+	 *            path prefix prefix for mount, with or without leading or
+	 *            trailing slashes
+	 * @param name
+	 *            a name
+	 * @param suffix
+	 *            suffix to append after {@link ResourceReference#getName()},
+	 *            might be null
 	 * @return this
 	 */
 	public ResourceMount setPath(String prefix, String name, String suffix) {
@@ -512,9 +587,12 @@ public class ResourceMount implements Cloneable {
 		}
 		return setPath(prefix + name + suffix);
 	}
-	
+
 	/**
-	 * @param mountRedirect whether a redirected should be mounted from the unversioned path to the versioned path (only used if there is a version). default is <code>true</code>
+	 * @param mountRedirect
+	 *            whether a redirected should be mounted from the unversioned
+	 *            path to the versioned path (only used if there is a version).
+	 *            default is <code>true</code>
 	 * @return this
 	 */
 	public ResourceMount setMountRedirect(boolean mountRedirect) {
@@ -523,8 +601,11 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * Locale might either be detected from added {@link ResourceSpec}s or set manually.
-	 * @param locale Locale for mounted resources
+	 * Locale might either be detected from added {@link ResourceSpec}s or set
+	 * manually.
+	 * 
+	 * @param locale
+	 *            Locale for mounted resources
 	 * @return this
 	 * @see {@link ResourceReference#setLocale(Locale)}
 	 */
@@ -532,18 +613,23 @@ public class ResourceMount implements Cloneable {
 		_locale = locale;
 		return this;
 	}
-	
+
 	/**
-	 * Autodetect the locale. Same as passing <code>null</code> to {@link #setLocale(Locale)}
+	 * Autodetect the locale. Same as passing <code>null</code> to
+	 * {@link #setLocale(Locale)}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount autodetectLocale() {
 		return setLocale(null);
 	}
-	
+
 	/**
-	 * Style might either be detected from added {@link ResourceSpec}s or set manually.
-	 * @param style Style for mounted resources
+	 * Style might either be detected from added {@link ResourceSpec}s or set
+	 * manually.
+	 * 
+	 * @param style
+	 *            Style for mounted resources
 	 * @return this
 	 * @see {@link ResourceReference#setStyle(String)}
 	 */
@@ -553,15 +639,19 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * Autodetect the style. Same as passing <code>null</code> to {@link #setStyle(String)}
+	 * Autodetect the style. Same as passing <code>null</code> to
+	 * {@link #setStyle(String)}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount autodetectStyle() {
 		return setStyle(null);
 	}
-	
+
 	/**
-	 * Set cache duration in seconds. default is autodetect ({@link <code>null</code>}). Must be >= 0
+	 * Set cache duration in seconds. default is autodetect ({@link
+	 * <code>null</code>}). Must be >= 0
+	 * 
 	 * @param cacheDuration
 	 * @return this
 	 * @see #autodetectCacheDuration()
@@ -575,21 +665,25 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * Same as passing {@link ResourceMount#DEFAULT_CACHE_DURATION} to {@link #setCacheDuration(int)}
+	 * Same as passing {@link ResourceMount#DEFAULT_CACHE_DURATION} to
+	 * {@link #setCacheDuration(int)}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount setDefaultCacheDuration() {
 		return setCacheDuration(DEFAULT_CACHE_DURATION);
 	}
-	
+
 	/**
-	 * Same as passing {@link ResourceMount#DEFAULT_AGGRESSIVE_CACHE_DURATION} to {@link #setCacheDuration(int)}
+	 * Same as passing {@link ResourceMount#DEFAULT_AGGRESSIVE_CACHE_DURATION}
+	 * to {@link #setCacheDuration(int)}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount setDefaultAggressiveCacheDuration() {
 		return setCacheDuration(DEFAULT_AGGRESSIVE_CACHE_DURATION);
 	}
-	
+
 	/**
 	 * @deprecated typo in name, it's aggressive with ss
 	 * @see #setDefaultAggressiveCacheDuration()
@@ -598,20 +692,25 @@ public class ResourceMount implements Cloneable {
 	public ResourceMount setDefaultAggresiveCacheDuration() {
 		return setCacheDuration(DEFAULT_AGGRESSIVE_CACHE_DURATION);
 	}
-	
+
 	/**
-	 * autodetect cache duration: use minimum of all resource specs or {@link ResourceMount#DEFAULT_CACHE_DURATION} if 
-	 * not available. Behavior might be overriden using {@link #getCacheDuration()}
+	 * autodetect cache duration: use minimum of all resource specs or
+	 * {@link ResourceMount#DEFAULT_CACHE_DURATION} if not available. Behavior
+	 * might be overriden using {@link #getCacheDuration()}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount autodetectCacheDuration() {
 		_cacheDuration = null;
 		return this;
 	}
-	
+
 	/**
-	 * Set the {@link IResourceVersionProvider} to use for {@link AbstractResourceVersion} detection
-	 * @param resourceVersionProvider the resource version provider
+	 * Set the {@link IResourceVersionProvider} to use for
+	 * {@link AbstractResourceVersion} detection
+	 * 
+	 * @param resourceVersionProvider
+	 *            the resource version provider
 	 * @return this
 	 */
 	public ResourceMount setResourceVersionProvider(IResourceVersionProvider resourceVersionProvider) {
@@ -620,8 +719,9 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param minifyJs whether js should be minified (<code>true</code>) or not (<code>false</code>). Default is
-	 * autodetect
+	 * @param minifyJs
+	 *            whether js should be minified (<code>true</code>) or not
+	 *            (<code>false</code>). Default is autodetect
 	 * @return this
 	 * @see #autodetectMinifyJs()
 	 */
@@ -631,8 +731,10 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * Autodetect wheter resource should be minified using a JS compressor. Default is to minify files ending with .js.
-	 * Behavior might be overriden using {@link #doMinifyJs(String)}
+	 * Autodetect wheter resource should be minified using a JS compressor.
+	 * Default is to minify files ending with .js. Behavior might be overriden
+	 * using {@link #doMinifyJs(String)}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount autodetectMinifyJs() {
@@ -641,7 +743,9 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param minifyCss whether css should be minified (<code>true</code>) or not (<code>false</code>). Default is autodetect
+	 * @param minifyCss
+	 *            whether css should be minified (<code>true</code>) or not
+	 *            (<code>false</code>). Default is autodetect
 	 * @return this
 	 * @see #autodetectMinifyCss()
 	 */
@@ -651,8 +755,10 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * Autodetect wheter resource should be minified using a CSS compressor. Default is to minify files ending with .css.
-	 * Behavior might be overriden using {@link #doMinifyCss(String)}
+	 * Autodetect wheter resource should be minified using a CSS compressor.
+	 * Default is to minify files ending with .css. Behavior might be overriden
+	 * using {@link #doMinifyCss(String)}
+	 * 
 	 * @return this
 	 */
 	public ResourceMount autodetectMinifyCss() {
@@ -662,7 +768,9 @@ public class ResourceMount implements Cloneable {
 
 	/**
 	 * The mount scope to use. default is autodetect (<code>null</code>)
-	 * @param mountScope mount scope
+	 * 
+	 * @param mountScope
+	 *            mount scope
 	 * @return this
 	 * @see ResourceReference#getScope()
 	 * @see #autodetectMountScope()
@@ -673,14 +781,16 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * Same as passing <code>null</code> to {@link #setMountScope(Class)}. Autodetect: either use the scope that all
-	 * (merged) resources are using or use {@link ResourceMount} as mount scope.
+	 * Same as passing <code>null</code> to {@link #setMountScope(Class)}.
+	 * Autodetect: either use the scope that all (merged) resources are using or
+	 * use {@link ResourceMount} as mount scope.
+	 * 
 	 * @return this
 	 */
 	public ResourceMount autodetectMountScope() {
 		return setMountScope(null);
 	}
-	
+
 	/**
 	 * @return the current {@link IResourcePreProcessor}
 	 */
@@ -689,7 +799,9 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * use an {@link IResourcePreProcessor} to modify resources (e.g. replace properties, change relative to absolute paths, ...)
+	 * use an {@link IResourcePreProcessor} to modify resources (e.g. replace
+	 * properties, change relative to absolute paths, ...)
+	 * 
 	 * @param preProcessor
 	 * @return this
 	 */
@@ -698,7 +810,6 @@ public class ResourceMount implements Cloneable {
 		return this;
 	}
 
-	
 	/**
 	 * @return current suffixMismatchStrategy
 	 */
@@ -707,7 +818,8 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param suffixMismatchStrategy the new strategy
+	 * @param suffixMismatchStrategy
+	 *            the new strategy
 	 * @return this
 	 */
 	public ResourceMount setSuffixMismatchStrategy(SuffixMismatchStrategy suffixMismatchStrategy) {
@@ -719,7 +831,8 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param resourceSpec add a new {@link ResourceSpec}
+	 * @param resourceSpec
+	 *            add a new {@link ResourceSpec}
 	 * @return this
 	 */
 	public ResourceMount addResourceSpec(ResourceSpec resourceSpec) {
@@ -732,43 +845,58 @@ public class ResourceMount implements Cloneable {
 
 	/**
 	 * add a new {@link ResourceSpec} with this scope and name
-	 * @param scope scope
-	 * @param name name
+	 * 
+	 * @param scope
+	 *            scope
+	 * @param name
+	 *            name
 	 * @return this
 	 */
 	public ResourceMount addResourceSpec(Class<?> scope, String name) {
 		return addResourceSpec(new ResourceSpec(scope, name));
 	}
-	
+
 	/**
 	 * add a new {@link ResourceSpec} with this scope and each name
-	 * @param scope scope
-	 * @param names names
+	 * 
+	 * @param scope
+	 *            scope
+	 * @param names
+	 *            names
 	 * @return this
 	 */
-	public ResourceMount addResourceSpecs(Class<?> scope, String ... names) {
+	public ResourceMount addResourceSpecs(Class<?> scope, String... names) {
 		for (String name : names) {
 			addResourceSpec(new ResourceSpec(scope, name));
-		}		
+		}
 		return this;
 	}
-	
+
 	/**
-	 * add a new {@link ResourceSpec} with this scope, name, locale, style and cacheDuration
-	 * @param scope scope
-	 * @param name name
-	 * @param locale locale
-	 * @param style style
-	 * @param cacheDuration cache duration
+	 * add a new {@link ResourceSpec} with this scope, name, locale, style and
+	 * cacheDuration
+	 * 
+	 * @param scope
+	 *            scope
+	 * @param name
+	 *            name
+	 * @param locale
+	 *            locale
+	 * @param style
+	 *            style
+	 * @param cacheDuration
+	 *            cache duration
 	 * @return this
 	 */
 	public ResourceMount addResourceSpec(Class<?> scope, String name, Locale locale, String style, Integer cacheDuration) {
 		return addResourceSpec(new ResourceSpec(scope, name, locale, style, cacheDuration));
 	}
-	
+
 	/**
 	 * add all resource specs
-	 * @param resourceSpecs array of {@link ResourceSpec}s to add
+	 * 
+	 * @param resourceSpecs
+	 *            array of {@link ResourceSpec}s to add
 	 * @return this
 	 */
 	public ResourceMount addResourceSpecs(ResourceSpec... resourceSpecs) {
@@ -777,7 +905,9 @@ public class ResourceMount implements Cloneable {
 
 	/**
 	 * add all resource specs
-	 * @param resourceSpecs {@link Iterable} of {@link ResourceSpec}s to add
+	 * 
+	 * @param resourceSpecs
+	 *            {@link Iterable} of {@link ResourceSpec}s to add
 	 * @return this
 	 */
 	public ResourceMount addResourceSpecs(Iterable<? extends ResourceSpec> resourceSpecs) {
@@ -788,10 +918,14 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * Adds a resource spec for a resource with the same name as the scope, adding a suffix.
-	 * Example: if scope is Foo.class and suffix is "js", name will be "Foo.js"
-	 * @param scope the scope
-	 * @param suffix the suffix
+	 * Adds a resource spec for a resource with the same name as the scope,
+	 * adding a suffix. Example: if scope is Foo.class and suffix is "js", name
+	 * will be "Foo.js"
+	 * 
+	 * @param scope
+	 *            the scope
+	 * @param suffix
+	 *            the suffix
 	 * @return this
 	 */
 	public ResourceMount addResourceSpecMatchingSuffix(Class<?> scope, String suffix) {
@@ -802,9 +936,13 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * same as {@link #addResourceSpecMatchingSuffix(Class, String)} but using multiple suffixes
-	 * @param scope the scope
-	 * @param suffixes the suffixes
+	 * same as {@link #addResourceSpecMatchingSuffix(Class, String)} but using
+	 * multiple suffixes
+	 * 
+	 * @param scope
+	 *            the scope
+	 * @param suffixes
+	 *            the suffixes
 	 * @return this
 	 */
 	public ResourceMount addResourceSpecsMatchingSuffixes(Class<?> scope, String... suffixes) {
@@ -812,9 +950,13 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * same as {@link #addResourceSpecMatchingSuffix(Class, String)} but using multiple suffixes
-	 * @param scope the scope
-	 * @param suffixes the suffixes
+	 * same as {@link #addResourceSpecMatchingSuffix(Class, String)} but using
+	 * multiple suffixes
+	 * 
+	 * @param scope
+	 *            the scope
+	 * @param suffixes
+	 *            the suffixes
 	 * @return this
 	 */
 	public ResourceMount addResourceSpecsMatchingSuffix(Class<?> scope, Iterable<String> suffixes) {
@@ -825,50 +967,60 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * uses the path (set by {@link #setPath(String)}) to obtain a suffix to use with {@link #addResourceSpecMatchingSuffix(Class, String)}
+	 * uses the path (set by {@link #setPath(String)}) to obtain a suffix to use
+	 * with {@link #addResourceSpecMatchingSuffix(Class, String)}
+	 * 
 	 * @param scopes
 	 * @return this
 	 */
-	public ResourceMount addResourceSpecsMatchingSuffix(Class<?> ... scopes) {
+	public ResourceMount addResourceSpecsMatchingSuffix(Class<?>... scopes) {
 		if (_path == null) {
 			throw new IllegalStateException("unversionPath must be set for this method to work");
 		}
 		String suffix = getSuffix(_path);
 		if (Strings.isEmpty(suffix) || suffix.contains("/")) {
-			throw new IllegalStateException("unversionPath does not have a valid suffix (i.e. does not contain a '.' followed by characterers and no '/')");
+			throw new IllegalStateException(
+					"unversionPath does not have a valid suffix (i.e. does not contain a '.' followed by characterers and no '/')");
 		}
 		for (Class<?> scope : scopes) {
 			addResourceSpecMatchingSuffix(scope, suffix);
 		}
 		return this;
 	}
-	
+
 	/**
 	 * add a {@link ResourceSpec} using a {@link ResourceReference}
-	 * @param ref the {@link ResourceReference}
+	 * 
+	 * @param ref
+	 *            the {@link ResourceReference}
 	 * @return this
 	 */
 	public ResourceMount addResourceSpec(ResourceReference ref) {
 		return addResourceSpec(new ResourceSpec(ref));
 	}
-	
+
 	/**
 	 * add a {@link ResourceSpec} for each {@link ResourceReference}
-	 * @param refs the {@link ResourceReference}s
+	 * 
+	 * @param refs
+	 *            the {@link ResourceReference}s
 	 * @return this
 	 */
-	public ResourceMount addResourceSpecs(ResourceReference ... refs) {
+	public ResourceMount addResourceSpecs(ResourceReference... refs) {
 		for (ResourceReference ref : refs) {
 			addResourceSpec(ref);
 		}
 		return this;
 	}
-	
+
 	/**
-	 * mount the {@link ResourceSpec}(s) added either as a single {@link Resource} or multiple Resource, depending on
-	 * {@link #doMerge()}. Might also mount a redirect for versioned path names. (e.g. from "/script/wicket-ajax.js" to "/script/wicket-ajax-1.3.6.js")
+	 * mount the {@link ResourceSpec}(s) added either as a single
+	 * {@link Resource} or multiple Resource, depending on {@link #doMerge()}.
+	 * Might also mount a redirect for versioned path names. (e.g. from
+	 * "/script/wicket-ajax.js" to "/script/wicket-ajax-1.3.6.js")
 	 * 
-	 * @param application the application
+	 * @param application
+	 *            the application
 	 * @return this
 	 */
 	public ResourceMount mount(WebApplication application) {
@@ -887,87 +1039,89 @@ public class ResourceMount implements Cloneable {
 	public AbstractHeaderContributor build(final WebApplication application) {
 		return build(application, null);
 	}
-	
+
 	/**
 	 * same as {@link #mount(WebApplication)}, but returns an
 	 * {@link AbstractHeaderContributor} to use in components
 	 * 
 	 * @param application
 	 *            the application
-	 * @param cssMediaType CSS media type, e.g. "print" or <code>null</code> for no media type
-	 * @return {@link AbstractHeaderContributor} to be used in components, all files ending with '.css' will be
-	 * rendered with passed cssMediaType 
+	 * @param cssMediaType
+	 *            CSS media type, e.g. "print" or <code>null</code> for no media
+	 *            type
+	 * @return {@link AbstractHeaderContributor} to be used in components, all
+	 *         files ending with '.css' will be rendered with passed
+	 *         cssMediaType
 	 */
 	public AbstractHeaderContributor build(final WebApplication application, String cssMediaType) {
 		if (_resourceSpecs.size() == 0) {
 			// nothing to do
 			return null;
 		}
-		
+
 		try {
 			List<Pair<String, ResourceSpec[]>> specsList;
 
 			boolean merge = doMerge();
 			if (merge) {
-				specsList = new ArrayList<Pair<String,ResourceSpec[]>>(1);
+				specsList = new ArrayList<Pair<String, ResourceSpec[]>>(1);
 				specsList.add(new Pair<String, ResourceSpec[]>(null, getResourceSpecs()));
 			} else {
-				specsList = new ArrayList<Pair<String,ResourceSpec[]>>(_resourceSpecs.size());
+				specsList = new ArrayList<Pair<String, ResourceSpec[]>>(_resourceSpecs.size());
 				for (ResourceSpec spec : _resourceSpecs) {
-					specsList.add(new Pair<String, ResourceSpec[]>(_resourceSpecs.size() > 1 ? spec.getFile() : null, new ResourceSpec[]{spec}));
+					specsList.add(new Pair<String, ResourceSpec[]>(_resourceSpecs.size() > 1 ? spec.getFile() : null,
+							new ResourceSpec[] { spec }));
 				}
-			} 
-			
-			final List<ResourceReference> refs = new ArrayList<ResourceReference>(
-					specsList.size());
+			}
+
+			final List<ResourceReference> refs = new ArrayList<ResourceReference>(specsList.size());
 			for (Pair<String, ResourceSpec[]> p : specsList) {
 				ResourceSpec[] specs = p.getSecond();
-				
+
 				String path = getPath(p.getFirst(), specs);
 				String unversionedPath = getPath(p.getFirst(), null);
 
 				checkSuffixes(unversionedPath, Arrays.asList(specs));
-				
+
 				boolean versioned = !unversionedPath.equals(path);
-				
+
 				String name = specs.length == 1 ? specs[0].getFile() : unversionedPath;
-				
-				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs), getStyle(specs), getCacheDuration(specs, versioned), specs, _preProcessor);
+
+				final ResourceReference ref = newResourceReference(getScope(specs), name, getLocale(specs),
+						getStyle(specs), getCacheDuration(specs, versioned), specs, _preProcessor);
 				refs.add(ref);
 				ref.bind(application);
 				application.mount(newStrategy(path, ref, merge));
-	
+
 				if (_mountRedirect && versioned) {
 					application.mount(newRedirectStrategy(unversionedPath, path));
 				}
-				
+
 				initResource(ref);
 			}
 			return newHeaderContributor(refs, cssMediaType);
 		} catch (Exception e) {
-			throw new WicketRuntimeException("failed to mount resource ('" + _path
-					+ "')", e);
+			throw new WicketRuntimeException("failed to mount resource ('" + _path + "')", e);
 		}
 	}
 
 	/**
-	 * @param refs a list of ResourceReferences
-	 * @return an {@link AbstractHeaderContributor} that renders references to all CSS and JS
-	 * resources contained in refs
+	 * @param refs
+	 *            a list of ResourceReferences
+	 * @return an {@link AbstractHeaderContributor} that renders references to
+	 *         all CSS and JS resources contained in refs
 	 */
-	protected AbstractHeaderContributor newHeaderContributor(
-			final List<ResourceReference> refs, String cssMediaType) {
+	protected AbstractHeaderContributor newHeaderContributor(final List<ResourceReference> refs, String cssMediaType) {
 		return new MergedHeaderContributor(refs, cssMediaType);
 	}
-	
+
 	/**
 	 * load resource stream once in order to load it into memory
 	 * 
 	 * @param ref
 	 * @throws ResourceStreamNotFoundException
 	 */
-	private void initResource(final ResourceReference ref)
-			throws ResourceStreamNotFoundException {
+	private void initResource(final ResourceReference ref) throws ResourceStreamNotFoundException {
 		boolean gzip = Application.get().getResourceSettings().getDisableGZipCompression();
 		try {
 			Application.get().getResourceSettings().setDisableGZipCompression(true);
@@ -980,9 +1134,13 @@ public class ResourceMount implements Cloneable {
 	/**
 	 * create a new {@link IRequestTargetUrlCodingStrategy}
 	 * 
-	 * @param mountPath the mount path
-	 * @param ref the {@link ResourceReference}
-	 * @param merge if <code>true</code>, all resources obtained by {@link #getResourceSpecs()} should be merged
+	 * @param mountPath
+	 *            the mount path
+	 * @param ref
+	 *            the {@link ResourceReference}
+	 * @param merge
+	 *            if <code>true</code>, all resources obtained by
+	 *            {@link #getResourceSpecs()} should be merged
 	 * @return this
 	 */
 	protected IRequestTargetUrlCodingStrategy newStrategy(String mountPath, final ResourceReference ref, boolean merge) {
@@ -1011,9 +1169,13 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * create a new {@link IRequestTargetUrlCodingStrategy} to redirect from mountPath to redirectPath
-	 * @param mountPath the path to redirect from
-	 * @param redirectPath the path to redirect to
+	 * create a new {@link IRequestTargetUrlCodingStrategy} to redirect from
+	 * mountPath to redirectPath
+	 * 
+	 * @param mountPath
+	 *            the path to redirect from
+	 * @param redirectPath
+	 *            the path to redirect to
 	 * @return a new {@link IRequestTargetUrlCodingStrategy}
 	 */
 	protected IRequestTargetUrlCodingStrategy newRedirectStrategy(String mountPath, String redirectPath) {
@@ -1021,34 +1183,45 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @return the path, same as passing <code>null</code> and <code>null</code> to {@link #getPath(String, ResourceSpec[])}
-	 * @throws VersionException if version can't be found
-	 * @throws IncompatibleVersionsException if versions can't be compared
+	 * @return the path, same as passing <code>null</code> and <code>null</code>
+	 *         to {@link #getPath(String, ResourceSpec[])}
+	 * @throws VersionException
+	 *             if version can't be found
+	 * @throws IncompatibleVersionsException
+	 *             if versions can't be compared
 	 * @see #getPath(String, boolean)
 	 */
 	public final String getPath() throws VersionException, IncompatibleVersionsException {
 		return getPath(null, null);
 	}
-	
+
 	/**
 	 * @param appendName
-	 * @return the path, same as passing <code>appendName</code> and <code>null</code> to {@link #getPath(String, ResourceSpec[])}
-	 * @throws VersionException if version can't be found
-	 * @throws IncompatibleVersionsException if versions can't be compared
+	 * @return the path, same as passing <code>appendName</code> and
+	 *         <code>null</code> to {@link #getPath(String, ResourceSpec[])}
+	 * @throws VersionException
+	 *             if version can't be found
+	 * @throws IncompatibleVersionsException
+	 *             if versions can't be compared
 	 * @see #getPath(String, boolean)
 	 */
 	public final String getPath(String appendName) throws VersionException, IncompatibleVersionsException {
 		return getPath(appendName, null);
 	}
-	
+
 	/**
-	 * @param appendName the name to append after path
-	 * @param specs a list of specs to get the version from or null
+	 * @param appendName
+	 *            the name to append after path
+	 * @param specs
+	 *            a list of specs to get the version from or null
 	 * @return the path
-	 * @throws VersionException if version can't be found
-	 * @throws IncompatibleVersionsException if versions can't be compared
+	 * @throws VersionException
+	 *             if version can't be found
+	 * @throws IncompatibleVersionsException
+	 *             if versions can't be compared
 	 */
-	public String getPath(String appendName, ResourceSpec[] specs) throws VersionException, IncompatibleVersionsException {
+	public String getPath(String appendName, ResourceSpec[] specs) throws VersionException,
+			IncompatibleVersionsException {
 		if (_path == null) {
 			throw new IllegalStateException("path must be set");
 		}
@@ -1060,25 +1233,29 @@ public class ResourceMount implements Cloneable {
 			}
 			path = path + appendName;
 		}
-		
-		
+
 		if (specs != null && specs.length > 0) {
 			AbstractResourceVersion version = getVersion(specs);
 			if (version != null && version.isValid()) {
 				return buildVersionedPath(path, version);
 			}
 		}
-		
+
 		return path;
 	}
 
 	/**
-	 * create a versioned path out of the given path and the version. default is to append the
-	 * version after a '-' in front of the last '.' in the path. (e.g. wicket-ajax-1.3.6.js)
-	 * if there is no '.' in the path or only at the beginning, a '-' and the version will be appended
-	 * (e.g. foobar-1.3.6 or .something-1.3.6
-	 * @param path the path
-	 * @param version the version. must not be null but may be invalid (check version.isValid()!)
+	 * create a versioned path out of the given path and the version. default is
+	 * to append the version after a '-' in front of the last '.' in the path.
+	 * (e.g. wicket-ajax-1.3.6.js) if there is no '.' in the path or only at the
+	 * beginning, a '-' and the version will be appended (e.g. foobar-1.3.6 or
+	 * .something-1.3.6
+	 * 
+	 * @param path
+	 *            the path
+	 * @param version
+	 *            the version. must not be null but may be invalid (check
+	 *            version.isValid()!)
 	 * @return the versioned path
 	 */
 	protected String buildVersionedPath(String path, AbstractResourceVersion version) {
@@ -1094,14 +1271,21 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * detect the version. default implementation is to use the manually set version or detect it using
-	 * {@link IResourceVersionProvider} from all specs. 
-	 * @param specs the specs to detect the version from
+	 * detect the version. default implementation is to use the manually set
+	 * version or detect it using {@link IResourceVersionProvider} from all
+	 * specs.
+	 * 
+	 * @param specs
+	 *            the specs to detect the version from
 	 * @return the version
-	 * @throws VersionException If a version can't be determined from any resource and version is required ({@link #setRequireVersion(boolean)})
-	 * @throws IncompatibleVersionsException if versions can't be compared
+	 * @throws VersionException
+	 *             If a version can't be determined from any resource and
+	 *             version is required ({@link #setRequireVersion(boolean)})
+	 * @throws IncompatibleVersionsException
+	 *             if versions can't be compared
 	 */
-	protected AbstractResourceVersion getVersion(ResourceSpec[] specs) throws VersionException, IncompatibleVersionsException {
+	protected AbstractResourceVersion getVersion(ResourceSpec[] specs) throws VersionException,
+			IncompatibleVersionsException {
 		if (_version != null) {
 			return _version;
 		}
@@ -1110,8 +1294,8 @@ public class ResourceMount implements Cloneable {
 			AbstractResourceVersion max = _minVersion;
 			for (ResourceSpec spec : specs) {
 				try {
-					AbstractResourceVersion version = _resourceVersionProvider.getVersion(spec
-							.getScope(), spec.getFile());
+					AbstractResourceVersion version = _resourceVersionProvider.getVersion(spec.getScope(),
+							spec.getFile());
 					if (max == null || version.compareTo(max) > 0) {
 						max = version;
 					}
@@ -1128,9 +1312,12 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * get the mount scope. Either use the manually set scope ({@link #setMountScope(Class)} or detect it. Default
-	 * is to use the scope of all specs if it is common or use {@link ResourceMount}
-	 * @param specs the specs to obtain the scope for
+	 * get the mount scope. Either use the manually set scope (
+	 * {@link #setMountScope(Class)} or detect it. Default is to use the scope
+	 * of all specs if it is common or use {@link ResourceMount}
+	 * 
+	 * @param specs
+	 *            the specs to obtain the scope for
 	 * @return the scope
 	 */
 	protected Class<?> getScope(ResourceSpec[] specs) {
@@ -1150,30 +1337,41 @@ public class ResourceMount implements Cloneable {
 				return scope;
 			}
 		}
-		
+
 		return ResourceMount.class;
 	}
 
 	/**
 	 * create a new {@link ResourceReference}
-	 * @param scope scope
-	 * @param name name
-	 * @param locale locale
-	 * @param style style
-	 * @param cacheDuration cache duration
-	 * @param resourceSpecs resource specs
+	 * 
+	 * @param scope
+	 *            scope
+	 * @param name
+	 *            name
+	 * @param locale
+	 *            locale
+	 * @param style
+	 *            style
+	 * @param cacheDuration
+	 *            cache duration
+	 * @param resourceSpecs
+	 *            resource specs
 	 * @return a new {@link ResourceReference}
 	 */
-	protected ResourceReference newResourceReference(Class<?> scope, final String name, Locale locale, String style, int cacheDuration, ResourceSpec[] resourceSpecs, IResourcePreProcessor preProcessor) {
+	protected ResourceReference newResourceReference(Class<?> scope, final String name, Locale locale, String style,
+			int cacheDuration, ResourceSpec[] resourceSpecs, IResourcePreProcessor preProcessor) {
 		ResourceReference ref;
 		if (resourceSpecs.length > 1) {
 			if (doCompress(name)) {
 				if (doMinifyCss(name)) {
-					ref = new CompressedMergedCssResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
+					ref = new CompressedMergedCssResourceReference(name, locale, style, resourceSpecs, cacheDuration,
+							preProcessor);
 				} else if (doMinifyJs(name)) {
-					ref = new CompressedMergedJsResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
+					ref = new CompressedMergedJsResourceReference(name, locale, style, resourceSpecs, cacheDuration,
+							preProcessor);
 				} else {
-					ref = new CompressedMergedResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
+					ref = new CompressedMergedResourceReference(name, locale, style, resourceSpecs, cacheDuration,
+							preProcessor);
 				}
 			} else {
 				ref = new MergedResourceReference(name, locale, style, resourceSpecs, cacheDuration, preProcessor);
@@ -1181,9 +1379,11 @@ public class ResourceMount implements Cloneable {
 		} else if (resourceSpecs.length == 1) {
 			if (doCompress(name)) {
 				if (doMinifyCss(name)) {
-					ref = new CachedCompressedCssResourceReference(scope, name, locale, style, cacheDuration, preProcessor);
+					ref = new CachedCompressedCssResourceReference(scope, name, locale, style, cacheDuration,
+							preProcessor);
 				} else if (doMinifyJs(name)) {
-					ref = new CachedCompressedJsResourceReference(scope, name, locale, style, cacheDuration, preProcessor);
+					ref = new CachedCompressedJsResourceReference(scope, name, locale, style, cacheDuration,
+							preProcessor);
 				} else {
 					ref = new CachedCompressedResourceReference(scope, name, locale, style, cacheDuration, preProcessor);
 				}
@@ -1197,11 +1397,15 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * detect the locale to use. Either use a manually chosen one ({@link #setLocale(Locale)}) or detect it from
-	 * the given resource specs. An {@link Exception} will be thrown if locales of added resources aren't compatible.
-	 * (e.g. 'de' and 'en'). The resource will always use the most specific locale. For instance, if 5 resources
-	 * are 'en' and one is 'en_US', the locale will be 'en_US'
-	 * @param specs the {@link ResourceSpec}s to get the locale for
+	 * detect the locale to use. Either use a manually chosen one (
+	 * {@link #setLocale(Locale)}) or detect it from the given resource specs.
+	 * An {@link Exception} will be thrown if locales of added resources aren't
+	 * compatible. (e.g. 'de' and 'en'). The resource will always use the most
+	 * specific locale. For instance, if 5 resources are 'en' and one is
+	 * 'en_US', the locale will be 'en_US'
+	 * 
+	 * @param specs
+	 *            the {@link ResourceSpec}s to get the locale for
 	 * @return the locale
 	 */
 	protected Locale getLocale(ResourceSpec[] specs) {
@@ -1216,19 +1420,22 @@ public class ResourceMount implements Cloneable {
 				if (spec.getLocale() != null) {
 					if (spec.getLocale().getLanguage() != null) {
 						newLocale = locale;
-						if (locale.getLanguage() != null && !spec.getLocale().getLanguage().equals(locale.getLanguage())) {
-							throw new IllegalStateException("languages aren't compatible: '" + locale + "' and '" + spec.getLocale() + "'");
+						if (locale.getLanguage() != null
+								&& !spec.getLocale().getLanguage().equals(locale.getLanguage())) {
+							throw new IllegalStateException("languages aren't compatible: '" + locale + "' and '"
+									+ spec.getLocale() + "'");
 						}
 					}
-					
+
 					if (spec.getLocale().getCountry() != null) {
 						if (locale.getCountry() != null && !spec.getLocale().getCountry().equals(locale.getCountry())) {
-							throw new IllegalStateException("countries aren't compatible: '" + locale + "' and '" + spec.getLocale() + "'");
+							throw new IllegalStateException("countries aren't compatible: '" + locale + "' and '"
+									+ spec.getLocale() + "'");
 						}
 					} else if (locale.getCountry() != null) {
 						// keep old locale, as it is more restrictive
 						newLocale = locale;
-					}					
+					}
 				}
 				locale = newLocale;
 			} else {
@@ -1237,26 +1444,31 @@ public class ResourceMount implements Cloneable {
 		}
 		return locale;
 	}
-	
+
 	/**
-	 * detect the style to use. Default implementation is to either use a manually chosen one ({@link #setStyle(String)}) or detect it from
-	 * the given resource specs. An {@link Exception} will be thrown if styles of added resources aren't compatible.
-	 * (e.g. 'foo' and 'bar', null and 'foo' are considered compatible). The resource will always use a style if at
-	 * least one resource uses one. For instance, if 5 resources are don't have a style and one has 'foo', the style
-	 * will be 'foo'
-	 * @param specs the {@link ResourceSpec}s to get the style for
+	 * detect the style to use. Default implementation is to either use a
+	 * manually chosen one ({@link #setStyle(String)}) or detect it from the
+	 * given resource specs. An {@link Exception} will be thrown if styles of
+	 * added resources aren't compatible. (e.g. 'foo' and 'bar', null and 'foo'
+	 * are considered compatible). The resource will always use a style if at
+	 * least one resource uses one. For instance, if 5 resources are don't have
+	 * a style and one has 'foo', the style will be 'foo'
+	 * 
+	 * @param specs
+	 *            the {@link ResourceSpec}s to get the style for
 	 * @return the style
 	 */
 	protected String getStyle(ResourceSpec[] specs) {
 		if (_style != null) {
 			return _style;
 		}
-		
+
 		String style = null;
 		for (ResourceSpec spec : specs) {
 			if (style != null) {
 				if (spec.getStyle() != null && !spec.getStyle().equals(style)) {
-					throw new IllegalStateException("styles aren't compatible: '" + style + "' and '" + spec.getStyle() + "'");
+					throw new IllegalStateException("styles aren't compatible: '" + style + "' and '" + spec.getStyle()
+							+ "'");
 				}
 			} else {
 				style = spec.getStyle();
@@ -1264,24 +1476,28 @@ public class ResourceMount implements Cloneable {
 		}
 		return style;
 	}
-	
+
 	/**
-	 * detect the cache duration to use. Default implementation is to either use a manually chosen one ({@link #setCacheDuration(int)})
-	 * or detect it from the given resource specs. The resource will always use the lowest cache duration or {@link ResourceMount#DEFAULT_CACHE_DURATION}
-	 * if it can't be detected
-	 * @param specs the {@link ResourceSpec}s to get the cache duration for
-	 * @param if the resource is versioned. 
+	 * detect the cache duration to use. Default implementation is to either use
+	 * a manually chosen one ({@link #setCacheDuration(int)}) or detect it from
+	 * the given resource specs. The resource will always use the lowest cache
+	 * duration or {@link ResourceMount#DEFAULT_CACHE_DURATION} if it can't be
+	 * detected
+	 * 
+	 * @param specs
+	 *            the {@link ResourceSpec}s to get the cache duration for
+	 * @param if the resource is versioned.
 	 * @return the cache duration in seconds
 	 */
 	protected int getCacheDuration(ResourceSpec[] specs, boolean versioned) {
 		if (_cacheDuration != null) {
 			return _cacheDuration;
 		}
-		
+
 		if (versioned) {
 			return DEFAULT_AGGRESSIVE_CACHE_DURATION;
 		}
-		
+
 		Integer cacheDuration = null;
 		for (ResourceSpec spec : specs) {
 			if (cacheDuration == null) {
@@ -1295,7 +1511,7 @@ public class ResourceMount implements Cloneable {
 		}
 		return cacheDuration;
 	}
-	
+
 	/**
 	 * @return the resource specs
 	 */
@@ -1304,8 +1520,10 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param file a file name
-	 * @return whether this file should use gzip compression. default is to check the suffix of the file
+	 * @param file
+	 *            a file name
+	 * @return whether this file should use gzip compression. default is to
+	 *         check the suffix of the file
 	 * @see #setCompressed(boolean)
 	 * @see #getCompressedSuffixes()
 	 */
@@ -1314,8 +1532,10 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param file a file name
-	 * @return whether this file should be processed by a JS compressor. default is to minify files ending with '.js'
+	 * @param file
+	 *            a file name
+	 * @return whether this file should be processed by a JS compressor. default
+	 *         is to minify files ending with '.js'
 	 * @see #setMinifyJs(Boolean)
 	 */
 	protected boolean doMinifyJs(final String file) {
@@ -1323,8 +1543,10 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * @param file a file name
-	 * @return whether this file should be processed by a CSS compressor. default is to minify files ending with '.css'
+	 * @param file
+	 *            a file name
+	 * @return whether this file should be processed by a CSS compressor.
+	 *         default is to minify files ending with '.css'
 	 * @see #setMinifyJs(Boolean)
 	 */
 	protected boolean doMinifyCss(final String file) {
@@ -1332,8 +1554,10 @@ public class ResourceMount implements Cloneable {
 	}
 
 	/**
-	 * should the added {@link ResourceSpec}s be merged to a single resource, or should they be mounted idividually?
-	 * default is to merge files ending with {@link ResourceMount#DEFAULT_MERGE_SUFFIXES}
+	 * should the added {@link ResourceSpec}s be merged to a single resource, or
+	 * should they be mounted idividually? default is to merge files ending with
+	 * {@link ResourceMount#DEFAULT_MERGE_SUFFIXES}
+	 * 
 	 * @return
 	 * @see #setMerged(boolean)
 	 * @see #autodetectMerging()
@@ -1342,9 +1566,10 @@ public class ResourceMount implements Cloneable {
 	protected boolean doMerge() {
 		return _merge == null ? _resourceSpecs.size() > 1 && _mergedSuffixes.contains(getSuffix(_path)) : _merge;
 	}
-	
+
 	/**
 	 * clear all added {@link ResourceSpec}s
+	 * 
 	 * @return this
 	 */
 	public ResourceMount clearSpecs() {
@@ -1367,10 +1592,13 @@ public class ResourceMount implements Cloneable {
 	public Set<String> getMergedSuffixes() {
 		return _mergedSuffixes;
 	}
-	
+
 	/**
 	 * check if suffixes of path and each RespurceSpec file match
-	 * @throws WicketRuntimeException if suffixes don't match and strategy is {@link SuffixMismatchStrategy#EXCEPTION}
+	 * 
+	 * @throws WicketRuntimeException
+	 *             if suffixes don't match and strategy is
+	 *             {@link SuffixMismatchStrategy#EXCEPTION}
 	 */
 	protected void checkSuffixes(String path, Iterable<ResourceSpec> specs) {
 		String suffix;
@@ -1382,27 +1610,33 @@ public class ResourceMount implements Cloneable {
 			}
 		}
 	}
-	
+
 	/**
-	 * apply {@link SuffixMismatchStrategy} without further checking, arguments are for logging only
-	 * @throws WicketRuntimeException if suffixes don't match and strategy is {@link SuffixMismatchStrategy#EXCEPTION}
+	 * apply {@link SuffixMismatchStrategy} without further checking, arguments
+	 * are for logging only
+	 * 
+	 * @throws WicketRuntimeException
+	 *             if suffixes don't match and strategy is
+	 *             {@link SuffixMismatchStrategy#EXCEPTION}
 	 */
 	protected void onSuffixMismatch(String resource, String path) {
-		switch(_suffixMismatchStrategy) {
-		case EXCEPTION: 
+		switch (_suffixMismatchStrategy) {
+		case EXCEPTION:
 			throw new WicketRuntimeException(String.format("Suffixes don't match: %s %s", resource, path));
-		case WARN: 
+		case WARN:
 			LOG.warn(String.format("Suffixes don't match: %s %s", resource, path));
 			break;
 		case IGNORE:
 			break;
 		default:
-			throw new RuntimeException(String.format("unimplemented suffixMismatchStrategy: %s", _suffixMismatchStrategy));
+			throw new RuntimeException(String.format("unimplemented suffixMismatchStrategy: %s",
+					_suffixMismatchStrategy));
 		}
 	}
-	
+
 	/**
-	 * a copy of the resource mount, with unfolded collections of compressed suffixes, merged suffices and {@link ResourceSpec}s
+	 * a copy of the resource mount, with unfolded collections of compressed
+	 * suffixes, merged suffices and {@link ResourceSpec}s
 	 */
 	@Override
 	public ResourceMount clone() {
@@ -1417,6 +1651,5 @@ public class ResourceMount implements Cloneable {
 			throw new WicketRuntimeException("clone of Object not supported?", e);
 		}
 	}
-	
-	
+
 }

@@ -24,18 +24,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RevisionVersionProvider extends AbstractClasspathResourceVersionProvider {
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(RevisionVersionProvider.class);
-	
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RevisionVersionProvider.class);
+
 	public AbstractResourceVersion getVersion(URL url) throws VersionException {
 		String line = readFirstLine(url);
-		
+
 		final Matcher m = Pattern.compile("Revision: ([0-9]+)").matcher(line);
 		if (m.find()) {
 			final int value = Integer.valueOf(m.group(1));
 			if (value <= 0) {
-				throw new VersionException("found invalid resource version: "
-						+ value + " in " + url);
+				throw new VersionException("found invalid resource version: " + value + " in " + url);
 			}
 			return new SimpleResourceVersion(value);
 		} else {
@@ -50,8 +48,7 @@ public class RevisionVersionProvider extends AbstractClasspathResourceVersionPro
 			r = new BufferedReader(new InputStreamReader(url.openStream()));
 			line = r.readLine();
 		} catch (final IOException e) {
-			throw new VersionException("failed to read line from url: "
-					+ url, e);
+			throw new VersionException("failed to read line from url: " + url, e);
 		} finally {
 			try {
 				if (r != null) {

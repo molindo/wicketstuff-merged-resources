@@ -21,26 +21,23 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
-
 /**
  * Simple test using the WicketTester
  */
-public class ResourceMergeOrderTest extends TestCase
-{
+public class ResourceMergeOrderTest extends TestCase {
 	private boolean _testedPanelOneCss = false;
-	
-	public void testRenderMyPage()
-	{
+
+	public void testRenderMyPage() {
 		new WicketTester(new AnnotationTestApplication() {
-			
+
 			protected boolean strip() {
 				return false;
 			}
-			
+
 			protected ResourceMount newResourceMount() {
 				ResourceMount mount = super.newResourceMount();
 				mount.setPreProcessor(new StringResourcePreProcessor() {
-					
+
 					@Override
 					protected String preProcess(String string) {
 						if (string.contains(".panelOne")) {

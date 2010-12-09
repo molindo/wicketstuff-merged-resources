@@ -23,37 +23,30 @@ import org.wicketstuff.mergedresources.components.ComponentB;
 import org.wicketstuff.mergedresources.components.PanelOne;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
-
 /**
  * Simple test using the WicketTester
  */
-public class ResourcePreProcessorTest extends TestCase
-{
+public class ResourcePreProcessorTest extends TestCase {
 	private int _preProcessInvocations = 0;
-	
-	public void testRenderMyPage()
-	{
+
+	public void testRenderMyPage() {
 		new WicketTester(new AbstractTestApplication() {
-			
+
 			@Override
 			protected void mountResources() {
 				ResourceMount m = new ResourceMount();
 				m.setPreProcessor(new StringResourcePreProcessor() {
-					
+
 					@Override
 					protected String preProcess(String string) {
 						_preProcessInvocations++;
-						//System.out.println("process " + string);
+						// System.out.println("process " + string);
 						return string;
 					}
 				});
-				m.setPath("foo.js")
-					.addResourceSpecsMatchingSuffix(PanelOne.class, MyForm.class)
-					.mount(this);
-				
-				m.setPath("bar.js")
-					.addResourceSpecsMatchingSuffix(ComponentB.class)
-					.mount(this);
+				m.setPath("foo.js").addResourceSpecsMatchingSuffix(PanelOne.class, MyForm.class).mount(this);
+
+				m.setPath("bar.js").addResourceSpecsMatchingSuffix(ComponentB.class).mount(this);
 			}
 		});
 		assertEquals(2, _preProcessInvocations);

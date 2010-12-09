@@ -37,36 +37,37 @@ public class MergedResource extends PackageResource {
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style,
+			final Class<?>[] scopes, final String[] files, int cacheDuration) {
 		super(scope, path, locale, style);
-		
+
 		if (scopes.length != files.length) {
-			throw new IllegalArgumentException("arrays must be of equal length: "
-					+ Arrays.toString(scopes) + ", " + Arrays.toString(files));
+			throw new IllegalArgumentException("arrays must be of equal length: " + Arrays.toString(scopes) + ", "
+					+ Arrays.toString(files));
 		}
 		_cacheDuration = cacheDuration;
 		_mergedResourceStream = new MergedResourceStream(scopes, files, locale, style);
 	}
 
-	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style,
+			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 
 		_cacheDuration = cacheDuration;
 		_mergedResourceStream = new MergedResourceStream(specs, locale, style, preProcessor);
 	}
-	
+
 	@Override
 	public IResourceStream getResourceStream() {
 		return _mergedResourceStream;
 	}
-	
+
 	@Override
 	protected int getCacheDuration() {
 		return _cacheDuration;
 	}
-	
-	protected void setHeaders(WebResponse response)
-	{
+
+	protected void setHeaders(WebResponse response) {
 		super.setHeaders(response);
 		response.setHeader("Cache-control", "public");
 	}

@@ -25,21 +25,24 @@ import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 public class CompressedMergedJsResourceReference extends MergedResourceReference {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public CompressedMergedJsResourceReference(String path, Locale locale, String style, Class<?>[] scopes, String[] files, int cacheDuration) {
+	public CompressedMergedJsResourceReference(String path, Locale locale, String style, Class<?>[] scopes,
+			String[] files, int cacheDuration) {
 		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedJsResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedJsResourceReference(String name, Locale locale, String style, ResourceSpec[] specs,
+			int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(CompressedMergedJsResourceReference.class, name, locale, style, specs, cacheDuration, preProcessor);
 	}
-	
+
 	@Override
 	protected Resource newResource() {
-		return new CompressedMergedJsResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(), getCacheDuration(), getPreProcessor());
+		return new CompressedMergedJsResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(),
+				getCacheDuration(), getPreProcessor());
 	}
 }

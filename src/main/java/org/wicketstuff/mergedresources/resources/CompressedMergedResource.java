@@ -37,20 +37,23 @@ public class CompressedMergedResource extends CompressedPackageResource {
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style,
+			final Class<?>[] scopes, final String[] files, int cacheDuration) {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style,
+			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 		_cacheDuration = cacheDuration;
 		_mergedResourceStream = newResourceStream(locale, style, specs, preProcessor);
 	}
-	
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs, IResourcePreProcessor preProcessor) {
+
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
+			IResourcePreProcessor preProcessor) {
 		return new MergedResourceStream(specs, locale, style, preProcessor);
 	}
-	
+
 	@Override
 	protected IResourceStream getPackageResourceStream() {
 		return _mergedResourceStream;
@@ -60,12 +63,10 @@ public class CompressedMergedResource extends CompressedPackageResource {
 	public int getCacheDuration() {
 		return _cacheDuration;
 	}
-	
-	protected void setHeaders(WebResponse response)
-	{
+
+	protected void setHeaders(WebResponse response) {
 		super.setHeaders(response);
-		if (!Application.get().getResourceSettings().getDisableGZipCompression())
-		{
+		if (!Application.get().getResourceSettings().getDisableGZipCompression()) {
 			response.setHeader("Vary", "Accept-Encoding");
 		}
 		response.setHeader("Cache-control", "public");

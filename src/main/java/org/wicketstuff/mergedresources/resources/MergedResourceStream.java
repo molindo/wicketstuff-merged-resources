@@ -42,8 +42,7 @@ import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
 public class MergedResourceStream implements IResourceStream {
 	private static final long serialVersionUID = 1L;
-	private static transient final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(MergedResourceStream.class);
+	private static transient final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MergedResourceStream.class);
 
 	private final ResourceSpec[] _specs;
 	private Locale _locale;
@@ -59,13 +58,14 @@ public class MergedResourceStream implements IResourceStream {
 		this(ResourceSpec.toResourceSpecs(scopes, files), locale, style, null);
 	}
 
-	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style, IResourcePreProcessor preProcessor) {
+	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style,
+			IResourcePreProcessor preProcessor) {
 		_specs = specs.clone();
 		_locale = locale;
 		_style = style;
 		_preProcessor = preProcessor;
 	}
-	
+
 	public void close() throws IOException {
 		// do nothing
 	}
@@ -113,27 +113,27 @@ public class MergedResourceStream implements IResourceStream {
 
 		private LocalizedMergedResourceStream() {
 			Time max = null;
-			//final StringWriter w = new StringWriter(4096);
+			// final StringWriter w = new StringWriter(4096);
 			ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
-			
+
 			final ArrayList<IResourceStream> resourceStreams = new ArrayList<IResourceStream>(_specs.length);
 
 			String contentType = null;
-			for (int i = 0; i < _specs.length; i++) {			
+			for (int i = 0; i < _specs.length; i++) {
 				final Class<?> scope = _specs[i].getScope();
 				final String fileName = _specs[i].getFile();
 
-
-				
 				final IResourceStream resourceStream = findResourceStream(scope, fileName);
 				if (contentType != null) {
-					if (resourceStream.getContentType() != null && !contentType.equalsIgnoreCase(resourceStream.getContentType())) {
-						log.warn("content types of merged resources don't match: '" + resourceStream.getContentType() + "' and '" + contentType + "'");
+					if (resourceStream.getContentType() != null
+							&& !contentType.equalsIgnoreCase(resourceStream.getContentType())) {
+						log.warn("content types of merged resources don't match: '" + resourceStream.getContentType()
+								+ "' and '" + contentType + "'");
 					}
 				} else {
 					contentType = resourceStream.getContentType();
 				}
-				
+
 				try {
 
 					final Time lastModified = resourceStream.lastModifiedTime();
@@ -161,7 +161,7 @@ public class MergedResourceStream implements IResourceStream {
 
 			}
 			_contentType = contentType;
-			
+
 			_content = toContent(preProcess(out.toByteArray()));
 			_lastModifiedTime = max == null ? Time.now() : max;
 			watchForChanges(resourceStreams);
@@ -172,8 +172,8 @@ public class MergedResourceStream implements IResourceStream {
 			final String path = Strings.beforeLast(scope.getName(), '.').replace('.', '/') + '/'
 					+ Strings.beforeLast(fileName, '.');
 			// Iterator over all the combinations
-			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _locale, Strings
-					.afterLast(fileName, '.'));
+			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _locale, Strings.afterLast(
+					fileName, '.'));
 
 			IResourceStream resourceStream = null;
 			while (resourceStream == null && iter.hasNext()) {
@@ -190,7 +190,8 @@ public class MergedResourceStream implements IResourceStream {
 			return resourceStream;
 		}
 
-		private void writeContent(final OutputStream out, final IResourceStream resourceStream) throws ResourceStreamNotFoundException, IOException {
+		private void writeContent(final OutputStream out, final IResourceStream resourceStream)
+				throws ResourceStreamNotFoundException, IOException {
 			Streams.copy(resourceStream.getInputStream(), out);
 			out.flush();
 		}
@@ -198,15 +199,14 @@ public class MergedResourceStream implements IResourceStream {
 		private void writeFileSeparator(ByteArrayOutputStream out) throws IOException {
 			out.write(getFileSeparator());
 		}
-		
+
 		private byte[] getFileSeparator() {
 			return isPlainText() ? "\n\n".getBytes() : new byte[0];
 		}
 
 		private void watchForChanges(final List<IResourceStream> resourceStreams) {
 			// Watch file in the future
-			final IModificationWatcher watcher = Application.get().getResourceSettings()
-					.getResourceWatcher(true);
+			final IModificationWatcher watcher = Application.get().getResourceSettings().getResourceWatcher(true);
 			if (watcher != null) {
 				final IChangeListener listener = new IChangeListener() {
 					public void onChange() {

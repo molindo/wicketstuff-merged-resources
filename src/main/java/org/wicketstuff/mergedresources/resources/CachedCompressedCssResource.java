@@ -25,8 +25,10 @@ public class CachedCompressedCssResource extends CompressedMergedCssResource {
 
 	private static final long serialVersionUID = 1L;
 
-	public CachedCompressedCssResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration, IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style, new ResourceSpec[]{new ResourceSpec(scope, path)}, cacheDuration, preProcessor);
+	public CachedCompressedCssResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
+			IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration,
+				preProcessor);
 	}
-	
+
 }

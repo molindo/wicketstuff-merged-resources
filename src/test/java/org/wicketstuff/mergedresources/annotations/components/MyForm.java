@@ -24,14 +24,14 @@ public class MyForm extends Form<Object> {
 			@Override
 			protected void onError(AjaxRequestTarget target) {
 				// nothing
-				
+
 			}
 
 			@Override
 			protected void onSubmit(AjaxRequestTarget target) {
-				// nothing				
+				// nothing
 			}
-			
+
 		});
 	}
 
