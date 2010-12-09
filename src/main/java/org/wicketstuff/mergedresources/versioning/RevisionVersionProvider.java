@@ -18,66 +18,49 @@ package org.wicketstuff.mergedresources.versioning;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.wicket.util.string.Strings;
-
-public class RevisionVersionProvider implements IResourceVersionProvider {
+public class RevisionVersionProvider extends AbstractClasspathResourceVersionProvider {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(RevisionVersionProvider.class);
 	
-	public AbstractResourceVersion getVersion(final Class<?> scope, final String fileName) throws VersionException {
-		final String path = getResourcePath(scope, fileName);
-		final InputStream in = newInputStream(scope, fileName, path);
-		if (in == null) {
-			throw new VersionException(scope, fileName, "can't find " + path);
-		}
-		final BufferedReader r = new BufferedReader(new InputStreamReader(in));
-		String line;
-		try {
-			line = r.readLine();
-		} catch (final IOException e) {
-			throw new VersionException(scope, fileName, "failed to read line from file: "
-					+ path, e);
-		} finally {
-			try {
-				r.close();
-			} catch (final IOException e) {
-				log.warn("error while closing reader", e);
-			}
-		}
+	public AbstractResourceVersion getVersion(URL url) throws VersionException {
+		String line = readFirstLine(url);
+		
 		final Matcher m = Pattern.compile("Revision: ([0-9]+)").matcher(line);
 		if (m.find()) {
 			final int value = Integer.valueOf(m.group(1));
 			if (value <= 0) {
-				throw new VersionException(scope, fileName, "found invalid resource version: "
-						+ value);
+				throw new VersionException("found invalid resource version: "
+						+ value + " in " + url);
 			}
 			return new SimpleResourceVersion(value);
 		} else {
-			throw new VersionException(scope, fileName, "did not find version in " + path);
+			throw new VersionException("did not find version in " + url);
 		}
 	}
 
-	/**
-	 * @return may return null, which will cause a VersionException
-	 */
-	protected InputStream newInputStream(final Class<?> scope,
-			final String fileName, final String path) {
-		
-		InputStream in = scope.getClassLoader().getResourceAsStream(path);
-		if (in == null) {
-			in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+	protected String readFirstLine(URL url) throws VersionException {
+		String line;
+		BufferedReader r = null;
+		try {
+			r = new BufferedReader(new InputStreamReader(url.openStream()));
+			line = r.readLine();
+		} catch (final IOException e) {
+			throw new VersionException("failed to read line from url: "
+					+ url, e);
+		} finally {
+			try {
+				if (r != null) {
+					r.close();
+				}
+			} catch (final IOException e) {
+				log.warn("error while closing reader", e);
+			}
 		}
-		return in;
-	}
-	
-	protected String getResourcePath(final Class<?> scope, final String fileName) {
-		final String file = Strings.beforeLast(scope.getName(), '.').replace('.', '/') + "/"
-				+ fileName;
-		return file;
+		return line;
 	}
 }

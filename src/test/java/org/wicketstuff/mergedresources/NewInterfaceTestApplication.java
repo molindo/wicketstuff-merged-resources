@@ -5,7 +5,7 @@ import org.wicketstuff.mergedresources.components.ComponentB;
 import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.PanelOne;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
-import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
+import org.wicketstuff.mergedresources.versioning.StaticResourceVersionProvider;
 
 public class NewInterfaceTestApplication extends AbstractTestApplication {
 
@@ -17,7 +17,7 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 	protected void mountResources() {
 		ResourceMount.mountWicketResources("script", this);
 
-		IResourceVersionProvider p = new RevisionVersionProvider();
+		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
 
 		ResourceMount mount = new ResourceMount().setResourceVersionProvider(p)
 				.setDefaultAggressiveCacheDuration();

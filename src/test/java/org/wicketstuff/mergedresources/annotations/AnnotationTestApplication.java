@@ -5,7 +5,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.wicketstuff.mergedresources.AbstractTestApplication;
 import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
-import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
+import org.wicketstuff.mergedresources.versioning.StaticResourceVersionProvider;
 
 public class AnnotationTestApplication extends AbstractTestApplication
 {    
@@ -46,7 +46,7 @@ public class AnnotationTestApplication extends AbstractTestApplication
 	}
 
 	protected ResourceMount newResourceMount() {
-		IResourceVersionProvider p = new RevisionVersionProvider();
+		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
 		return new ResourceMount()
 			.setResourceVersionProvider(p)
 			.setDefaultAggressiveCacheDuration();

@@ -16,8 +16,6 @@
  */
 package org.wicketstuff.mergedresources.versioning;
 
-import java.io.IOException;
-
 public interface IResourceVersionProvider {
 	
 	/**
@@ -28,14 +26,22 @@ public interface IResourceVersionProvider {
 	
 	public static class VersionException extends Exception {
 
-		public VersionException(final Class<?> scope, final String fileName, final String msg, final IOException e) {
-			super(scope + ", " + fileName + ": " + msg, e);
+		public VersionException(final Class<?> scope, final String fileName, final String msg, final Throwable cause) {
+			super(scope + ", " + fileName + ": " + msg, cause);
 		}
 
 		public VersionException(final Class<?> scope, final String fileName, final String msg) {
 			super(scope + ", " + fileName + ": " + msg);
 		}
 
+		public VersionException(String msg) {
+			super(msg);
+		}
+
+		public VersionException(String msg, Throwable cause) {
+			super(msg, cause);
+		}
+		
 		private static final long serialVersionUID = 1L;
 
 	}
