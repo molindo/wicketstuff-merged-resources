@@ -51,7 +51,6 @@ public class Pair<A, B> implements Serializable {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -63,7 +62,7 @@ public class Pair<A, B> implements Serializable {
 		if (!(obj instanceof Pair)) {
 			return false;
 		}
-		final Pair other = (Pair) obj;
+		final Pair<?, ?> other = (Pair<?, ?>) obj;
 		if (_first == null) {
 			if (other._first != null) {
 				return false;

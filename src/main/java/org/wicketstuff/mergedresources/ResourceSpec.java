@@ -14,10 +14,10 @@ public class ResourceSpec implements IClusterable {
 	private final String _scopeName;
 	private transient Class<?> _scope;
 	private final String _file;
-	private ResourceReference _ref;
-	private Locale _locale;
-	private String _style;
-	private Integer _cacheDuration;
+	private final ResourceReference _ref;
+	private final Locale _locale;
+	private final String _style;
+	private final Integer _cacheDuration;
 
 	public static ResourceSpec[] toResourceSpecs(Class<?>[] scopes, String[] files) {
 		if (scopes.length != files.length) {
@@ -81,9 +81,6 @@ public class ResourceSpec implements IClusterable {
 
 	public ResourceSpec(ResourceReference ref) {
 		this(ref.getScope(), ref.getName(), ref.getLocale(), ref.getStyle(), null, ref);
-		if (ref == null) {
-			throw new NullPointerException("ref");
-		}
 	}
 
 	private ResourceSpec(Class<?> scope, String file, Locale locale, String style, Integer cacheDuration,
@@ -163,34 +160,43 @@ public class ResourceSpec implements IClusterable {
 		int result = 1;
 		result = prime * result + _file.hashCode();
 		result = prime * result + _scopeName.hashCode();
-		result = prime * result + ((_locale == null) ? 0 : _locale.hashCode());
-		result = prime * result + ((_style == null) ? 0 : _style.hashCode());
+		result = prime * result + (_locale == null ? 0 : _locale.hashCode());
+		result = prime * result + (_style == null ? 0 : _style.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof ResourceSpec))
+		}
+		if (!(obj instanceof ResourceSpec)) {
 			return false;
+		}
 		ResourceSpec other = (ResourceSpec) obj;
-		if (!_file.equals(other._file))
+		if (!_file.equals(other._file)) {
 			return false;
-		if (!_scopeName.equals(other._scopeName))
+		}
+		if (!_scopeName.equals(other._scopeName)) {
 			return false;
+		}
 		if (_locale == null) {
-			if (other._locale != null)
+			if (other._locale != null) {
 				return false;
-		} else if (!_locale.equals(other._locale))
+			}
+		} else if (!_locale.equals(other._locale)) {
 			return false;
+		}
 		if (_style == null) {
-			if (other._style != null)
+			if (other._style != null) {
 				return false;
-		} else if (!_style.equals(other._style))
+			}
+		} else if (!_style.equals(other._style)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -203,12 +209,15 @@ public class ResourceSpec implements IClusterable {
 		} else {
 			builder.append("file=").append(_file).append(", ");
 			builder.append("scopeName=").append(_scopeName).append(", ");
-			if (_locale != null)
+			if (_locale != null) {
 				builder.append("locale=").append(_locale).append(", ");
-			if (_style != null)
+			}
+			if (_style != null) {
 				builder.append("style=").append(_style).append(", ");
-			if (_cacheDuration != null)
+			}
+			if (_cacheDuration != null) {
 				builder.append("cacheDuration=").append(_cacheDuration).append(", ");
+			}
 
 			builder.setLength(builder.length() - 2);
 			builder.append("]");
