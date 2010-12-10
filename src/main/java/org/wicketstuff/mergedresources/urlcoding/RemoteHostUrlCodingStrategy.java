@@ -22,7 +22,6 @@ import java.net.URL;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Response;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.IMountableRequestTargetUrlCodingStrategy;
@@ -31,7 +30,6 @@ import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCod
 import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 
 import at.molindo.utils.data.StringUtils;
-import at.molindo.wicketutils.utils.WicketUtils;
 
 public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrategy,
 		IMountableRequestTargetUrlCodingStrategy {
@@ -85,24 +83,9 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 
 			@Override
 			public void respond(final RequestCycle requestCycle) {
-				if (isRedirect()) {
-					final Response response = requestCycle.getResponse();
-					response.reset();
-					response.redirect(getUrl(isGzipSupported()));
-				} else {
-					getOriginalRequestTarget().respond(requestCycle);
-				}
-			}
-
-			protected String getUrl(boolean gzipSupported) {
-				return _url.toString();
+				getOriginalRequestTarget().respond(requestCycle);
 			}
 		};
-	}
-
-	protected boolean isGzipSupported() {
-		final String s = WicketUtils.getHeader("Accept-Encoding");
-		return s == null ? false : s.indexOf("gzip") >= 0;
 	}
 
 	@Override
@@ -123,13 +106,6 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 	@Override
 	public boolean matches(final String path, final boolean b) {
 		return _strategy.matches(path, b);
-	}
-
-	/**
-	 * @return should requests be redirected to already uploaded
-	 */
-	protected boolean isRedirect() {
-		return false;
 	}
 
 }
