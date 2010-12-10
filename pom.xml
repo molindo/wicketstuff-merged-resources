@@ -51,9 +51,9 @@
 		    <scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.wicketstuff</groupId>
-			<artifactId>wicketstuff-annotation</artifactId>
-			<version>1.1</version>
+		    <groupId>org.wicketstuff</groupId>
+		    <artifactId>annotation</artifactId>
+		    <version>1.4.14</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
