@@ -16,13 +16,11 @@
 
 package org.wicketstuff.mergedresources.urlcoding;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.IMountableRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
@@ -40,7 +38,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 	private final SharedResourceRequestTargetUrlCodingStrategy _strategy;
 	private final String _key;
 
-	private final URL _url;
+	private final String _root;
 
 	public RemoteHostUrlCodingStrategy(URL root, final String mountPath, final ResourceReference ref) {
 		if (ref == null) {
@@ -49,12 +47,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		_key = ref.getSharedResourceKey();
 		_strategy = newStrategy(mountPath, _key);
 
-		try {
-			_url = new URL(StringUtils.trailing(root.toString(), "/")
-					+ StringUtils.stripLeading(_strategy.getMountPath(), "/"));
-		} catch (MalformedURLException e) {
-			throw new WicketRuntimeException("failed to create valid URL from " + root + " and " + mountPath, e);
-		}
+		_root = StringUtils.trailing(root.toString(), "/");
 	}
 
 	protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
@@ -91,7 +84,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 
 	@Override
 	public CharSequence encode(final IRequestTarget requestTarget) {
-		return _url.toString();
+		return _root + StringUtils.stripLeading(_strategy.encode(requestTarget).toString(), "/");
 	}
 
 	@Override
