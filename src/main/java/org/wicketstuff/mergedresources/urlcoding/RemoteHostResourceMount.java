@@ -25,8 +25,6 @@ import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
 import org.wicketstuff.mergedresources.ResourceMount;
 
-import at.molindo.utils.data.StringUtils;
-
 public class RemoteHostResourceMount extends ResourceMount {
 	private final URL _root;
 	private final boolean _enabled;
@@ -53,11 +51,7 @@ public class RemoteHostResourceMount extends ResourceMount {
 
 	public RemoteHostResourceMount(URL root, boolean enabled) {
 		_enabled = enabled;
-		try {
-			_root = new URL(StringUtils.trailing(root.toString(), "/"));
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("failed to append / to url " + root, e);
-		}
+		_root = root;
 	}
 
 	@Override

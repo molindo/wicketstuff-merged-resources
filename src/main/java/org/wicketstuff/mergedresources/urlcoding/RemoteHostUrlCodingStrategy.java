@@ -50,7 +50,8 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		_strategy = newStrategy(mountPath, _key);
 
 		try {
-			_url = new URL(root, StringUtils.stripLeading(_strategy.getMountPath(), "/"));
+			_url = new URL(StringUtils.trailing(root.toString(), "/")
+					+ StringUtils.stripLeading(_strategy.getMountPath(), "/"));
 		} catch (MalformedURLException e) {
 			throw new WicketRuntimeException("failed to create valid URL from " + root + " and " + mountPath, e);
 		}
