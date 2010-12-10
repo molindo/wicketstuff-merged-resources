@@ -24,7 +24,7 @@
 <script type="text/javascript" src="static/scripts.js/PanelOne.js"></script>
 <link rel="stylesheet" type="text/css" href="static/styles.css/MyForm.css" />
 <script type="text/javascript" src="static/scripts.js/MyForm.js"></script>
-<script type="text/javascript" src="wicket/wicket-1.4.6.js"></script>
+<script type="text/javascript" src="wicket/wicket-1.4.13.js"></script>
 <script type="text/javascript" src="resources/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/wicket-ajax-debug.js"></script>
 <script type="text/javascript" id="wicket-ajax-debug-enable"><!--/*--><![CDATA[/*><!--*/
 wicketAjaxDebugEnable=true;
@@ -40,7 +40,7 @@ wicketAjaxDebugEnable=true;
 	<div wicket:id="componentB"><wicket:panel>
 <h1 class="componentB" wicket:id="label">Wicket!</h1>
 </wicket:panel></div>
-	<form wicket:id="myForm" action="?wicket:interface=:0:panel:myForm::IFormSubmitListener::" method="post" id="myForm1" onsubmit="return validateMyForm()" onclick="var wcall=wicketSubmitFormById('myForm1', '?wicket:interface=:0:panel:myForm::IActivePageBehaviorListener:3:&amp;wicket:ignoreIfNotActive=true', null,null,null, function() {return Wicket.$$(this)&amp;&amp;Wicket.$$('myForm1')}.bind(this));;"><div style="display:none"><input type="hidden" name="myForm1_hf_0" id="myForm1_hf_0" /></div>
+	<form wicket:id="myForm" action="?wicket:interface=:0:panel:myForm::IFormSubmitListener::" method="post" id="myForm1" onsubmit="return validateMyForm()" onclick="var wcall=wicketSubmitFormById('myForm1', '?wicket:interface=:0:panel:myForm::IActivePageBehaviorListener:3:&amp;wicket:ignoreIfNotActive=true', null,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$$(this)&amp;&amp;Wicket.$$('myForm1')}.bind(this));;"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="myForm1_hf_0" id="myForm1_hf_0" /></div>
 		<input type="submit" value="Click!" />
 	</form>
 </div>
