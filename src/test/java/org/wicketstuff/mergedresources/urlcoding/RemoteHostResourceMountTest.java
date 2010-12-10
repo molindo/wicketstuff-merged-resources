@@ -16,9 +16,6 @@
 
 package org.wicketstuff.mergedresources.urlcoding;
 
-import java.net.MalformedURLException;
-
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 import org.wicketstuff.mergedresources.HomePage;
@@ -33,11 +30,7 @@ public class RemoteHostResourceMountTest {
 
 			@Override
 			protected ResourceMount newResourceMount() {
-				try {
-					return new RemoteHostResourceMount("http://cdn.example.com/test");
-				} catch (MalformedURLException e) {
-					throw new WicketRuntimeException(e);
-				}
+				return new RemoteHostResourceMount("http://cdn.example.com/test");
 			}
 
 		});

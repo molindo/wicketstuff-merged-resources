@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
 import org.wicketstuff.mergedresources.ResourceMount;
@@ -28,12 +29,30 @@ import at.molindo.utils.data.StringUtils;
 
 public class RemoteHostResourceMount extends ResourceMount {
 	private final URL _root;
+	private final boolean _enabled;
 
-	public RemoteHostResourceMount(String root) throws MalformedURLException {
-		this(new URL(root));
+	private static URL toURL(String root) {
+		try {
+			return new URL(root);
+		} catch (MalformedURLException e) {
+			throw new WicketRuntimeException(e);
+		}
+	}
+
+	public RemoteHostResourceMount(String root) throws WicketRuntimeException {
+		this(toURL(root), true);
+	}
+
+	public RemoteHostResourceMount(String root, boolean enabled) throws WicketRuntimeException {
+		this(toURL(root), enabled);
 	}
 
 	public RemoteHostResourceMount(URL root) {
+		this(root, true);
+	}
+
+	public RemoteHostResourceMount(URL root, boolean enabled) {
+		_enabled = enabled;
 		try {
 			_root = new URL(StringUtils.trailing(root.toString(), "/"));
 		} catch (MalformedURLException e) {
@@ -44,14 +63,17 @@ public class RemoteHostResourceMount extends ResourceMount {
 	@Override
 	protected IRequestTargetUrlCodingStrategy newStrategy(String mountPath, final ResourceReference ref,
 			final boolean merge) {
-
-		return new RemoteHostUrlCodingStrategy(_root, mountPath, ref) {
-			@Override
-			protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
-					final String sharedResourceKey) {
-				return (SharedResourceRequestTargetUrlCodingStrategy) RemoteHostResourceMount.super.newStrategy(
-						mountPath, ref, merge);
-			}
-		};
+		if (!_enabled) {
+			return super.newStrategy(mountPath, ref, merge);
+		} else {
+			return new RemoteHostUrlCodingStrategy(_root, mountPath, ref) {
+				@Override
+				protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
+						final String sharedResourceKey) {
+					return (SharedResourceRequestTargetUrlCodingStrategy) RemoteHostResourceMount.super.newStrategy(
+							mountPath, ref, merge);
+				}
+			};
+		}
 	}
 }
