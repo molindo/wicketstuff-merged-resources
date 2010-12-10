@@ -31,7 +31,7 @@ public class RemoteHostResourceMount extends ResourceMount {
 
 	private static URL toURL(String root) {
 		try {
-			return new URL(root);
+			return root == null ? null : new URL(root);
 		} catch (MalformedURLException e) {
 			throw new WicketRuntimeException(e);
 		}

@@ -25,7 +25,7 @@ import org.wicketstuff.mergedresources.ResourceMount;
 public class RemoteHostResourceMountTest {
 
 	@Test
-	public void renderJsContributorPage() throws Exception {
+	public void renderRemoteHostResourcePage() throws Exception {
 		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
 
 			@Override

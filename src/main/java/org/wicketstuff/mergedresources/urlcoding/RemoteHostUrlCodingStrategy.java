@@ -47,7 +47,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		_key = ref.getSharedResourceKey();
 		_strategy = newStrategy(mountPath, _key);
 
-		_root = StringUtils.trailing(root.toString(), "/");
+		_root = root == null ? null : StringUtils.trailing(root.toString(), "/");
 	}
 
 	protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
@@ -84,7 +84,8 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 
 	@Override
 	public CharSequence encode(final IRequestTarget requestTarget) {
-		return _root + StringUtils.stripLeading(_strategy.encode(requestTarget).toString(), "/");
+		CharSequence encoded = _strategy.encode(requestTarget);
+		return _root == null ? encoded : _root + StringUtils.stripLeading(encoded.toString(), "/");
 	}
 
 	@Override
