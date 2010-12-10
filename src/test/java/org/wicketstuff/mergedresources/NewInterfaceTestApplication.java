@@ -31,11 +31,11 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 
 	@Override
 	protected void mountResources() {
-		ResourceMount.mountWicketResources("script", this);
+		ResourceMount.mountWicketResources("script", this, newResourceMount());
 
 		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
 
-		ResourceMount mount = new ResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
+		ResourceMount mount = newResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
 
 		initMount(mount);
 
@@ -48,6 +48,10 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 
 		_jsContributor = mount.clone().setPath("/script/all.js")
 				.addResourceSpecsMatchingSuffix(PanelOne.class, ComponentB.class, MyForm.class).build(this);
+	}
+
+	protected ResourceMount newResourceMount() {
+		return new ResourceMount();
 	}
 
 	protected void initMount(ResourceMount mount) {

@@ -1,0 +1,41 @@
+<!--
+
+    Copyright 2010 Molindo GmbH
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<html>
+    <head>
+        <title>Faster Wicket with merged resources!</title>
+    <link rel="stylesheet" type="text/css" href="http://cdn.example.com/test/style/all-42.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.example.com/test/style/print-42.css" media="print" />
+<script type="text/javascript" src="http://cdn.example.com/test/script/all-42.js"></script>
+<script type="text/javascript" src="http://cdn.example.com/test/script/wicket-event-1.4.13.js"></script>
+<script type="text/javascript" src="http://cdn.example.com/test/script/wicket-ajax-1.4.13.js"></script>
+</head>
+    <body>
+        <div>
+<div class="panelOne">
+	<div>
+<h1 class="componentB">Wicket!</h1>
+</div>
+	<form action="?wicket:interface=:0:panel:myForm::IFormSubmitListener::" method="post" id="id1" onsubmit="return validateMyForm()" onclick="var wcall=wicketSubmitFormById('id1', '?wicket:interface=:0:panel:myForm::IActivePageBehaviorListener:3:&amp;wicket:ignoreIfNotActive=true', null,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$$(this)&amp;&amp;Wicket.$$('id1')}.bind(this));;"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="id1_hf_0" id="id1_hf_0" /></div>
+		<input type="submit" value="Click!" />
+	</form>
+</div>
+</div>
+    </body>
+</html>
+
