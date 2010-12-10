@@ -13,17 +13,17 @@
  * 
  * http://www.julienlecomte.net/yuicompressor/yuicompressor-2.4.2.zip
  */
-package com.yahoo.platform.yui.compressor;
+package at.molindo.thirdparty.com.yahoo.platform.yui.compressor;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CssCompressor {
 
-	private StringBuffer srcsb = new StringBuffer();
+	private final StringBuffer srcsb = new StringBuffer();
 
 	public CssCompressor(Reader in) throws IOException {
 		// Read the stream...
