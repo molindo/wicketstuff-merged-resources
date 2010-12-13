@@ -114,7 +114,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		}
 
 		try {
-			return new URL(protocol, _host, port == null ? -1 : _port, _path
+			return new URL(protocol, _host, port == null ? -1 : port, _path
 					+ StringUtils.stripLeading(encoded.toString(), "/")).toString();
 		} catch (MalformedURLException e) {
 			log.error("failed to build URL, balling back to default", e);
