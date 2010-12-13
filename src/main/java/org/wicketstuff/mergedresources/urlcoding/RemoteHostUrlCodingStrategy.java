@@ -16,6 +16,7 @@
 
 package org.wicketstuff.mergedresources.urlcoding;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.wicket.IRequestTarget;
@@ -28,17 +29,22 @@ import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCod
 import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 
 import at.molindo.utils.data.StringUtils;
+import at.molindo.wicketutils.utils.WicketUtils;
 
 public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrategy,
 		IMountableRequestTargetUrlCodingStrategy {
 
-	// private static final org.slf4j.Logger log =
-	// org.slf4j.LoggerFactory.getLogger(RemoteHostUrlCodingStrategy.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RemoteHostUrlCodingStrategy.class);
 
 	private final SharedResourceRequestTargetUrlCodingStrategy _strategy;
 	private final String _key;
 
-	private final String _root;
+	private final String _protocol;
+	private final Integer _port;
+	private final String _host;
+	private final String _path;
+	private boolean _useRequestProtocol = true;
+	private boolean _useRequestPort = true;
 
 	public RemoteHostUrlCodingStrategy(URL root, final String mountPath, final ResourceReference ref) {
 		if (ref == null) {
@@ -47,7 +53,15 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		_key = ref.getSharedResourceKey();
 		_strategy = newStrategy(mountPath, _key);
 
-		_root = root == null ? null : StringUtils.trailing(root.toString(), "/");
+		if (root != null) {
+			_protocol = root.getProtocol();
+			_port = root.getPort();
+			_host = root.getHost();
+			_path = StringUtils.trailing(root.getFile(), "/");
+		} else {
+			_port = null;
+			_host = _protocol = _path = null;
+		}
 	}
 
 	protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
@@ -84,8 +98,28 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 
 	@Override
 	public CharSequence encode(final IRequestTarget requestTarget) {
-		CharSequence encoded = _strategy.encode(requestTarget);
-		return _root == null ? encoded : _root + StringUtils.stripLeading(encoded.toString(), "/");
+		final CharSequence encoded = _strategy.encode(requestTarget);
+		if (_host == null) {
+			return encoded;
+		}
+
+		String protocol = !isUseRequestProtocol() ? _protocol : WicketUtils.getHttpServletRequest().getScheme();
+		Integer port = !isUseRequestPort() ? _port : WicketUtils.getHttpServletRequest().getServerPort();
+		if (port != null) {
+			if (port == 80 && "http".equals(protocol)) {
+				port = null;
+			} else if (port == 443 && "https".equals(protocol)) {
+				port = null;
+			}
+		}
+
+		try {
+			return new URL(protocol, _host, port == null ? -1 : _port, _path
+					+ StringUtils.stripLeading(encoded.toString(), "/")).toString();
+		} catch (MalformedURLException e) {
+			log.error("failed to build URL, balling back to default", e);
+			return encoded;
+		}
 	}
 
 	@Override
@@ -101,6 +135,24 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 	@Override
 	public boolean matches(final String path, final boolean b) {
 		return _strategy.matches(path, b);
+	}
+
+	public boolean isUseRequestProtocol() {
+		return _useRequestProtocol;
+	}
+
+	public RemoteHostUrlCodingStrategy setUseRequestProtocol(boolean useRequestProtocol) {
+		_useRequestProtocol = useRequestProtocol;
+		return this;
+	}
+
+	public boolean isUseRequestPort() {
+		return _useRequestPort;
+	}
+
+	public RemoteHostUrlCodingStrategy setUseRequestPort(boolean useRequestPort) {
+		_useRequestPort = useRequestPort;
+		return this;
 	}
 
 }
