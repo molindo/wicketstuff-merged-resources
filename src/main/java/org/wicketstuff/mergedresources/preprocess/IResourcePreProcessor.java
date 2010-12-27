@@ -16,8 +16,10 @@
 
 package org.wicketstuff.mergedresources.preprocess;
 
+import org.wicketstuff.mergedresources.ResourceSpec;
+
 public interface IResourcePreProcessor {
 
-	byte[] preProcess(byte[] content);
+	byte[] preProcess(ResourceSpec resourceSpec, byte[] content);
 
 }

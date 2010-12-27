@@ -38,7 +38,7 @@ public class ResourcePreProcessorTest extends TestCase {
 				m.setPreProcessor(new StringResourcePreProcessor() {
 
 					@Override
-					protected String preProcess(String string) {
+					protected String preProcess(ResourceSpec resourceSpec, String string) {
 						_preProcessInvocations++;
 						// System.out.println("process " + string);
 						return string;
@@ -49,6 +49,6 @@ public class ResourcePreProcessorTest extends TestCase {
 				m.setPath("bar.js").addResourceSpecsMatchingSuffix(ComponentB.class).mount(this);
 			}
 		});
-		assertEquals(2, _preProcessInvocations);
+		assertEquals(5, _preProcessInvocations);
 	}
 }

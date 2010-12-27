@@ -143,7 +143,8 @@ public class MergedResourceStream implements IResourceStream {
 					if (i > 0) {
 						writeFileSeparator(out);
 					}
-					writeContent(out, resourceStream);
+					byte[] preprocessed = preProcess(_specs[i], Streams.readString(resourceStream.getInputStream()).getBytes());
+					writeContent(out, new ByteArrayInputStream(preprocessed));
 					resourceStreams.add(resourceStream);
 				} catch (final IOException e) {
 					throw new WicketRuntimeException("failed to read from " + resourceStream, e);
@@ -162,7 +163,7 @@ public class MergedResourceStream implements IResourceStream {
 			}
 			_contentType = contentType;
 
-			_content = toContent(preProcess(out.toByteArray()));
+			_content = toContent(out.toByteArray());
 			_lastModifiedTime = max == null ? Time.now() : max;
 			watchForChanges(resourceStreams);
 		}
@@ -190,9 +191,8 @@ public class MergedResourceStream implements IResourceStream {
 			return resourceStream;
 		}
 
-		private void writeContent(final OutputStream out, final IResourceStream resourceStream)
-				throws ResourceStreamNotFoundException, IOException {
-			Streams.copy(resourceStream.getInputStream(), out);
+		private void writeContent(final OutputStream out, final InputStream resourceStream) throws IOException {
+			Streams.copy(resourceStream, out);
 			out.flush();
 		}
 
@@ -251,7 +251,7 @@ public class MergedResourceStream implements IResourceStream {
 		return true;
 	}
 
-	public byte[] preProcess(byte[] content) {
-		return (_preProcessor != null) ? _preProcessor.preProcess(content) : content;
+	public byte[] preProcess(ResourceSpec resourceSpec, byte[] content) {
+		return (_preProcessor != null) ? _preProcessor.preProcess(resourceSpec, content) : content;
 	}
 }

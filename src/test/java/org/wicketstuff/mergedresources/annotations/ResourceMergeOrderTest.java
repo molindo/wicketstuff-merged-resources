@@ -19,6 +19,7 @@ package org.wicketstuff.mergedresources.annotations;
 import junit.framework.TestCase;
 import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.ResourceMount;
+import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
 /**
@@ -39,7 +40,7 @@ public class ResourceMergeOrderTest extends TestCase {
 				mount.setPreProcessor(new StringResourcePreProcessor() {
 
 					@Override
-					protected String preProcess(String string) {
+					protected String preProcess(ResourceSpec reference, String string) {
 						if (string.contains(".panelOne")) {
 							String s = string.trim();
 							s = s.substring(s.lastIndexOf('\n'));
