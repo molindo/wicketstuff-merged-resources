@@ -32,6 +32,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 @SuppressWarnings(value = "SE_BAD_FIELD", justification = "no serialization in test case")
 public class ResourcePreProcessorTest extends TestCase {
 	private int _preProcessInvocations = 0;
+	private int _preProcessInvocationsMerged = 0;
 
 	public void testRenderMyPage() {
 		new WicketTester(new AbstractTestApplication() {
@@ -45,7 +46,11 @@ public class ResourcePreProcessorTest extends TestCase {
 
 					@Override
 					protected String preProcess(ResourceSpec resourceSpec, String string) {
-						_preProcessInvocations++;
+						if (resourceSpec != null) {
+							_preProcessInvocations++;
+						} else {
+							_preProcessInvocationsMerged++;
+						}
 						// System.out.println("process " + string);
 						return string;
 					}
@@ -56,5 +61,6 @@ public class ResourcePreProcessorTest extends TestCase {
 			}
 		});
 		assertEquals(5, _preProcessInvocations);
+		assertEquals(2, _preProcessInvocationsMerged);
 	}
 }
