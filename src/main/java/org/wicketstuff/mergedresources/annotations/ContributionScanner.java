@@ -28,6 +28,8 @@ import org.apache.wicket.util.string.Strings;
 import org.wicketstuff.config.MatchingResources;
 import org.wicketstuff.mergedresources.ResourceSpec;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Gather page resources to merge, depends on {@link CssContribution} and
  * {@link JsContribution} annotations.
@@ -168,8 +170,9 @@ public class ContributionScanner {
 	 * @return a Spring search pattern for the given package
 	 */
 	private String getPatternForPackage(String packageName) {
-		if (packageName == null)
+		if (packageName == null) {
 			packageName = "";
+		}
 		packageName = packageName.replace('.', '/');
 		if (!packageName.endsWith("/")) {
 			packageName += '/';
@@ -178,11 +181,12 @@ public class ContributionScanner {
 		return "classpath*:" + packageName + "**/*.class";
 	}
 
+	@SuppressWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient, ignore weight")
 	public static final class WeightedResourceSpec extends ResourceSpec {
 
 		private static final long serialVersionUID = 1L;
 
-		private int _weight;
+		private final int _weight;
 
 		public WeightedResourceSpec(Class<?> scope, String file, int weight) {
 			super(scope, file);
@@ -193,6 +197,7 @@ public class ContributionScanner {
 			this(scope, file, 0);
 		}
 
+		@Override
 		public String toString() {
 			return super.toString() + " (weight=" + _weight + ")";
 		}
@@ -201,6 +206,7 @@ public class ContributionScanner {
 	public enum WeightedResourceSpecComparator implements Comparator<WeightedResourceSpec> {
 		INSTANCE;
 
+		@Override
 		public int compare(WeightedResourceSpec o1, WeightedResourceSpec o2) {
 			if (o1 == null) {
 				return o2 == null ? 0 : -1;

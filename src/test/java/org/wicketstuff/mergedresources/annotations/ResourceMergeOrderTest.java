@@ -23,9 +23,12 @@ import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Simple test using the WicketTester
  */
+@SuppressWarnings(value = "SE_BAD_FIELD", justification = "no serialization in test case")
 public class ResourceMergeOrderTest extends TestCase {
 	private boolean _testedPanelOneCss = false;
 

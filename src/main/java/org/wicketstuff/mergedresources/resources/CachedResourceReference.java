@@ -22,11 +22,14 @@ import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
+@SuppressWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient")
 public class CachedResourceReference extends ResourceReference {
 
 	private static final long serialVersionUID = 1L;
-	private int _cacheDuration;
-	private IResourcePreProcessor _preProcessor;
+	private final int _cacheDuration;
+	private final IResourcePreProcessor _preProcessor;
 
 	public CachedResourceReference(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
 			IResourcePreProcessor preProcessor) {

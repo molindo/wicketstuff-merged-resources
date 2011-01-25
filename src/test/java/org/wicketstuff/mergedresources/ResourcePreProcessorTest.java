@@ -24,9 +24,12 @@ import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.PanelOne;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Simple test using the WicketTester
  */
+@SuppressWarnings(value = "SE_BAD_FIELD", justification = "no serialization in test case")
 public class ResourcePreProcessorTest extends TestCase {
 	private int _preProcessInvocations = 0;
 

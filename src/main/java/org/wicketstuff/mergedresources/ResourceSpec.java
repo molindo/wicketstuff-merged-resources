@@ -24,10 +24,13 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.util.string.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 public class ResourceSpec implements IClusterable {
 	private static final long serialVersionUID = 1L;
 
 	private final String _scopeName;
+	@SuppressWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "set from scopeName on demand")
 	private transient Class<?> _scope;
 	private final String _file;
 	private final ResourceReference _ref;

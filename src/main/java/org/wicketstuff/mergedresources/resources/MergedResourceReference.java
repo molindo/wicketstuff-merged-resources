@@ -23,12 +23,15 @@ import org.apache.wicket.ResourceReference;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
+@SuppressWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient")
 public class MergedResourceReference extends ResourceReference {
 
 	private static final long serialVersionUID = 1L;
 	private final ResourceSpec[] _specs;
-	private int _cacheDuration;
-	private IResourcePreProcessor _preProcessor;
+	private final int _cacheDuration;
+	private final IResourcePreProcessor _preProcessor;
 
 	@Deprecated
 	public MergedResourceReference(Class<?> scope, String path, Locale locale, String style, Class<?>[] scopes,
