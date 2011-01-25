@@ -18,14 +18,15 @@ package org.wicketstuff.mergedresources.versioning;
 
 public class StaticResourceVersionProvider implements IResourceVersionProvider {
 
-	private int _value;
+	private final int _value;
 
 	public StaticResourceVersionProvider(int value) {
 		// validate value
-		new SimpleResourceVersion(_value);
+		new SimpleResourceVersion(value);
 		_value = value;
 	}
 
+	@Override
 	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
 		return new SimpleResourceVersion(_value);
 	}
