@@ -29,7 +29,6 @@ import java.util.Locale;
 import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.listener.IChangeListener;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
@@ -40,6 +39,8 @@ import org.apache.wicket.util.watch.IModificationWatcher;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
+import at.molindo.utils.io.StreamUtils;
+
 public class MergedResourceStream implements IResourceStream {
 	private static final long serialVersionUID = 1L;
 	private static transient final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MergedResourceStream.class);
@@ -48,7 +49,7 @@ public class MergedResourceStream implements IResourceStream {
 	private Locale _locale;
 	private final String _style;
 	private LocalizedMergedResourceStream _localizedMergedResourceStream;
-	private IResourcePreProcessor _preProcessor;
+	private final IResourcePreProcessor _preProcessor;
 
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
@@ -66,30 +67,37 @@ public class MergedResourceStream implements IResourceStream {
 		_preProcessor = preProcessor;
 	}
 
+	@Override
 	public void close() throws IOException {
 		// do nothing
 	}
 
+	@Override
 	public String getContentType() {
 		return getLocalizedMergedResourceStream().getContentType();
 	}
 
+	@Override
 	public InputStream getInputStream() throws ResourceStreamNotFoundException {
 		return getLocalizedMergedResourceStream().getInputStream();
 	}
 
+	@Override
 	public Locale getLocale() {
 		return _locale;
 	}
 
+	@Override
 	public long length() {
 		return getLocalizedMergedResourceStream().getContent().length;
 	}
 
+	@Override
 	public void setLocale(final Locale locale) {
 		_locale = locale;
 	}
 
+	@Override
 	public Time lastModifiedTime() {
 		return getLocalizedMergedResourceStream().getLastModifiedTime();
 	}
@@ -143,7 +151,7 @@ public class MergedResourceStream implements IResourceStream {
 					if (i > 0) {
 						writeFileSeparator(out);
 					}
-					byte[] preprocessed = preProcess(_specs[i], Streams.readString(resourceStream.getInputStream()).getBytes());
+					byte[] preprocessed = preProcess(_specs[i], StreamUtils.bytes(resourceStream.getInputStream()));
 					writeContent(out, new ByteArrayInputStream(preprocessed));
 					resourceStreams.add(resourceStream);
 				} catch (final IOException e) {
@@ -178,7 +186,7 @@ public class MergedResourceStream implements IResourceStream {
 
 			IResourceStream resourceStream = null;
 			while (resourceStream == null && iter.hasNext()) {
-				final String resourceName = (String) iter.next();
+				final String resourceName = iter.next();
 				resourceStream = Application.get().getResourceSettings().getResourceStreamLocator()
 						.locate(scope, resourceName, _style, _locale, null);
 			}
@@ -192,7 +200,7 @@ public class MergedResourceStream implements IResourceStream {
 		}
 
 		private void writeContent(final OutputStream out, final InputStream resourceStream) throws IOException {
-			Streams.copy(resourceStream, out);
+			StreamUtils.copy(resourceStream, out);
 			out.flush();
 		}
 
@@ -209,6 +217,7 @@ public class MergedResourceStream implements IResourceStream {
 			final IModificationWatcher watcher = Application.get().getResourceSettings().getResourceWatcher(true);
 			if (watcher != null) {
 				final IChangeListener listener = new IChangeListener() {
+					@Override
 					public void onChange() {
 						log.info("merged resource has changed");
 						synchronized (MergedResourceStream.this) {
@@ -252,6 +261,6 @@ public class MergedResourceStream implements IResourceStream {
 	}
 
 	public byte[] preProcess(ResourceSpec resourceSpec, byte[] content) {
-		return (_preProcessor != null) ? _preProcessor.preProcess(resourceSpec, content) : content;
+		return _preProcessor != null ? _preProcessor.preProcess(resourceSpec, content) : content;
 	}
 }
