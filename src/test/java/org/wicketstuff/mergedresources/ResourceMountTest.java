@@ -16,8 +16,14 @@
 
 package org.wicketstuff.mergedresources;
 
-import java.io.InputStream;
+import static org.apache.wicket.Application.DEPLOYMENT;
+import static org.apache.wicket.Application.DEVELOPMENT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.ResourceReference;
@@ -28,19 +34,11 @@ import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.string.StringList;
 import org.apache.wicket.util.tester.WicketTester;
-
 import org.junit.Test;
 import org.wicketstuff.mergedresources.ResourceMount.SuffixMismatchStrategy;
-import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.ComponentB;
+import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.PanelOne;
-
-import static org.apache.wicket.Application.DEPLOYMENT;
-import static org.apache.wicket.Application.DEVELOPMENT;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 public class ResourceMountTest {
 	static final ResourceReference CSS_COMPONENT_B = new ResourceReference(ComponentB.class, "ComponentB.css");
@@ -109,7 +107,7 @@ public class ResourceMountTest {
 	 * Verify that an exception is thrown if we execute build() without
 	 * specifying a path first.
 	 */
-	@Test(expected = WicketRuntimeException.class)
+	@Test(expected = IllegalStateException.class)
 	public void testMissingPath() {
 		ResourceMount b = new ResourceMount();
 		b.addResourceSpec(CSS_COMPONENT_B);

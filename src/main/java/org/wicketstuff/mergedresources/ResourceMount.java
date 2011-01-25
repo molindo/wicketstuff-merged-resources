@@ -1240,9 +1240,11 @@ public class ResourceMount implements Cloneable {
 	 *             if version can't be found
 	 * @throws IncompatibleVersionsException
 	 *             if versions can't be compared
+	 * @throws IllegalStateException
+	 *             if path not set
 	 */
 	public String getPath(String appendName, ResourceSpec[] specs) throws VersionException,
-			IncompatibleVersionsException {
+			IncompatibleVersionsException, IllegalStateException {
 		if (_path == null) {
 			throw new IllegalStateException("path must be set");
 		}
