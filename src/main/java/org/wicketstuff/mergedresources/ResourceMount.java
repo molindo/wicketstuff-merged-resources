@@ -44,9 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.mergedresources.annotations.ContributionInjector;
 import org.wicketstuff.mergedresources.annotations.ContributionScanner;
+import org.wicketstuff.mergedresources.annotations.ContributionScanner.WeightedResourceSpec;
 import org.wicketstuff.mergedresources.annotations.CssContribution;
 import org.wicketstuff.mergedresources.annotations.JsContribution;
-import org.wicketstuff.mergedresources.annotations.ContributionScanner.WeightedResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 import org.wicketstuff.mergedresources.resources.CachedCompressedCssResourceReference;
 import org.wicketstuff.mergedresources.resources.CachedCompressedJsResourceReference;
@@ -63,12 +63,12 @@ import org.wicketstuff.mergedresources.util.MergedResourceRequestTargetUrlCoding
 import org.wicketstuff.mergedresources.util.Pair;
 import org.wicketstuff.mergedresources.util.RedirectStrategy;
 import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion;
+import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.IncompatibleVersionsException;
 import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider;
+import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 import org.wicketstuff.mergedresources.versioning.RevisionVersionProvider;
 import org.wicketstuff.mergedresources.versioning.SimpleResourceVersion;
 import org.wicketstuff.mergedresources.versioning.WicketVersionProvider;
-import org.wicketstuff.mergedresources.versioning.AbstractResourceVersion.IncompatibleVersionsException;
-import org.wicketstuff.mergedresources.versioning.IResourceVersionProvider.VersionException;
 
 public class ResourceMount implements Cloneable {
 
@@ -96,6 +96,7 @@ public class ResourceMount implements Cloneable {
 	 * @deprecated typo in name, it's aggressive with ss, use
 	 *             {@link #DEFAULT_AGGRESSIVE_CACHE_DURATION} instead
 	 */
+	@Deprecated
 	public static final int DEFAULT_AGGRESIVE_CACHE_DURATION = DEFAULT_AGGRESSIVE_CACHE_DURATION;
 
 	/**
@@ -233,7 +234,7 @@ public class ResourceMount implements Cloneable {
 	 */
 	public static void enableAnnotations(WebApplication application) {
 		Boolean enabled = application.getMetaData(ANNOTATIONS_ENABLED_KEY);
-		if (enabled != Boolean.TRUE) {
+		if (!Boolean.TRUE.equals(enabled)) {
 			try {
 				Class.forName("org.wicketstuff.config.MatchingResources");
 				Class.forName("org.springframework.core.io.support.PathMatchingResourcePatternResolver");
