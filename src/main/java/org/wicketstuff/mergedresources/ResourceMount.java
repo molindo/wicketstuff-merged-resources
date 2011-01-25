@@ -1117,7 +1117,11 @@ public class ResourceMount implements Cloneable {
 				initResource(ref);
 			}
 			return newHeaderContributor(refs, cssMediaType);
-		} catch (Exception e) {
+		} catch (VersionException e) {
+			throw new WicketRuntimeException("failed to mount resource ('" + _path + "')", e);
+		} catch (IncompatibleVersionsException e) {
+			throw new WicketRuntimeException("failed to mount resource ('" + _path + "')", e);
+		} catch (ResourceStreamNotFoundException e) {
 			throw new WicketRuntimeException("failed to mount resource ('" + _path + "')", e);
 		}
 	}
