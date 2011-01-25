@@ -103,14 +103,12 @@ public class MergedResourceStream implements IResourceStream {
 	}
 
 	private LocalizedMergedResourceStream getLocalizedMergedResourceStream() {
-		if (_localizedMergedResourceStream == null) {
-			synchronized (this) {
-				if (_localizedMergedResourceStream == null) {
-					_localizedMergedResourceStream = new LocalizedMergedResourceStream();
-				}
+		synchronized (this) {
+			if (_localizedMergedResourceStream == null) {
+				_localizedMergedResourceStream = new LocalizedMergedResourceStream();
 			}
+			return _localizedMergedResourceStream;
 		}
-		return _localizedMergedResourceStream;
 	}
 
 	private final class LocalizedMergedResourceStream implements IClusterable {
@@ -151,6 +149,7 @@ public class MergedResourceStream implements IResourceStream {
 					if (i > 0) {
 						writeFileSeparator(out);
 					}
+					// process content from single spec
 					byte[] preprocessed = preProcess(_specs[i], StreamUtils.bytes(resourceStream.getInputStream()));
 					writeContent(out, new ByteArrayInputStream(preprocessed));
 					resourceStreams.add(resourceStream);
@@ -171,7 +170,7 @@ public class MergedResourceStream implements IResourceStream {
 			}
 			_contentType = contentType;
 
-			_content = toContent(out.toByteArray());
+			_content = toContent(preProcess(null, out.toByteArray()));
 			_lastModifiedTime = max == null ? Time.now() : max;
 			watchForChanges(resourceStreams);
 		}
