@@ -16,10 +16,23 @@
 
 package org.wicketstuff.mergedresources.preprocess;
 
+import java.io.Serializable;
+
+import javax.annotation.CheckForNull;
+
 import org.wicketstuff.mergedresources.ResourceSpec;
 
-public interface IResourcePreProcessor {
+public interface IResourcePreProcessor extends Serializable {
 
-	byte[] preProcess(ResourceSpec resourceSpec, byte[] content);
+	/**
+	 * 
+	 * @param resourceSpec
+	 *            null when processing complete merged resource, non-null for
+	 *            each part of a merged resource
+	 * @param content
+	 * 
+	 * @return processed content, may be <code>content</code>
+	 */
+	byte[] preProcess(@CheckForNull ResourceSpec resourceSpec, byte[] content);
 
 }

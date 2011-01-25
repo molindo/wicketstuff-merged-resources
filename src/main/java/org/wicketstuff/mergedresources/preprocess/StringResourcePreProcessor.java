@@ -16,14 +16,19 @@
 
 package org.wicketstuff.mergedresources.preprocess;
 
+import javax.annotation.CheckForNull;
+
 import org.wicketstuff.mergedresources.ResourceSpec;
 
 public abstract class StringResourcePreProcessor implements IResourcePreProcessor {
 
+	private static final long serialVersionUID = 1L;
+
+	@Override
 	public byte[] preProcess(ResourceSpec resourceSpec, byte[] content) {
 		return preProcess(resourceSpec, new String(content)).getBytes();
 	}
 
-	protected abstract String preProcess(ResourceSpec resourceSpec, String string);
+	protected abstract String preProcess(@CheckForNull ResourceSpec resourceSpec, String string);
 
 }

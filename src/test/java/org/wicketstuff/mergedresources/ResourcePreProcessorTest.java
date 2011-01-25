@@ -17,9 +17,10 @@
 package org.wicketstuff.mergedresources;
 
 import junit.framework.TestCase;
+
 import org.apache.wicket.util.tester.WicketTester;
-import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.ComponentB;
+import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.PanelOne;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
@@ -36,6 +37,8 @@ public class ResourcePreProcessorTest extends TestCase {
 			protected void mountResources() {
 				ResourceMount m = new ResourceMount();
 				m.setPreProcessor(new StringResourcePreProcessor() {
+
+					private static final long serialVersionUID = 1L;
 
 					@Override
 					protected String preProcess(ResourceSpec resourceSpec, String string) {

@@ -17,6 +17,7 @@
 package org.wicketstuff.mergedresources.annotations;
 
 import junit.framework.TestCase;
+
 import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.ResourceSpec;
@@ -31,13 +32,17 @@ public class ResourceMergeOrderTest extends TestCase {
 	public void testRenderMyPage() {
 		new WicketTester(new AnnotationTestApplication() {
 
+			@Override
 			protected boolean strip() {
 				return false;
 			}
 
+			@Override
 			protected ResourceMount newResourceMount() {
 				ResourceMount mount = super.newResourceMount();
 				mount.setPreProcessor(new StringResourcePreProcessor() {
+
+					private static final long serialVersionUID = 1L;
 
 					@Override
 					protected String preProcess(ResourceSpec reference, String string) {
