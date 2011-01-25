@@ -47,8 +47,8 @@ public class CssUrlRewritingResourcePreProcessor extends StringResourcePreProces
 	 */
 	@Override
 	protected String preProcess(ResourceSpec resourceSpec, String string) {
-		// Only preprocess files with CSS extension
-		if (!resourceSpec.getFile().toLowerCase().endsWith(".css")) {
+		// Only preprocess partial files with CSS extension
+		if (resourceSpec == null || !resourceSpec.getFile().toLowerCase().endsWith(".css")) {
 			return string;
 		}
 
