@@ -23,6 +23,7 @@ import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.request.RequestParameters;
+import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.IMountableRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
@@ -36,7 +37,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RemoteHostUrlCodingStrategy.class);
 
-	private final SharedResourceRequestTargetUrlCodingStrategy _strategy;
+	private final AbstractRequestTargetUrlCodingStrategy _strategy;
 	private final String _key;
 
 	private final String _protocol;
@@ -64,8 +65,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		}
 	}
 
-	protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
-			final String sharedResourceKey) {
+	protected AbstractRequestTargetUrlCodingStrategy newStrategy(final String mountPath, final String sharedResourceKey) {
 		return new SharedResourceRequestTargetUrlCodingStrategy(mountPath, sharedResourceKey);
 	}
 
