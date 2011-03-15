@@ -10,7 +10,7 @@
 	<groupId>at.molindo</groupId>
 	<artifactId>wicketstuff-merged-resources</artifactId>
 	<packaging>bundle</packaging>
-	<version>3.1-alpha-1</version>
+	<version>3.1-SNAPSHOT</version>
 	<name>Wicket Merged Resources</name>
 	<description>
 	    Resource merging for Apache Wicket (http://wicket.apache.org),
