@@ -16,15 +16,15 @@
 
 package org.wicketstuff.mergedresources.annotations;
 
-import java.util.HashMap;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.application.IComponentInstantiationListener;
 
+import java.util.HashMap;
+
 public class ContributionInjector implements IComponentInstantiationListener {
 
-	private HashMap<Class<? extends Component>, HeaderContribution> _contributions = new HashMap<Class<? extends Component>, HeaderContribution>();
+	private final HashMap<Class<? extends Component>, HeaderContribution> _contributions = new HashMap<Class<? extends Component>, HeaderContribution>();
 
 	public void onInstantiation(Component component) {
 		if (eligible(component)) {

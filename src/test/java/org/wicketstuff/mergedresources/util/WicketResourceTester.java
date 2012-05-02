@@ -17,8 +17,8 @@
 package org.wicketstuff.mergedresources.util;
 
 import org.apache.wicket.Page;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.tester.WicketTester;
 
 public class WicketResourceTester extends WicketTester {
@@ -40,7 +40,7 @@ public class WicketResourceTester extends WicketTester {
 	}
 
 	public String urlFor(ResourceReference resourceReference) {
-		CharSequence cs = resolveRequestCycle().urlFor(resourceReference);
+		CharSequence cs = getRequestCycle().urlFor(resourceReference, null);
 		return cs == null ? null : cs.toString();
 	}
 }

@@ -16,10 +16,10 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
+
+import java.util.Locale;
 
 public class CachedCompressedResource extends CompressedMergedResource {
 
@@ -27,7 +27,6 @@ public class CachedCompressedResource extends CompressedMergedResource {
 
 	public CachedCompressedResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
 			IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration,
-				preProcessor);
+		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration, preProcessor);
 	}
 }

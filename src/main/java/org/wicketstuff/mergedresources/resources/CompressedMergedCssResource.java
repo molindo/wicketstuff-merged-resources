@@ -16,51 +16,34 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
-import org.wicketstuff.mergedresources.util.YuiCompressorUtil;
+
+import java.util.Locale;
 
 public class CompressedMergedCssResource extends CompressedMergedResource {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
-	 */
 	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final Class<?>[] scopes, final String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
-	}
-
-	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style,
-			ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+									   ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style, specs, cacheDuration, preProcessor);
 	}
 
 	@Override
 	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
-			IResourcePreProcessor preProcessor) {
+												IResourcePreProcessor preProcessor) {
 		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
-			// still using deprecated stripJavascriptCommentsAndWhitespace
-			// property for CSS
-			@SuppressWarnings("deprecation")
 			@Override
 			protected byte[] toContent(final byte[] content) {
-
 				ICssCompressor compressor = ResourceMount.getCssCompressor(Application.get());
 				if (compressor != null) {
 					return compressor.compress(content, ICssCompressor.UTF_8);
-				} else if (Application.get().getResourceSettings()
-				// use the JS settings for CSS - deprecated as of WMR 3.1
-						.getStripJavascriptCommentsAndWhitespace()) {
-					return YuiCompressorUtil.compress(content, ICssCompressor.UTF_8);
 				} else {
 					return content;
 				}

@@ -17,11 +17,8 @@
 package org.wicketstuff.mergedresources;
 
 import junit.framework.TestCase;
-
-import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.util.tester.WicketTester;
-import org.wicketstuff.mergedresources.HomePage;
-import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
 
 /**
  * Simple test using the WicketTester
@@ -32,8 +29,8 @@ public class TestNewInterfaceHomePageUnmerged extends TestCase {
 	public void setUp() {
 		tester = new WicketTester(new NewInterfaceTestApplication() {
 			@Override
-			public String getConfigurationType() {
-				return Application.DEVELOPMENT;
+			public RuntimeConfigurationType getConfigurationType() {
+				return RuntimeConfigurationType.DEVELOPMENT;
 			}
 
 			@Override
@@ -57,7 +54,7 @@ public class TestNewInterfaceHomePageUnmerged extends TestCase {
 
 		assertTrue(tester.ifContains("style/all-[0-9]+\\.css").wasFailed());
 		assertTrue(tester.ifContains("script/all-[0-9]+\\.js").wasFailed());
-		assertFalse(tester.ifContains("resources/").wasFailed());
+		assertFalse(tester.ifContains("wicket/resource/").wasFailed());
 
 		// does anybody know how to check resources?
 	}

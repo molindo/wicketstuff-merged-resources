@@ -17,7 +17,6 @@
 package org.wicketstuff.mergedresources.preprocess.css;
 
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.wicketstuff.mergedresources.ResourceSpec;
 

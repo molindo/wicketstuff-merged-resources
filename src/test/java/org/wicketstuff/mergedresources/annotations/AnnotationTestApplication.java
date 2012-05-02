@@ -16,7 +16,7 @@
 
 package org.wicketstuff.mergedresources.annotations;
 
-import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.markup.html.WebPage;
 import org.wicketstuff.mergedresources.AbstractTestApplication;
 import org.wicketstuff.mergedresources.ResourceMount;
@@ -30,9 +30,6 @@ public class AnnotationTestApplication extends AbstractTestApplication {
 	public AnnotationTestApplication() {
 	}
 
-	/**
-	 * @see wicket.Application#getHomePage()
-	 */
 	public Class<? extends WebPage> getHomePage() {
 		return AnnotationHomePage.class;
 	}
@@ -47,8 +44,8 @@ public class AnnotationTestApplication extends AbstractTestApplication {
 	}
 
 	@Override
-	public String getConfigurationType() {
-		return Application.DEPLOYMENT;
+	public RuntimeConfigurationType getConfigurationType() {
+		return RuntimeConfigurationType.DEPLOYMENT;
 	}
 
 	@Override
@@ -60,6 +57,6 @@ public class AnnotationTestApplication extends AbstractTestApplication {
 
 	protected ResourceMount newResourceMount() {
 		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
-		return new ResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
+		return new ResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration().setMountRedirect(true);
 	}
 }

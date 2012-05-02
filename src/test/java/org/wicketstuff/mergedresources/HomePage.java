@@ -16,8 +16,8 @@
 
 package org.wicketstuff.mergedresources;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.wicketstuff.mergedresources.components.PanelOne;
 
 /**

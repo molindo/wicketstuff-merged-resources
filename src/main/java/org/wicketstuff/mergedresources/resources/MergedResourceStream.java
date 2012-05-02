@@ -16,19 +16,11 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
+import at.molindo.utils.io.StreamUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.listener.IChangeListener;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
@@ -39,7 +31,11 @@ import org.apache.wicket.util.watch.IModificationWatcher;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
-import at.molindo.utils.io.StreamUtils;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 public class MergedResourceStream implements IResourceStream {
 	private static final long serialVersionUID = 1L;
@@ -47,23 +43,17 @@ public class MergedResourceStream implements IResourceStream {
 
 	private final ResourceSpec[] _specs;
 	private Locale _locale;
-	private final String _style;
+	private String _style;
+	private String _variation;
+
 	private LocalizedMergedResourceStream _localizedMergedResourceStream;
 	private final IResourcePreProcessor _preProcessor;
 
-	/**
-	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
-	 */
-	@Deprecated
-	public MergedResourceStream(final Class<?>[] scopes, final String[] files, final Locale locale, final String style) {
-		this(ResourceSpec.toResourceSpecs(scopes, files), locale, style, null);
-	}
-
-	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style,
-			IResourcePreProcessor preProcessor) {
+	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style, IResourcePreProcessor preProcessor) {
 		_specs = specs.clone();
 		_locale = locale;
 		_style = style;
+		_variation = null;
 		_preProcessor = preProcessor;
 	}
 
@@ -88,13 +78,33 @@ public class MergedResourceStream implements IResourceStream {
 	}
 
 	@Override
-	public long length() {
-		return getLocalizedMergedResourceStream().getContent().length;
+	public Bytes length() {
+		return Bytes.bytes(getLocalizedMergedResourceStream().getContent().length);
 	}
 
 	@Override
 	public void setLocale(final Locale locale) {
 		_locale = locale;
+	}
+
+	@Override
+	public String getStyle() {
+		return _style;
+	}
+
+	@Override
+	public void setStyle(String style) {
+		this._style = style;
+	}
+
+	@Override
+	public String getVariation() {
+		return _variation;
+	}
+
+	@Override
+	public void setVariation(String variation) {
+		this._variation = variation;
 	}
 
 	@Override
@@ -113,6 +123,7 @@ public class MergedResourceStream implements IResourceStream {
 
 	private final class LocalizedMergedResourceStream implements IClusterable {
 		private static final long serialVersionUID = 1L;
+
 		private final byte[] _content;
 		private final String _contentType;
 		private final Time _lastModifiedTime;
@@ -141,7 +152,6 @@ public class MergedResourceStream implements IResourceStream {
 				}
 
 				try {
-
 					final Time lastModified = resourceStream.lastModifiedTime();
 					if (max == null || lastModified != null && lastModified.after(max)) {
 						max = lastModified;
@@ -169,7 +179,6 @@ public class MergedResourceStream implements IResourceStream {
 
 			}
 			_contentType = contentType;
-
 			_content = toContent(preProcess(null, out.toByteArray()));
 			_lastModifiedTime = max == null ? Time.now() : max;
 			watchForChanges(resourceStreams);
@@ -180,19 +189,16 @@ public class MergedResourceStream implements IResourceStream {
 			final String path = Strings.beforeLast(scope.getName(), '.').replace('.', '/') + '/'
 					+ Strings.beforeLast(fileName, '.');
 			// Iterator over all the combinations
-			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _locale, Strings.afterLast(
-					fileName, '.'));
-
+			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _variation, _locale, Strings.afterLast(fileName, '.'), false);
 			IResourceStream resourceStream = null;
 			while (resourceStream == null && iter.hasNext()) {
 				final String resourceName = iter.next();
 				resourceStream = Application.get().getResourceSettings().getResourceStreamLocator()
-						.locate(scope, resourceName, _style, _locale, null);
+						.locate(scope, resourceName, _style, _variation, _locale, null, false);
 			}
 
 			if (resourceStream == null) {
-				throw new WicketRuntimeException("did not find IResourceStream for "
-						+ Arrays.asList(scope, fileName, _style, _locale));
+				throw new WicketRuntimeException("did not find IResourceStream for " + Arrays.asList(scope, fileName, _style, _locale));
 			}
 
 			return resourceStream;

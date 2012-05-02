@@ -16,28 +16,19 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
 import org.apache.wicket.Application;
-import org.apache.wicket.javascript.IJavascriptCompressor;
+import org.apache.wicket.javascript.IJavaScriptCompressor;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
+
+import java.util.Locale;
 
 public class CompressedMergedJsResource extends CompressedMergedResource {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CompressedMergedJsResource.class);
-
-	/**
-	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
-	 */
-	@Deprecated
-	public CompressedMergedJsResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final Class<?>[] scopes, final String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
-	}
 
 	public CompressedMergedJsResource(Class<?> scope, final String path, final Locale locale, String style,
 			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
@@ -53,8 +44,7 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 			@Override
 			protected byte[] toContent(final byte[] content) {
 				try {
-					final IJavascriptCompressor compressor = Application.get().getResourceSettings()
-							.getJavascriptCompressor();
+					final IJavaScriptCompressor compressor = Application.get().getResourceSettings().getJavaScriptCompressor();
 					if (compressor != null) {
 						return compressor.compress(new String(content)).getBytes();
 					}

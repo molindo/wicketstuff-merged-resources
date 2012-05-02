@@ -16,28 +16,28 @@
 
 package org.wicketstuff.mergedresources;
 
-import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.wicketstuff.mergedresources.resources.UncompressedCssCompressor;
 import org.wicketstuff.mergedresources.resources.YuiCssCompressor;
 
 public abstract class AbstractTestApplication extends WebApplication {
-	/**
-	 * Constructor
-	 */
+	/** Constructor */
 	public AbstractTestApplication() {
 	}
 
 	@Override
 	protected void init() {
+		getResourceSettings().setCachingStrategy(NoOpResourceCachingStrategy.INSTANCE);
+
 		ResourceMount.setCssCompressor(this, strip() ? new YuiCssCompressor() : new UncompressedCssCompressor());
-
-		// getResourceSettings().setAddLastModifiedTimeToResourceReferenceUrl(true);
-
 		if (merge()) {
 			mountResources();
 		}
+
+		mountPage("/", getHomePage());
 	}
 
 	protected abstract void mountResources();
@@ -50,15 +50,12 @@ public abstract class AbstractTestApplication extends WebApplication {
 		return true;
 	}
 
-	/**
-	 * @see wicket.Application#getHomePage()
-	 */
 	public Class<? extends WebPage> getHomePage() {
 		return HomePage.class;
 	}
 
 	@Override
-	public String getConfigurationType() {
-		return Application.DEPLOYMENT;
+	public RuntimeConfigurationType getConfigurationType() {
+		return RuntimeConfigurationType.DEPLOYMENT;
 	}
 }

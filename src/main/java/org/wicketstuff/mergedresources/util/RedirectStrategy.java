@@ -16,38 +16,24 @@
 
 package org.wicketstuff.mergedresources.util;
 
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.request.RequestParameters;
-import org.apache.wicket.request.target.basic.RedirectRequestTarget;
-import org.apache.wicket.request.target.coding.BookmarkablePageRequestTargetUrlCodingStrategy;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.http.handler.RedirectRequestHandler;
+import org.apache.wicket.request.mapper.MountedMapper;
 
-public class RedirectStrategy extends BookmarkablePageRequestTargetUrlCodingStrategy {
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RedirectStrategy.class);
+public class RedirectStrategy extends MountedMapper {
 
-	private final String _redirectPath;
+	private final String redirectUrl;
 
-	public RedirectStrategy(final String mountPath, final String pageMapName, final String redirectPath) {
-		super(mountPath, WebPage.class, pageMapName);
-		_redirectPath = redirectPath;
-	}
-
-	public RedirectStrategy(String mountPath, String redirectPath) {
-		this(mountPath, null, redirectPath);
+	public RedirectStrategy(final String mountPath, final String redirectPath) {
+		super(mountPath, WebPage.class);
+		this.redirectUrl = redirectPath;
 	}
 
 	@Override
-	public IRequestTarget decode(final RequestParameters requestParameters) {
-		if (log.isDebugEnabled()) {
-			final WebRequest r = (WebRequest) RequestCycle.get().getRequest();
-			final String ref = r.getHttpServletRequest().getHeader("Referer");
-			final String requested = r.getURL();
-			log.debug("redirecting request coming from " + ref + " to " + requested + " to " + _redirectPath);
-		}
-
-		return new RedirectRequestTarget(_redirectPath);
+	public IRequestHandler mapRequest(Request request) {
+		return new RedirectRequestHandler(redirectUrl);
 	}
 
 }

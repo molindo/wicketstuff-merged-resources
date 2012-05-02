@@ -16,14 +16,13 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import java.util.Locale;
 
 @SuppressWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient")
 public class MergedResourceReference extends ResourceReference {
@@ -33,12 +32,6 @@ public class MergedResourceReference extends ResourceReference {
 	private final int _cacheDuration;
 	private final IResourcePreProcessor _preProcessor;
 
-	@Deprecated
-	public MergedResourceReference(Class<?> scope, String path, Locale locale, String style, Class<?>[] scopes,
-			String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
-	}
-
 	public MergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration,
 			IResourcePreProcessor preProcessor) {
 		this(MergedResourceReference.class, name, locale, style, specs, cacheDuration, preProcessor);
@@ -46,25 +39,15 @@ public class MergedResourceReference extends ResourceReference {
 
 	public MergedResourceReference(Class<?> scope, String name, Locale locale, String style, ResourceSpec[] specs,
 			int cacheDuration, IResourcePreProcessor preProcessor) {
-		super(scope, name, locale, style);
+		super(scope, name, locale, style, null);
 		_specs = specs;
 		_cacheDuration = cacheDuration;
 		_preProcessor = preProcessor;
 	}
 
 	@Override
-	protected Resource newResource() {
+	public IResource getResource() {
 		return new MergedResource(getScope(), getName(), getLocale(), getStyle(), _specs, _cacheDuration, _preProcessor);
-	}
-
-	@Deprecated
-	public Class<?>[] getMergedScopes() {
-		return ResourceSpec.toScopes(_specs);
-	}
-
-	@Deprecated
-	public String[] getMergedFiles() {
-		return ResourceSpec.toFiles(_specs);
 	}
 
 	public ResourceSpec[] getMergedSpecs() {

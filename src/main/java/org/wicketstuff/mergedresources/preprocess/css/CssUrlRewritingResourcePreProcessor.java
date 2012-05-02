@@ -16,12 +16,12 @@
 
 package org.wicketstuff.mergedresources.preprocess.css;
 
+import org.wicketstuff.mergedresources.ResourceSpec;
+import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
+
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.wicketstuff.mergedresources.ResourceSpec;
-import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
 /**
  * <p> Replaces relative paths in CSS files to full path urls. </p>
@@ -42,6 +42,8 @@ import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 public class CssUrlRewritingResourcePreProcessor extends StringResourcePreProcessor {
 	private static final long serialVersionUID = 1L;
 
+	private static final char SEPARATOR = '/';
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -56,10 +58,9 @@ public class CssUrlRewritingResourcePreProcessor extends StringResourcePreProces
 
 		// Matches urls according to the CSS url specification quoted in javadoc
 		// above.
-		Pattern pattern = Pattern.compile("(url\\s*\\(\\s*\\\"?\'?)([^\\\\/].*)(\\s*\\\"?\\'?\\))");
+		Pattern pattern = Pattern.compile("(url\\s*\\(\\s*\"?\'?)([^\\\\/].*)(\\s*\"?'?\\))");
 
 		Matcher urlMatcher = pattern.matcher(string);
-
 		while (urlMatcher.find()) {
 			// Group 1 is the part "url(", starting the url
 			String start = urlMatcher.group(1);
@@ -98,14 +99,14 @@ public class CssUrlRewritingResourcePreProcessor extends StringResourcePreProces
 		StringBuilder sb = new StringBuilder();
 
 		// Append "/resources/"
-		sb.append(File.separator).append("resources").append(File.separator);
+		sb.append(SEPARATOR).append("resources").append(SEPARATOR);
 
 		// This will return the full class name of the Scope class (for example
 		// the Panel this
 		// ResourceReference is bound to). In Wicket this is part of the path.
 		sb.append(resourceSpec.getScope().getName());
 
-		sb.append(File.separator);
+		sb.append(SEPARATOR);
 
 		// If the CSS file is in "res/styling.css", this will return "res/"
 		sb.append(getPath(resourceSpec.getFile()));

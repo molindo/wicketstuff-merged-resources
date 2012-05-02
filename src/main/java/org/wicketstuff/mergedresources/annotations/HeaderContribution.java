@@ -16,30 +16,30 @@
 
 package org.wicketstuff.mergedresources.annotations;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.resource.aggregation.ResourceReferenceAndStringData;
+import org.apache.wicket.util.string.Strings;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractHeaderContributor;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.util.string.Strings;
+import static org.apache.wicket.resource.dependencies.AbstractResourceDependentResourceReference.ResourceType.CSS;
+import static org.apache.wicket.resource.dependencies.AbstractResourceDependentResourceReference.ResourceType.JS;
 
-public class HeaderContribution extends AbstractHeaderContributor {
+public class HeaderContribution extends Behavior {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<IHeaderContributor> _headerContributors = new ArrayList<IHeaderContributor>(5);
+	private List<ResourceReferenceAndStringData> _headerContributors = new ArrayList<ResourceReferenceAndStringData>(5);
 
-	/**
-	 * Reads contributions from {@link JsContribution} and
-	 * {@link CssContribution} annotations.
-	 */
+	/** Reads contributions from {@link JsContribution} and {@link CssContribution} annotations. */
 	public HeaderContribution(Class<? extends Component> scope) {
 		addJsContributions(scope, scope.getAnnotation(JsContribution.class));
 		addCssContributions(scope, scope.getAnnotation(CssContribution.class));
-
 		CssContributions cssMulti = scope.getAnnotation(CssContributions.class);
 		if (cssMulti != null) {
 			for (CssContribution css : cssMulti.value()) {
@@ -55,10 +55,11 @@ public class HeaderContribution extends AbstractHeaderContributor {
 			String stylesheetsMedia = Strings.isEmpty(css.media()) ? null : css.media();
 			for (String stylesheet : stylesheets) {
 				if (stylesheetsMedia == null) {
-					_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet));
+					_headerContributors.add(new ResourceReferenceAndStringData(
+							new CssResourceReference(scope, stylesheet), null, null, null, CSS, false, null, null));
 				} else {
-					_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet,
-							stylesheetsMedia));
+					_headerContributors.add(new ResourceReferenceAndStringData(
+							new CssResourceReference(scope, stylesheet), null, null, stylesheetsMedia, CSS, false, null, null));
 				}
 			}
 		}
@@ -68,7 +69,8 @@ public class HeaderContribution extends AbstractHeaderContributor {
 		if (js != null) {
 			String[] scripts = replaceDefault(js.value(), scope.getSimpleName() + ".js");
 			for (String script : scripts) {
-				_headerContributors.add(JavascriptPackageResource.getHeaderContribution(scope, script));
+				_headerContributors.add(new ResourceReferenceAndStringData(
+						new JavaScriptResourceReference(scope, script), null, null, null, JS, false, null, null));
 			}
 		}
 	}
@@ -83,8 +85,20 @@ public class HeaderContribution extends AbstractHeaderContributor {
 	}
 
 	@Override
-	public IHeaderContributor[] getHeaderContributors() {
-		return _headerContributors.toArray(new IHeaderContributor[_headerContributors.size()]);
+	public void renderHead(Component component, IHeaderResponse response) {
+		super.renderHead(component, response);
+		for (ResourceReferenceAndStringData headerContributor : _headerContributors) {
+			switch (headerContributor.getResourceType()) {
+				case JS:
+					response.renderJavaScriptReference(headerContributor.getReference(), headerContributor.getIdOrMedia());
+					break;
+				case CSS:
+					response.renderCSSReference(headerContributor.getReference(), headerContributor.getIdOrMedia());
+					break;
+				case PLAIN:
+					break;
+			}
+		}
 	}
 
 }

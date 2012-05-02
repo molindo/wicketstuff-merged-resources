@@ -16,37 +16,31 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
-import org.apache.wicket.Application;
-import org.apache.wicket.markup.html.CompressedPackageResource;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.time.Duration;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
-public class CompressedMergedResource extends CompressedPackageResource {
+import java.util.Locale;
+
+public class CompressedMergedResource extends PackageResource {
 
 	private static final long serialVersionUID = 1L;
 
 	private final IResourceStream _mergedResourceStream;
-
 	private int _cacheDuration;
-
-	/**
-	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
-	 */
-	@Deprecated
-	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final Class<?>[] scopes, final String[] files, int cacheDuration) {
-		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
-	}
 
 	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style,
 			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style);
+		super(scope, path, locale, style, null);
 		_cacheDuration = cacheDuration;
 		_mergedResourceStream = newResourceStream(locale, style, specs, preProcessor);
+	}
+
+	@Override
+	public IResourceStream getResourceStream() {
+		return _mergedResourceStream;
 	}
 
 	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
@@ -55,20 +49,8 @@ public class CompressedMergedResource extends CompressedPackageResource {
 	}
 
 	@Override
-	protected IResourceStream getPackageResourceStream() {
-		return _mergedResourceStream;
-	}
-
-	@Override
-	public int getCacheDuration() {
-		return _cacheDuration;
-	}
-
-	protected void setHeaders(WebResponse response) {
-		super.setHeaders(response);
-		if (!Application.get().getResourceSettings().getDisableGZipCompression()) {
-			response.setHeader("Vary", "Accept-Encoding");
-		}
-		response.setHeader("Cache-control", "public");
+	protected void configureCache(ResourceResponse data, Attributes attributes) {
+		data.setCacheDuration(Duration.seconds(_cacheDuration));
+		super.configureCache(data, attributes);
 	}
 }
