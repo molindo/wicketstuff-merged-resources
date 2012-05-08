@@ -40,7 +40,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket</artifactId>
+			<artifactId>wicket-core</artifactId>
 			<version>${wicket.version}</version>
 			<exclusions>
 				<exclusion>
@@ -57,8 +57,8 @@
 		</dependency>
 		<dependency>
 		    <groupId>org.wicketstuff</groupId>
-		    <artifactId>annotation</artifactId>
-		    <version>1.4.14</version>
+		    <artifactId>wicketstuff-annotation</artifactId>
+		    <version>1.5.5</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -83,7 +83,7 @@
 		</dependency>
 		<dependency>
 			<groupId>at.molindo</groupId>
-			<artifactId>molindo-wicket-utils</artifactId>
+			<artifactId>molindo-utils</artifactId>
 		</dependency>
 		<dependency>
 			<!-- commons-logging replacement for spring -->
@@ -118,9 +118,8 @@
 	</build>
 
 	<properties>
-		<wicket.version>1.4.13</wicket.version>
-		<spring.version>3.0.4.RELEASE</spring.version>
+		<wicket.version>1.5.5</wicket.version>
+		<spring.version>3.1.1.RELEASE</spring.version>
 		<molindo-utils.version>1.0-alpha-1</molindo-utils.version>
-		<molindo-wicket-utils.version>1.0-alpha-1</molindo-wicket-utils.version>
 	</properties>
 </project>

@@ -16,13 +16,12 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import java.util.Locale;
 
 @SuppressWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient")
 public class CachedCompressedCssResourceReference extends ResourceReference {
@@ -33,15 +32,15 @@ public class CachedCompressedCssResourceReference extends ResourceReference {
 
 	public CachedCompressedCssResourceReference(Class<?> scope, String path, Locale locale, String style,
 			int cacheDuration, IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style);
+		super(scope, path, locale, style, null);
 		_cacheDuration = cacheDuration;
 		_preProcessor = preProcessor;
 	}
 
+
 	@Override
-	protected Resource newResource() {
-		return new CachedCompressedCssResource(getScope(), getName(), getLocale(), getStyle(), _cacheDuration,
-				_preProcessor);
+	public IResource getResource() {
+		return new CachedCompressedCssResource(getScope(), getName(), getLocale(), getStyle(), _cacheDuration, _preProcessor);
 	}
 
 	public int getCacheDuration() {

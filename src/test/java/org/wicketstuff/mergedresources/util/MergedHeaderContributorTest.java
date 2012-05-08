@@ -29,9 +29,8 @@ public class MergedHeaderContributorTest {
 			protected void initMount(ResourceMount mount) {
 				mount.setMerged(false);
 			}
-
 		});
-
+		tester.getApplication().mountPage("/merged", MergedContributorPage.class);
 		tester.startPage(MergedContributorPage.class);
 		tester.assertRenderedPage(MergedContributorPage.class);
 		tester.assertResultPage(MergedContributorPage.class, "MergedContributorPage-expected.html");

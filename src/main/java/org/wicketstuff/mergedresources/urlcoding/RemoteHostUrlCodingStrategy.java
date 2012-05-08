@@ -16,29 +16,25 @@
 
 package org.wicketstuff.mergedresources.urlcoding;
 
+import at.molindo.utils.data.StringUtils;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.AbstractMapper;
+import org.apache.wicket.request.mapper.ResourceMapper;
+import org.apache.wicket.request.resource.ResourceReference;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.request.RequestParameters;
-import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.coding.IMountableRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
-
-import at.molindo.utils.data.StringUtils;
-import at.molindo.wicketutils.utils.WicketUtils;
-
-public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrategy,
-		IMountableRequestTargetUrlCodingStrategy {
+public class RemoteHostUrlCodingStrategy extends AbstractMapper {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RemoteHostUrlCodingStrategy.class);
 
-	private final AbstractRequestTargetUrlCodingStrategy _strategy;
-	private final String _key;
+	private final ResourceMapper _strategy;
 
 	private final String _protocol;
 	private final Integer _port;
@@ -51,8 +47,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		if (ref == null) {
 			throw new NullPointerException("sharedResourceKey");
 		}
-		_key = ref.getSharedResourceKey();
-		_strategy = newStrategy(mountPath, _key);
+		_strategy = newStrategy(mountPath, ref);
 
 		if (root != null) {
 			_protocol = root.getProtocol();
@@ -65,46 +60,55 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		}
 	}
 
-	protected AbstractRequestTargetUrlCodingStrategy newStrategy(final String mountPath, final String sharedResourceKey) {
-		return new SharedResourceRequestTargetUrlCodingStrategy(mountPath, sharedResourceKey);
+	protected ResourceMapper newStrategy(final String mountPath, final ResourceReference sharedResourceKey) {
+		return new ResourceMapper(mountPath, sharedResourceKey);
 	}
 
 	@Override
-	public IRequestTarget decode(final RequestParameters requestParameters) {
-		return new IRequestTarget() {
+	public IRequestHandler mapRequest(final Request request) {
+		return new IRequestHandler() {
 
-			private SharedResourceRequestTarget _orig;
-
-			private SharedResourceRequestTarget getOriginalRequestTarget() {
-				if (_orig == null) {
-					_orig = (SharedResourceRequestTarget) _strategy.decode(requestParameters);
-				}
-				return _orig;
-			}
+			private IRequestHandler _orig;
 
 			@Override
-			public void detach(final RequestCycle requestCycle) {
+			public void detach(final IRequestCycle requestCycle) {
 				if (_orig != null) {
 					_orig.detach(requestCycle);
 				}
 			}
 
 			@Override
-			public void respond(final RequestCycle requestCycle) {
+			public void respond(final IRequestCycle requestCycle) {
 				getOriginalRequestTarget().respond(requestCycle);
+			}
+
+			private IRequestHandler getOriginalRequestTarget() {
+				if (_orig == null) {
+					_orig = _strategy.mapRequest(request);
+				}
+				return _orig;
 			}
 		};
 	}
 
 	@Override
-	public CharSequence encode(final IRequestTarget requestTarget) {
-		final CharSequence encoded = _strategy.encode(requestTarget);
+	public int getCompatibilityScore(Request request) {
+		return 0;
+	}
+
+	@Override
+	public Url mapHandler(IRequestHandler requestHandler) {
+		final Url encoded = _strategy.mapHandler(requestHandler);
 		if (_host == null) {
 			return encoded;
 		}
+		if (encoded == null) {
+			return null;
+		}
 
-		String protocol = !isUseRequestProtocol() ? _protocol : WicketUtils.getHttpServletRequest().getScheme();
-		Integer port = !isUseRequestPort() ? _port : WicketUtils.getHttpServletRequest().getServerPort();
+		final HttpServletRequest serlvetRequest = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+		String protocol = !isUseRequestProtocol() ? _protocol : serlvetRequest.getScheme();
+		Integer port = !isUseRequestPort() ? _port : serlvetRequest.getServerPort();
 		if (port != null) {
 			if (port == 80 && "http".equals(protocol)) {
 				port = null;
@@ -114,27 +118,11 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		}
 
 		try {
-			return new URL(protocol, _host, port == null ? -1 : port, _path
-					+ StringUtils.stripLeading(encoded.toString(), "/")).toString();
+			return Url.parse(new URL(protocol, _host, port == null ? -1 : port, _path + StringUtils.stripLeading(encoded.toString(), "/")).toString());
 		} catch (MalformedURLException e) {
 			log.error("failed to build URL, balling back to default", e);
 			return encoded;
 		}
-	}
-
-	@Override
-	public String getMountPath() {
-		return _strategy.getMountPath();
-	}
-
-	@Override
-	public boolean matches(final IRequestTarget requestTarget) {
-		return _strategy.matches(requestTarget);
-	}
-
-	@Override
-	public boolean matches(final String path, final boolean b) {
-		return _strategy.matches(path, b);
 	}
 
 	public boolean isUseRequestProtocol() {

@@ -16,19 +16,17 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
+
+import java.util.Locale;
 
 public class CachedResource extends MergedResource {
 
 	private static final long serialVersionUID = 1L;
 
-	public CachedResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
-			IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration,
-				preProcessor);
+	public CachedResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration, IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration, preProcessor);
 	}
 
 }

@@ -16,9 +16,10 @@
 
 package org.wicketstuff.mergedresources.components;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 public class PanelOne extends Panel {
 
@@ -26,12 +27,15 @@ public class PanelOne extends Panel {
 
 	public PanelOne(String id) {
 		super(id);
-		add(CSSPackageResource.getHeaderContribution(PanelOne.class, PanelOne.class.getSimpleName() + ".css"));
-		add(CSSPackageResource.getHeaderContribution(PanelOne.class, PanelOne.class.getSimpleName() + "-print.css",
-				"print"));
-		add(JavascriptPackageResource.getHeaderContribution(PanelOne.class, PanelOne.class.getSimpleName() + ".js"));
 		add(new MyForm("myForm"));
 		add(new ComponentB("componentB"));
 	}
 
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		response.renderJavaScriptReference(new JavaScriptResourceReference(PanelOne.class, PanelOne.class.getSimpleName() + ".css"));
+		response.renderCSSReference(new CssResourceReference(PanelOne.class, PanelOne.class.getSimpleName() + "-print.css"), "print");
+		response.renderJavaScriptReference(new JavaScriptResourceReference(PanelOne.class, PanelOne.class.getSimpleName() + ".js"));
+		super.renderHead(response);
+	}
 }

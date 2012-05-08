@@ -17,10 +17,8 @@
 package org.wicketstuff.mergedresources;
 
 import junit.framework.TestCase;
-
-import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.util.tester.WicketTester;
-import org.wicketstuff.mergedresources.HomePage;
 
 /**
  * Simple test using the WicketTester
@@ -40,13 +38,12 @@ public class TestNewInterfaceHomePage extends TestCase {
 			protected boolean strip() {
 				return true;
 			}
-
 		});
 	}
 
 	public void testRenderMyPage() {
 		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(),
-				Application.DEPLOYMENT);
+				RuntimeConfigurationType.DEPLOYMENT);
 
 		// start and render the test page
 		tester.startPage(HomePage.class);
@@ -54,9 +51,9 @@ public class TestNewInterfaceHomePage extends TestCase {
 		// assert rendered page class
 		tester.assertRenderedPage(HomePage.class);
 
+		System.out.println(tester.getResponse().getDocument());
 		assertFalse(tester.ifContains("style/all-[0-9]+\\.css").wasFailed());
 		assertFalse(tester.ifContains("script/all-[0-9]+\\.js").wasFailed());
-		System.out.println(tester.getServletResponse().getDocument());
 		assertTrue(tester.ifContains("resources/").wasFailed());
 		// does anybody know how to check resources?
 	}

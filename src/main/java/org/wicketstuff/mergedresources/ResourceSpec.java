@@ -16,15 +16,13 @@
 
 package org.wicketstuff.mergedresources;
 
-import java.util.Arrays;
-import java.util.Locale;
-
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import java.util.Locale;
 
 public class ResourceSpec implements IClusterable {
 	private static final long serialVersionUID = 1L;
@@ -37,34 +35,6 @@ public class ResourceSpec implements IClusterable {
 	private final Locale _locale;
 	private final String _style;
 	private final Integer _cacheDuration;
-
-	public static ResourceSpec[] toResourceSpecs(Class<?>[] scopes, String[] files) {
-		if (scopes.length != files.length) {
-			throw new IllegalArgumentException("arrays must be of equal length: " + Arrays.toString(scopes) + ", "
-					+ Arrays.toString(files));
-		}
-		ResourceSpec[] resourceSpecs = new ResourceSpec[scopes.length];
-		for (int i = 0; i < scopes.length; i++) {
-			resourceSpecs[i] = new ResourceSpec(scopes[i], files[i]);
-		}
-		return resourceSpecs;
-	}
-
-	public static Class<?>[] toScopes(ResourceSpec[] specs) {
-		Class<?>[] scopes = new Class<?>[specs.length];
-		for (int i = 0; i < specs.length; i++) {
-			scopes[i] = specs[i].getScope();
-		}
-		return scopes;
-	}
-
-	public static String[] toFiles(ResourceSpec[] specs) {
-		String[] files = new String[specs.length];
-		for (int i = 0; i < specs.length; i++) {
-			files[i] = specs[i].getFile();
-		}
-		return files;
-	}
 
 	public ResourceSpec(Class<?> scope, String file) {
 		this(scope, file, null, null, null, null);

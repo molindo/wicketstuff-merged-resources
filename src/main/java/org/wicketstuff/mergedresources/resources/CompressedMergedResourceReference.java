@@ -16,33 +16,23 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
-import org.apache.wicket.Resource;
+import org.apache.wicket.request.resource.IResource;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
+
+import java.util.Locale;
 
 public class CompressedMergedResourceReference extends MergedResourceReference {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
-	 */
-	@Deprecated
-	public CompressedMergedResourceReference(String path, Locale locale, String style, Class<?>[] scopes,
-			String[] files, int cacheDuration) {
-		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
-	}
-
 	public CompressedMergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs,
-			int cacheDuration, IResourcePreProcessor preProcessor) {
+											 int cacheDuration, IResourcePreProcessor preProcessor) {
 		super(CompressedMergedResourceReference.class, name, locale, style, specs, cacheDuration, preProcessor);
 	}
 
 	@Override
-	protected Resource newResource() {
-		return new CompressedMergedResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(),
-				getCacheDuration(), getPreProcessor());
+	public IResource getResource() {
+		return new CompressedMergedResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(), getCacheDuration(), getPreProcessor());
 	}
 }

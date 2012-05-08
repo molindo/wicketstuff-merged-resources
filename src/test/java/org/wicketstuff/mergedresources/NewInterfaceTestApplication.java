@@ -16,7 +16,7 @@
 
 package org.wicketstuff.mergedresources;
 
-import org.apache.wicket.behavior.AbstractHeaderContributor;
+import org.apache.wicket.behavior.Behavior;
 import org.wicketstuff.mergedresources.components.ComponentB;
 import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.PanelOne;
@@ -25,9 +25,9 @@ import org.wicketstuff.mergedresources.versioning.StaticResourceVersionProvider;
 
 public class NewInterfaceTestApplication extends AbstractTestApplication {
 
-	private AbstractHeaderContributor _jsContributor;
-	private AbstractHeaderContributor _cssPrintContributor;
-	private AbstractHeaderContributor _cssContributor;
+	private Behavior _jsContributor;
+	private Behavior _cssPrintContributor;
+	private Behavior _cssContributor;
 
 	@Override
 	protected void mountResources() {
@@ -57,21 +57,21 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 	protected void initMount(ResourceMount mount) {
 	}
 
-	public AbstractHeaderContributor getCssContributor() {
+	public Behavior getCssContributor() {
 		if (_cssContributor == null) {
 			throw new IllegalStateException("application not yet initialized");
 		}
 		return _cssContributor;
 	}
 
-	public AbstractHeaderContributor getCssPrintContributor() {
+	public Behavior getCssPrintContributor() {
 		if (_cssPrintContributor == null) {
 			throw new IllegalStateException("application not yet initialized");
 		}
 		return _cssPrintContributor;
 	}
 
-	public AbstractHeaderContributor getJsContributor() {
+	public Behavior getJsContributor() {
 		if (_jsContributor == null) {
 			throw new IllegalStateException("application not yet initialized");
 		}

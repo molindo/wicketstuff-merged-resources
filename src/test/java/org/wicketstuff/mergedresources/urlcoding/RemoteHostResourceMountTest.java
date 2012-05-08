@@ -34,7 +34,7 @@ public class RemoteHostResourceMountTest {
 			}
 
 		});
-
+		tester.setUseRequestUrlAsBase(false);
 		tester.startPage(HomePage.class);
 		tester.assertRenderedPage(HomePage.class);
 		tester.assertResultPage(RemoteHostResourceMountTest.class, "RemoteHostResourceMountTest-expected.html");

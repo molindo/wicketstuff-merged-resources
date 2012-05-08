@@ -22,8 +22,13 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.example.com/test/style/all-42.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.example.com/test/style/print-42.css" media="print" />
 <script type="text/javascript" src="http://cdn.example.com/test/script/all-42.js"></script>
-<script type="text/javascript" src="http://cdn.example.com/test/script/wicket-event-1.4.13.js"></script>
-<script type="text/javascript" src="http://cdn.example.com/test/script/wicket-ajax-1.4.13.js"></script>
+<script type="text/javascript" src="http://cdn.example.com/test/script/wicket-event-1.5.5.js"></script>
+<script type="text/javascript" src="http://cdn.example.com/test/script/wicket-ajax-1.5.5.js"></script>
+<script type="text/javascript" id="wicket-ajax-base-url">
+/*<![CDATA[*/
+Wicket.Ajax.baseUrl="?0";
+/*]]>*/
+</script>
 </head>
     <body>
         <div>
@@ -31,7 +36,7 @@
 	<div>
 <h1 class="componentB">Wicket!</h1>
 </div>
-	<form action="?wicket:interface=:0:panel:myForm::IFormSubmitListener::" method="post" id="id1" onsubmit="return validateMyForm()" onclick="var wcall=wicketSubmitFormById('id1', '?wicket:interface=:0:panel:myForm::IActivePageBehaviorListener:3:&amp;wicket:ignoreIfNotActive=true', null,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$$(this)&amp;&amp;Wicket.$$('id1')}.bind(this));;"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="id1_hf_0" id="id1_hf_0" /></div>
+	<form action="?0-1.IFormSubmitListener-panel-myForm" method="post" id="id1" onsubmit="return validateMyForm()" onclick="var wcall=wicketSubmitFormById(&#039;id1&#039;, &#039;?0-1.IBehaviorListener.1-panel-myForm&#039;, null,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$$(this)&amp;&amp;Wicket.$$(&#039;id1&#039;)}.bind(this));;"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="id1_hf_0" id="id1_hf_0" /></div>
 		<input type="submit" value="Click!" />
 	</form>
 </div>

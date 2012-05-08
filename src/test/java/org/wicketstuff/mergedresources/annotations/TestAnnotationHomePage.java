@@ -17,11 +17,10 @@
 package org.wicketstuff.mergedresources.annotations;
 
 import junit.framework.TestCase;
-
-import org.apache.wicket.Application;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.markup.html.WicketEventReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.wicketstuff.mergedresources.annotations.components.PanelOne;
 import org.wicketstuff.mergedresources.util.WicketResourceTester;
 
@@ -36,8 +35,7 @@ public class TestAnnotationHomePage extends TestCase {
 	}
 
 	public void testRenderMyPage() {
-		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(),
-				Application.DEPLOYMENT);
+		assertEquals("test must run in deployment mode", tester.getApplication().getConfigurationType(), RuntimeConfigurationType.DEPLOYMENT);
 
 		// start and render the test page
 		tester.startPage(tester.getApplication().getHomePage());
@@ -45,7 +43,7 @@ public class TestAnnotationHomePage extends TestCase {
 		// assert rendered page class
 		tester.assertRenderedPage(tester.getApplication().getHomePage());
 
-		System.out.println(tester.getServletResponse().getDocument());
+		System.out.println(tester.getLastResponseAsString());
 		assertTrue(tester.ifContains("resources/").wasFailed());
 		assertFalse(tester.ifContains("files/all-[0-9]+\\.css").wasFailed());
 		assertFalse(tester.ifContains("files/all-[0-9]+\\.js").wasFailed());
@@ -56,13 +54,9 @@ public class TestAnnotationHomePage extends TestCase {
 
 		assertTrue(tester.urlFor(WicketAjaxReference.INSTANCE).matches("script/wicket-ajax.*\\.js"));
 		assertTrue(tester.urlFor(WicketEventReference.INSTANCE).matches("script/wicket-event.*\\.js"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne.css")).matches(
-				"files/all-[0-9]+\\.css"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "PanelOne-print.css")).matches(
-				"files/print-[0-9]+\\.css"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "functions.js"))
-				.matches("files/all-[0-9]+\\.js"));
-		assertTrue(tester.urlFor(new ResourceReference(PanelOne.class, "accept.png"))
-				.matches("img/accept-[0-9]+\\.png"));
+		assertTrue(tester.urlFor(new PackageResourceReference(PanelOne.class, "PanelOne.css")).matches("files/all-[0-9]+\\.css"));
+		assertTrue(tester.urlFor(new PackageResourceReference(PanelOne.class, "PanelOne-print.css")).matches("files/print-[0-9]+\\.css"));
+		assertTrue(tester.urlFor(new PackageResourceReference(PanelOne.class, "functions.js")).matches("files/all-[0-9]+\\.js"));
+		assertTrue(tester.urlFor(new PackageResourceReference(PanelOne.class, "accept.png")).matches("img/accept-[0-9]+\\.png"));
 	}
 }

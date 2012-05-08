@@ -16,14 +16,14 @@
 
 package org.wicketstuff.mergedresources.urlcoding;
 
+import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.request.IRequestMapper;
+import org.apache.wicket.request.mapper.ResourceMapper;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.wicketstuff.mergedresources.ResourceMount;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCodingStrategy;
-import org.wicketstuff.mergedresources.ResourceMount;
 
 public class RemoteHostResourceMount extends ResourceMount {
 	private final URL _root;
@@ -55,17 +55,14 @@ public class RemoteHostResourceMount extends ResourceMount {
 	}
 
 	@Override
-	protected IRequestTargetUrlCodingStrategy newStrategy(String mountPath, final ResourceReference ref,
-			final boolean merge) {
+	protected IRequestMapper newStrategy(String mountPath, final ResourceReference ref, final boolean merge) {
 		if (!_enabled) {
 			return super.newStrategy(mountPath, ref, merge);
 		} else {
 			return new RemoteHostUrlCodingStrategy(_root, mountPath, ref) {
 				@Override
-				protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
-						final String sharedResourceKey) {
-					return (SharedResourceRequestTargetUrlCodingStrategy) RemoteHostResourceMount.super.newStrategy(
-							mountPath, ref, merge);
+				protected ResourceMapper newStrategy(final String mountPath, final ResourceReference sharedResourceKey) {
+					return (ResourceMapper) RemoteHostResourceMount.super.newStrategy(mountPath, ref, merge);
 				}
 			};
 		}

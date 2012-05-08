@@ -16,24 +16,15 @@
 
 package org.wicketstuff.mergedresources.resources;
 
-import java.util.Locale;
-
-import org.apache.wicket.Resource;
+import org.apache.wicket.request.resource.IResource;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
+
+import java.util.Locale;
 
 public class CompressedMergedJsResourceReference extends MergedResourceReference {
 
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
-	 */
-	@Deprecated
-	public CompressedMergedJsResourceReference(String path, Locale locale, String style, Class<?>[] scopes,
-			String[] files, int cacheDuration) {
-		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
-	}
 
 	public CompressedMergedJsResourceReference(String name, Locale locale, String style, ResourceSpec[] specs,
 			int cacheDuration, IResourcePreProcessor preProcessor) {
@@ -41,7 +32,7 @@ public class CompressedMergedJsResourceReference extends MergedResourceReference
 	}
 
 	@Override
-	protected Resource newResource() {
+	public IResource getResource() {
 		return new CompressedMergedJsResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(),
 				getCacheDuration(), getPreProcessor());
 	}

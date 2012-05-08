@@ -16,10 +16,11 @@
 
 package org.wicketstuff.mergedresources.components;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 public class ComponentB extends Panel {
 
@@ -27,11 +28,14 @@ public class ComponentB extends Panel {
 
 	public ComponentB(String id) {
 		super(id);
-		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".css"));
-		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css",
-				"print"));
-		add(JavascriptPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
 		add(new Label("label", "Wicket!"));
 	}
 
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		response.renderCSSReference(new CssResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + ".css"));
+		response.renderCSSReference(new CssResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css"), "print");
+		response.renderJavaScriptReference(new JavaScriptResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
+		super.renderHead(response);
+	}
 }
