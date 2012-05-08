@@ -33,6 +33,9 @@ public class RedirectStrategy extends MountedMapper {
 
 	@Override
 	public IRequestHandler mapRequest(Request request) {
+		if (super.mapRequest(request) == null) {
+			return null;
+		}
 		return new RedirectRequestHandler(redirectUrl);
 	}
 

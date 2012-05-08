@@ -106,7 +106,7 @@ import java.util.*;
 	private String _style;
 	private Boolean _minifyJs;
 	private Boolean _minifyCss;
-	private boolean _mountRedirect = false;
+	private boolean _mountRedirect = true;
 	private Class<?> _mountScope;
 	private Boolean _merge;
 	private IResourcePreProcessor _preProcessor;
