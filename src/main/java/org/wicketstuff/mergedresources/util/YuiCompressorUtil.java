@@ -24,7 +24,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 
-import at.molindo.thirdparty.com.yahoo.platform.yui.compressor.CssCompressor;
+import com.yahoo.platform.yui.compressor.CssCompressor;
 
 public class YuiCompressorUtil {
 	private static final transient org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(YuiCompressorUtil.class);
