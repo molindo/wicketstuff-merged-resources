@@ -18,29 +18,28 @@ package org.wicketstuff.mergedresources.annotations;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.resource.aggregation.ResourceReferenceAndStringData;
 import org.apache.wicket.util.string.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.wicket.resource.dependencies.AbstractResourceDependentResourceReference.ResourceType.CSS;
-import static org.apache.wicket.resource.dependencies.AbstractResourceDependentResourceReference.ResourceType.JS;
-
 public class HeaderContribution extends Behavior {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<ResourceReferenceAndStringData> _headerContributors = new ArrayList<ResourceReferenceAndStringData>(5);
+	private List<HeaderItem> _headerContributors = new ArrayList<HeaderItem>(5);
 
 	/** Reads contributions from {@link JsContribution} and {@link CssContribution} annotations. */
 	public HeaderContribution(Class<? extends Component> scope) {
 		addJsContributions(scope, scope.getAnnotation(JsContribution.class));
 		addCssContributions(scope, scope.getAnnotation(CssContribution.class));
-		CssContributions cssMulti = scope.getAnnotation(CssContributions.class);
+		final CssContributions cssMulti = scope.getAnnotation(CssContributions.class);
 		if (cssMulti != null) {
 			for (CssContribution css : cssMulti.value()) {
 				addCssContributions(scope, css);
@@ -50,16 +49,13 @@ public class HeaderContribution extends Behavior {
 
 	private void addCssContributions(Class<? extends Component> scope, CssContribution css) {
 		if (css != null) {
-			String[] stylesheets = replaceDefault(css.value(),
-					ContributionScanner.getDefaultCssFile(scope.getSimpleName(), css.media()));
-			String stylesheetsMedia = Strings.isEmpty(css.media()) ? null : css.media();
+			final String[] stylesheets = replaceDefault(css.value(), ContributionScanner.getDefaultCssFile(scope.getSimpleName(), css.media()));
+			final String stylesheetsMedia = Strings.isEmpty(css.media()) ? null : css.media();
 			for (String stylesheet : stylesheets) {
 				if (stylesheetsMedia == null) {
-					_headerContributors.add(new ResourceReferenceAndStringData(
-							new CssResourceReference(scope, stylesheet), null, null, null, CSS, false, null, null));
+					_headerContributors.add(CssHeaderItem.forReference(new CssResourceReference(scope, stylesheet)));
 				} else {
-					_headerContributors.add(new ResourceReferenceAndStringData(
-							new CssResourceReference(scope, stylesheet), null, null, stylesheetsMedia, CSS, false, null, null));
+					_headerContributors.add(CssHeaderItem.forReference(new CssResourceReference(scope, stylesheet), stylesheetsMedia));
 				}
 			}
 		}
@@ -67,10 +63,9 @@ public class HeaderContribution extends Behavior {
 
 	private void addJsContributions(Class<? extends Component> scope, JsContribution js) {
 		if (js != null) {
-			String[] scripts = replaceDefault(js.value(), scope.getSimpleName() + ".js");
+			final String[] scripts = replaceDefault(js.value(), scope.getSimpleName() + ".js");
 			for (String script : scripts) {
-				_headerContributors.add(new ResourceReferenceAndStringData(
-						new JavaScriptResourceReference(scope, script), null, null, null, JS, false, null, null));
+				_headerContributors.add(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(scope, script)));
 			}
 		}
 	}
@@ -87,17 +82,8 @@ public class HeaderContribution extends Behavior {
 	@Override
 	public void renderHead(Component component, IHeaderResponse response) {
 		super.renderHead(component, response);
-		for (ResourceReferenceAndStringData headerContributor : _headerContributors) {
-			switch (headerContributor.getResourceType()) {
-				case JS:
-					response.renderJavaScriptReference(headerContributor.getReference(), headerContributor.getIdOrMedia());
-					break;
-				case CSS:
-					response.renderCSSReference(headerContributor.getReference(), headerContributor.getIdOrMedia());
-					break;
-				case PLAIN:
-					break;
-			}
+		for (HeaderItem headerItem : _headerContributors) {
+			response.render(headerItem);
 		}
 	}
 

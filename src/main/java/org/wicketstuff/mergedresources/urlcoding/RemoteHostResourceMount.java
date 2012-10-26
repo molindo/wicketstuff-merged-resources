@@ -17,8 +17,8 @@
 package org.wicketstuff.mergedresources.urlcoding;
 
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.core.request.mapper.ResourceMapper;
 import org.apache.wicket.request.IRequestMapper;
-import org.apache.wicket.request.mapper.ResourceMapper;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.wicketstuff.mergedresources.ResourceMount;
 

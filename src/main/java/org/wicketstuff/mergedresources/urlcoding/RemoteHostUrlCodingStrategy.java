@@ -17,13 +17,13 @@
 package org.wicketstuff.mergedresources.urlcoding;
 
 import at.molindo.utils.data.StringUtils;
+import org.apache.wicket.core.request.mapper.ResourceMapper;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.AbstractMapper;
-import org.apache.wicket.request.mapper.ResourceMapper;
 import org.apache.wicket.request.resource.ResourceReference;
 
 import javax.servlet.http.HttpServletRequest;

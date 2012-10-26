@@ -19,7 +19,9 @@ package org.wicketstuff.mergedresources.components;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
@@ -52,8 +54,8 @@ public class MyForm extends Form<Object> {
 
 	@Override
 	public void renderHead(IHeaderResponse response) {
-		response.renderCSSReference(new CssResourceReference(MyForm.class, MyForm.class.getSimpleName() + ".css"));
-		response.renderJavaScriptReference(new JavaScriptResourceReference(MyForm.class, MyForm.class.getSimpleName() + ".js"));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(MyForm.class, MyForm.class.getSimpleName() + ".css")));
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(MyForm.class, MyForm.class.getSimpleName() + ".js")));
 		super.renderHead(response);
 	}
 }

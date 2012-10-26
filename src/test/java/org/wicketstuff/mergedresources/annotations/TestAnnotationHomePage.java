@@ -18,8 +18,8 @@ package org.wicketstuff.mergedresources.annotations;
 
 import junit.framework.TestCase;
 import org.apache.wicket.RuntimeConfigurationType;
-import org.apache.wicket.ajax.WicketAjaxReference;
-import org.apache.wicket.markup.html.WicketEventReference;
+import org.apache.wicket.ajax.WicketAjaxJQueryResourceReference;
+import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.wicketstuff.mergedresources.annotations.components.PanelOne;
 import org.wicketstuff.mergedresources.util.WicketResourceTester;
@@ -52,8 +52,8 @@ public class TestAnnotationHomePage extends TestCase {
 		assertFalse(tester.ifContains("files/forms-[0-9]+\\.css").wasFailed());
 		// does anybody know how to check resources?
 
-		assertTrue(tester.urlFor(WicketAjaxReference.INSTANCE).matches("script/wicket-ajax.*\\.js"));
-		assertTrue(tester.urlFor(WicketEventReference.INSTANCE).matches("script/wicket-event.*\\.js"));
+		assertTrue(tester.urlFor(WicketAjaxJQueryResourceReference.get()).matches("script/wicket-ajax.*\\.js"));
+		assertTrue(tester.urlFor(WicketEventJQueryResourceReference.get()).matches("script/wicket-event.*\\.js"));
 		assertTrue(tester.urlFor(new PackageResourceReference(PanelOne.class, "PanelOne.css")).matches("files/all-[0-9]+\\.css"));
 		assertTrue(tester.urlFor(new PackageResourceReference(PanelOne.class, "PanelOne-print.css")).matches("files/print-[0-9]+\\.css"));
 		assertTrue(tester.urlFor(new PackageResourceReference(PanelOne.class, "functions.js")).matches("files/all-[0-9]+\\.js"));

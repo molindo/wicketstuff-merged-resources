@@ -16,11 +16,11 @@
 
 package org.wicketstuff.mergedresources.util;
 
+import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.http.handler.RedirectRequestHandler;
-import org.apache.wicket.request.mapper.MountedMapper;
 
 public class RedirectStrategy extends MountedMapper {
 

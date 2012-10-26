@@ -10,7 +10,7 @@
 	<groupId>at.molindo</groupId>
 	<artifactId>wicketstuff-merged-resources</artifactId>
 	<packaging>bundle</packaging>
-	<version>3.1-SNAPSHOT</version>
+	<version>3.1-26102012</version>
 	<name>Wicket Merged Resources</name>
 	<description>
 	    Resource merging for Apache Wicket (http://wicket.apache.org),
@@ -118,7 +118,7 @@
 	</build>
 
 	<properties>
-		<wicket.version>1.5.5</wicket.version>
+		<wicket.version>6.2.0</wicket.version>
 		<spring.version>3.1.1.RELEASE</spring.version>
 		<molindo-utils.version>1.0-alpha-1</molindo-utils.version>
 	</properties>

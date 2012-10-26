@@ -18,13 +18,13 @@ package org.wicketstuff.mergedresources.resources;
 
 import at.molindo.utils.io.StreamUtils;
 import org.apache.wicket.Application;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.core.util.resource.locator.ResourceNameIterator;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.listener.IChangeListener;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.watch.IModificationWatcher;
@@ -189,7 +189,7 @@ public class MergedResourceStream implements IResourceStream {
 			final String path = Strings.beforeLast(scope.getName(), '.').replace('.', '/') + '/'
 					+ Strings.beforeLast(fileName, '.');
 			// Iterator over all the combinations
-			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _variation, _locale, Strings.afterLast(fileName, '.'), false);
+			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _variation, _locale, Arrays.asList(Strings.afterLast(fileName, '.')), false);
 			IResourceStream resourceStream = null;
 			while (resourceStream == null && iter.hasNext()) {
 				final String resourceName = iter.next();

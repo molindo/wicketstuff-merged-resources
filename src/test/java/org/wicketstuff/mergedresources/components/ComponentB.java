@@ -16,7 +16,9 @@
 
 package org.wicketstuff.mergedresources.components;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
@@ -33,9 +35,9 @@ public class ComponentB extends Panel {
 
 	@Override
 	public void renderHead(IHeaderResponse response) {
-		response.renderCSSReference(new CssResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + ".css"));
-		response.renderCSSReference(new CssResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css"), "print");
-		response.renderJavaScriptReference(new JavaScriptResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + ".css")));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css"), "print"));
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(ComponentB.class, ComponentB.class.getSimpleName() + ".js")));
 		super.renderHead(response);
 	}
 }

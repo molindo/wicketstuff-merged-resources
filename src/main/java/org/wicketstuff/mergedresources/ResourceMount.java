@@ -19,12 +19,12 @@ package org.wicketstuff.mergedresources;
 import org.apache.wicket.Application;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.ajax.WicketAjaxReference;
+import org.apache.wicket.ajax.WicketAjaxJQueryResourceReference;
+import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.WicketEventReference;
+import org.apache.wicket.core.request.mapper.ResourceMapper;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestMapper;
-import org.apache.wicket.request.mapper.ResourceMapper;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
@@ -137,9 +137,8 @@ import java.util.*;
 			mountPrefix = mountPrefix + "/";
 		}
 
-		for (ResourceReference ref : new ResourceReference[]{WicketAjaxReference.INSTANCE, WicketEventReference.INSTANCE}) {
+		for (ResourceReference ref : new ResourceReference[]{WicketAjaxJQueryResourceReference.get(), WicketEventJQueryResourceReference.get()}) {
 			String path = mountPrefix + ref.getName();
-
 			mount.clone().setPath(path).addResourceSpec(ref).mount(application);
 		}
 	}
@@ -170,8 +169,7 @@ import java.util.*;
 		mount = mount.clone().setResourceVersionProvider(new WicketVersionProvider(application))
 				.setPath(mountPrefix + "wicket.js").setMerged(true);
 
-		for (ResourceReference ref : new ResourceReference[]{WicketEventReference.INSTANCE,
-				WicketAjaxReference.INSTANCE}) {
+		for (ResourceReference ref : new ResourceReference[]{WicketEventJQueryResourceReference.get(), WicketAjaxJQueryResourceReference.get()}) {
 			mount.addResourceSpec(ref);
 		}
 

@@ -18,7 +18,9 @@ package org.wicketstuff.mergedresources.util;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 
@@ -49,12 +51,12 @@ public class MergedHeaderContributor extends Behavior {
 					final String name = ref.getName();
 					if (name != null) {
 						if (name.endsWith(".js")) {
-							response.renderJavaScriptReference(ref);
+							response.render(JavaScriptHeaderItem.forReference(ref));
 						} else if (name.endsWith(".css")) {
 							if (Strings.isEmpty(_cssMediaType)) {
-								response.renderCSSReference(ref);
+								response.render(CssHeaderItem.forReference(ref));
 							} else {
-								response.renderCSSReference(ref, _cssMediaType);
+								response.render(CssHeaderItem.forReference(ref, _cssMediaType));
 							}
 						}
 					}

@@ -17,9 +17,9 @@
 package org.wicketstuff.mergedresources;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
 
 import java.util.Locale;

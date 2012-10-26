@@ -16,7 +16,7 @@
 
 package org.wicketstuff.mergedresources.versioning;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public abstract class AbstractResourceVersion implements IClusterable {
 	private static final long serialVersionUID = 1L;
