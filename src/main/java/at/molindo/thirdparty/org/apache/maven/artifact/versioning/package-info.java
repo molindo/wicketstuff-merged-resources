@@ -17,4 +17,4 @@
  * Copied from Apache Maven 3.0.5
  * Path: maven-artifact/src/main/java/org/apache/maven/artifact/versioning/
  */
-package org.wicketstuff.mergedresources.thirdparty.org.apache.maven.artifact.versioning;
+package at.molindo.thirdparty.org.apache.maven.artifact.versioning;

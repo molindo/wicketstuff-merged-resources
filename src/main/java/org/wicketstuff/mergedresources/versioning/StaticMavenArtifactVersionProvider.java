@@ -15,8 +15,8 @@
  */
 package org.wicketstuff.mergedresources.versioning;
 
-import org.wicketstuff.mergedresources.thirdparty.org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.wicketstuff.mergedresources.thirdparty.org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import at.molindo.thirdparty.org.apache.maven.artifact.versioning.ArtifactVersion;
+import at.molindo.thirdparty.org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 public class StaticMavenArtifactVersionProvider implements IResourceVersionProvider {
 

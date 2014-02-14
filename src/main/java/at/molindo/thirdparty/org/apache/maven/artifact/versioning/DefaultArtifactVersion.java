@@ -1,4 +1,4 @@
-package org.wicketstuff.mergedresources.thirdparty.org.apache.maven.artifact.versioning;
+package at.molindo.thirdparty.org.apache.maven.artifact.versioning;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
