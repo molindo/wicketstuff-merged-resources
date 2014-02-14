@@ -116,8 +116,9 @@
 						<Bundle-SymbolicName>${project.groupId}</Bundle-SymbolicName>
 						<Bundle-Name>${project.artifactId}</Bundle-Name>
 						<Bundle-Version>${project.version}</Bundle-Version>
-						<Export-Package>org.wicketstuff.mergedresources.*;
-						at.molindo.thirdparty.com.yahoo.platform.yui.compressor
+						<Export-Package>
+							org.wicketstuff.mergedresources.*;
+							at.molindo.thirdparty.*;
 						</Export-Package>
 						<Import-Package>
 							*;resolution:=optional
