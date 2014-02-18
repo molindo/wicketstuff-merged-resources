@@ -26,3 +26,4 @@ Current snapshots are available from Sonatype OSS:
 Builds are performed by Travis CI:
 
 [![Build Status](https://travis-ci.org/molindo/wicketstuff-merged-resources.png?branch=master)](https://travis-ci.org/molindo/wicketstuff-merged-resources)
+
