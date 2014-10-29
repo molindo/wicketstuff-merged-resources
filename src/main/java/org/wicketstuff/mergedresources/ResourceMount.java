@@ -991,10 +991,13 @@ public class ResourceMount implements Cloneable {
 	 * @return this
 	 */
 	public ResourceMount addResourceSpecsMatchingSuffix(Class<?>... scopes) {
+		return addResourceSpecsMatchingSuffix(getSuffix(_path), scopes);
+	}
+
+	public ResourceMount addResourceSpecsMatchingSuffix(String suffix, Class<?>... scopes) {
 		if (_path == null) {
 			throw new IllegalStateException("unversionPath must be set for this method to work");
 		}
-		String suffix = getSuffix(_path);
 		if (Strings.isEmpty(suffix) || suffix.contains("/")) {
 			throw new IllegalStateException(
 					"unversionPath does not have a valid suffix (i.e. does not contain a '.' followed by characterers and no '/')");
