@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.preprocess;
 
 import java.io.Serializable;
@@ -25,12 +24,11 @@ import org.wicketstuff.mergedresources.ResourceSpec;
 public interface IResourcePreProcessor extends Serializable {
 
 	/**
-	 * 
+	 *
 	 * @param resourceSpec
-	 *            null when processing complete merged resource, non-null for
-	 *            each part of a merged resource
+	 *            null when processing complete merged resource, non-null for each part of a merged resource
 	 * @param content
-	 * 
+	 *
 	 * @return processed content, may be <code>content</code>
 	 */
 	byte[] preProcess(@CheckForNull ResourceSpec resourceSpec, byte[] content);

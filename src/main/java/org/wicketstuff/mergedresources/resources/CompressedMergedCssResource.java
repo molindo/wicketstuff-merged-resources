@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.util.Locale;
@@ -32,19 +31,17 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
-	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	@Deprecated
+	public CompressedMergedCssResource(final Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, final int cacheDuration) {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedCssResource(Class<?> scope, final String path, final Locale locale, final String style,
-			ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedCssResource(final Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style, specs, cacheDuration, preProcessor);
 	}
 
 	@Override
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
-			IResourcePreProcessor preProcessor) {
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs, final IResourcePreProcessor preProcessor) {
 		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
@@ -54,11 +51,11 @@ public class CompressedMergedCssResource extends CompressedMergedResource {
 			@Override
 			protected byte[] toContent(final byte[] content) {
 
-				ICssCompressor compressor = ResourceMount.getCssCompressor(Application.get());
+				final ICssCompressor compressor = ResourceMount.getCssCompressor(Application.get());
 				if (compressor != null) {
 					return compressor.compress(content, ICssCompressor.UTF_8);
 				} else if (Application.get().getResourceSettings()
-				// use the JS settings for CSS - deprecated as of WMR 3.1
+						// use the JS settings for CSS - deprecated as of WMR 3.1
 						.getStripJavascriptCommentsAndWhitespace()) {
 					return YuiCompressorUtil.compress(content, ICssCompressor.UTF_8);
 				} else {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ public class StaticMavenArtifactVersionProvider implements IResourceVersionProvi
 
 	private final MavenResourceVersion _version;
 
-	public StaticMavenArtifactVersionProvider(String version) {
+	public StaticMavenArtifactVersionProvider(final String version) {
 		this(new DefaultArtifactVersion(version));
 	}
 
-	public StaticMavenArtifactVersionProvider(ArtifactVersion version) {
+	public StaticMavenArtifactVersionProvider(final ArtifactVersion version) {
 		if (version == null) {
 			throw new NullPointerException("version");
 		}
@@ -34,7 +34,7 @@ public class StaticMavenArtifactVersionProvider implements IResourceVersionProvi
 	}
 
 	@Override
-	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+	public AbstractResourceVersion getVersion(final Class<?> scope, final String file) throws VersionException {
 		return _version;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.io.UnsupportedEncodingException;
@@ -23,11 +22,12 @@ import org.apache.wicket.WicketRuntimeException;
 
 public class UncompressedCssCompressor implements ICssCompressor {
 
-	public byte[] compress(byte[] original, Charset charset) {
+	@Override
+	public byte[] compress(final byte[] original, final Charset charset) {
 		if (!ICssCompressor.EXPECTED_CHARSET.equals(charset)) {
 			try {
 				return new String(original, charset.name()).getBytes(ICssCompressor.UTF_8.name());
-			} catch (UnsupportedEncodingException e) {
+			} catch (final UnsupportedEncodingException e) {
 				throw new WicketRuntimeException("unexpected encoding from Charset.name()?", e);
 			}
 		} else {

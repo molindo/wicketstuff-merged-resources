@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.annotations.components;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -30,21 +29,21 @@ public class MyForm extends Form<Object> {
 
 	private static final long serialVersionUID = 1L;
 
-	public MyForm(String id) {
+	public MyForm(final String id) {
 		super(id);
-		add(new AttributeAppender("onsubmit", true, new Model<String>("return validateMyForm()"), ";"));
+		add(new AttributeAppender("onsubmit", true, new Model<>("return validateMyForm()"), ";"));
 		add(new AjaxFormSubmitBehavior(this, "onclick") {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onError(AjaxRequestTarget target) {
+			protected void onError(final AjaxRequestTarget target) {
 				// nothing
 
 			}
 
 			@Override
-			protected void onSubmit(AjaxRequestTarget target) {
+			protected void onSubmit(final AjaxRequestTarget target) {
 				// nothing
 			}
 

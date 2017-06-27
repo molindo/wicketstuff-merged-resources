@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.util;
 
 import org.apache.wicket.Page;
@@ -27,20 +26,20 @@ public class WicketResourceTester extends WicketTester {
 		super();
 	}
 
-	public WicketResourceTester(Class<? extends Page> homePage) {
+	public WicketResourceTester(final Class<? extends Page> homePage) {
 		super(homePage);
 	}
 
-	public WicketResourceTester(WebApplication application, String path) {
+	public WicketResourceTester(final WebApplication application, final String path) {
 		super(application, path);
 	}
 
-	public WicketResourceTester(WebApplication application) {
+	public WicketResourceTester(final WebApplication application) {
 		super(application);
 	}
 
-	public String urlFor(ResourceReference resourceReference) {
-		CharSequence cs = resolveRequestCycle().urlFor(resourceReference);
+	public String urlFor(final ResourceReference resourceReference) {
+		final CharSequence cs = resolveRequestCycle().urlFor(resourceReference);
 		return cs == null ? null : cs.toString();
 	}
 }

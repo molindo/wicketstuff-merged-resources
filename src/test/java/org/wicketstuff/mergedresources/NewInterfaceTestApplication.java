@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources;
 
 import org.apache.wicket.behavior.AbstractHeaderContributor;
@@ -33,9 +32,10 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 	protected void mountResources() {
 		ResourceMount.mountWicketResources("script", this, newResourceMount());
 
-		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
+		final IResourceVersionProvider p = new StaticResourceVersionProvider(42);
 
-		ResourceMount mount = newResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
+		final ResourceMount mount = newResourceMount().setResourceVersionProvider(p)
+				.setDefaultAggressiveCacheDuration();
 
 		initMount(mount);
 
@@ -54,7 +54,7 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 		return new ResourceMount();
 	}
 
-	protected void initMount(ResourceMount mount) {
+	protected void initMount(final ResourceMount mount) {
 	}
 
 	public AbstractHeaderContributor getCssContributor() {

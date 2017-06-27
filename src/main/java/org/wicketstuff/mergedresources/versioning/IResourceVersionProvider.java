@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.versioning;
 
 public interface IResourceVersionProvider {
@@ -35,11 +34,11 @@ public interface IResourceVersionProvider {
 			super(scope + ", " + fileName + ": " + msg);
 		}
 
-		public VersionException(String msg) {
+		public VersionException(final String msg) {
 			super(msg);
 		}
 
-		public VersionException(String msg, Throwable cause) {
+		public VersionException(final String msg, final Throwable cause) {
 			super(msg, cause);
 		}
 

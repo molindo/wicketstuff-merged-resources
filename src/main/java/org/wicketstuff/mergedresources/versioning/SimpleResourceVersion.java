@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.versioning;
 
 public final class SimpleResourceVersion extends AbstractResourceVersion {
@@ -21,7 +20,7 @@ public final class SimpleResourceVersion extends AbstractResourceVersion {
 	private static final long serialVersionUID = 1L;
 	private int _value;
 
-	public SimpleResourceVersion(int value) {
+	public SimpleResourceVersion(final int value) {
 		setValue(value);
 	}
 
@@ -29,22 +28,25 @@ public final class SimpleResourceVersion extends AbstractResourceVersion {
 		return _value;
 	}
 
-	private void setValue(int value) {
+	private void setValue(final int value) {
 		if (value < 0) {
 			throw new IllegalArgumentException("value must be > 0 (valid) or 0 (invalid)");
 		}
 		_value = value;
 	}
 
+	@Override
 	public boolean isValid() {
 		return _value > 0;
 	}
 
+	@Override
 	public String getVersion() {
 		return Integer.toString(_value);
 	}
 
-	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
+	@Override
+	protected int compareValid(final AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (o instanceof SimpleResourceVersion) {
 			return ((Integer) getValue()).compareTo(((SimpleResourceVersion) o).getValue());
 		} else {

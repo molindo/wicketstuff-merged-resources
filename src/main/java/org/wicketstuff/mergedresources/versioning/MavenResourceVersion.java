@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ public final class MavenResourceVersion extends AbstractResourceVersion {
 
 	private final ArtifactVersion _version;
 
-	public MavenResourceVersion(ArtifactVersion version) {
+	public MavenResourceVersion(final ArtifactVersion version) {
 		if (version == null) {
 			throw new NullPointerException("version");
 		}
@@ -45,7 +45,7 @@ public final class MavenResourceVersion extends AbstractResourceVersion {
 	}
 
 	@Override
-	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
+	protected int compareValid(final AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (o instanceof MavenResourceVersion) {
 			return getArtifactVersion().compareTo(((MavenResourceVersion) o).getArtifactVersion());
 		} else {

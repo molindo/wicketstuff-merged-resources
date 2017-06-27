@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.nio.charset.Charset;
@@ -22,7 +21,8 @@ import org.wicketstuff.mergedresources.util.YuiCompressorUtil;
 
 public class YuiCssCompressor implements ICssCompressor {
 
-	public byte[] compress(byte[] original, Charset charset) {
+	@Override
+	public byte[] compress(final byte[] original, final Charset charset) {
 		return YuiCompressorUtil.compress(original, charset);
 	}
 

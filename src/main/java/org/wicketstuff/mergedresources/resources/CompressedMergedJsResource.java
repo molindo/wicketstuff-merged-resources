@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.util.Locale;
@@ -34,19 +33,16 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public CompressedMergedJsResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	public CompressedMergedJsResource(final Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, final int cacheDuration) {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedJsResource(Class<?> scope, final String path, final Locale locale, String style,
-			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedJsResource(final Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style, specs, cacheDuration, preProcessor);
 	}
 
 	@Override
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
-			IResourcePreProcessor preProcessor) {
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs, final IResourcePreProcessor preProcessor) {
 		return new MergedResourceStream(specs, locale, style, preProcessor) {
 			private static final long serialVersionUID = 1L;
 
@@ -59,7 +55,7 @@ public class CompressedMergedJsResource extends CompressedMergedResource {
 						return compressor.compress(new String(content)).getBytes();
 					}
 					return content;
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					log.error("Error while stripping content", e);
 					return content;
 				}

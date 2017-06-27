@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.versioning;
 
 import java.io.BufferedReader;
@@ -26,8 +25,9 @@ import java.util.regex.Pattern;
 public class RevisionVersionProvider extends AbstractClasspathResourceVersionProvider {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RevisionVersionProvider.class);
 
-	public AbstractResourceVersion getVersion(URL url) throws VersionException {
-		String line = readFirstLine(url);
+	@Override
+	public AbstractResourceVersion getVersion(final URL url) throws VersionException {
+		final String line = readFirstLine(url);
 
 		final Matcher m = Pattern.compile("Revision: ([0-9]+)").matcher(line);
 		if (m.find()) {
@@ -41,7 +41,7 @@ public class RevisionVersionProvider extends AbstractClasspathResourceVersionPro
 		}
 	}
 
-	protected String readFirstLine(URL url) throws VersionException {
+	protected String readFirstLine(final URL url) throws VersionException {
 		String line;
 		BufferedReader r = null;
 		try {

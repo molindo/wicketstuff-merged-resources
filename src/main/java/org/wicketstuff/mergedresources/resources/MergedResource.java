@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.util.Arrays;
@@ -31,14 +30,13 @@ public class MergedResource extends PackageResource {
 
 	private final MergedResourceStream _mergedResourceStream;
 
-	private int _cacheDuration;
+	private final int _cacheDuration;
 
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	public MergedResource(final Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, final int cacheDuration) {
 		super(scope, path, locale, style);
 
 		if (scopes.length != files.length) {
@@ -49,8 +47,7 @@ public class MergedResource extends PackageResource {
 		_mergedResourceStream = new MergedResourceStream(scopes, files, locale, style);
 	}
 
-	public MergedResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public MergedResource(final Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 
 		_cacheDuration = cacheDuration;
@@ -67,7 +64,8 @@ public class MergedResource extends PackageResource {
 		return _cacheDuration;
 	}
 
-	protected void setHeaders(WebResponse response) {
+	@Override
+	protected void setHeaders(final WebResponse response) {
 		super.setHeaders(response);
 		response.setHeader("Cache-control", "public");
 	}

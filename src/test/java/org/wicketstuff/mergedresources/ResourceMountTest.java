@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources;
 
-import static org.apache.wicket.Application.DEPLOYMENT;
-import static org.apache.wicket.Application.DEVELOPMENT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.apache.wicket.Application.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +40,7 @@ public class ResourceMountTest {
 	static final ResourceReference CSS_COMPONENT_B = new ResourceReference(ComponentB.class, "ComponentB.css");
 	static final ResourceReference CSS_PANEL_ONE = new ResourceReference(PanelOne.class, "PanelOne.css");
 	static final ResourceReference CSS_MY_FORM = new ResourceReference(MyForm.class, "MyForm.css");
-	static final ResourceReference CSS_PRINT_COMPONENT_B = new ResourceReference(ComponentB.class,
-			"ComponentB-print.css");
+	static final ResourceReference CSS_PRINT_COMPONENT_B = new ResourceReference(ComponentB.class, "ComponentB-print.css");
 	static final ResourceReference CSS_PRINT_PANEL_ONE = new ResourceReference(PanelOne.class, "PanelOne-print.css");
 	static final ResourceReference JS_COMPONENT_B = new ResourceReference(ComponentB.class, "ComponentB.js");
 	static final ResourceReference JS_PANEL_ONE = new ResourceReference(PanelOne.class, "PanelOne.js");
@@ -56,32 +51,30 @@ public class ResourceMountTest {
 	private static final ResourceReference[] MERGED_JS = { JS_COMPONENT_B, JS_PANEL_ONE, JS_MY_FORM };
 
 	/**
-	 * Verify that the test page renders as expected (i.e. with each resource
-	 * listed separately) during development.
+	 * Verify that the test page renders as expected (i.e. with each resource listed separately) during development.
 	 */
 	@Test
 	public void testRender_development() throws Exception {
-		WicketTester tester = doRender(DEVELOPMENT);
+		final WicketTester tester = doRender(DEVELOPMENT);
 		tester.assertResultPage(ResourceMountTest.class, "ResourceMountTestPage-development-expected.html");
 	}
 
 	/**
-	 * Verify that the test page renders as expected (i.e. with merged resource
-	 * href and src attributes) during deployment.
+	 * Verify that the test page renders as expected (i.e. with merged resource href and src attributes) during
+	 * deployment.
 	 */
 	@Test
 	public void testRender_deployment() throws Exception {
-		WicketTester tester = doRender(DEPLOYMENT);
+		final WicketTester tester = doRender(DEPLOYMENT);
 		tester.assertResultPage(ResourceMountTest.class, "ResourceMountTestPage-deployment-expected.html");
 	}
 
 	/**
-	 * Verify that individual, non-merged resources can be succesfully
-	 * downloaded in development mode.
+	 * Verify that individual, non-merged resources can be succesfully downloaded in development mode.
 	 */
 	@Test
 	public void testDownload_development() throws IOException {
-		WicketTester tester = doRender(DEVELOPMENT);
+		final WicketTester tester = doRender(DEVELOPMENT);
 		assertDownloaded(tester, "static/styles.css/ComponentB.css", CSS_COMPONENT_B);
 		assertDownloaded(tester, "static/styles.css/PanelOne.css", CSS_PANEL_ONE);
 		assertDownloaded(tester, "static/styles.css/MyForm.css", CSS_MY_FORM);
@@ -92,36 +85,33 @@ public class ResourceMountTest {
 	}
 
 	/**
-	 * Verify that resources are merged during deployment and can be
-	 * successfully downloaded.
+	 * Verify that resources are merged during deployment and can be successfully downloaded.
 	 */
 	@Test
 	public void testDownload_deployment() throws IOException {
-		WicketTester tester = doRender(DEPLOYMENT);
+		final WicketTester tester = doRender(DEPLOYMENT);
 		assertDownloaded(tester, "static/styles.css", MERGED_CSS);
 		assertDownloaded(tester, "static/styles-print.css", MERGED_CSS_PRINT);
 		assertDownloaded(tester, "static/scripts.js", MERGED_JS);
 	}
 
 	/**
-	 * Verify that an exception is thrown if we execute build() without
-	 * specifying a path first.
+	 * Verify that an exception is thrown if we execute build() without specifying a path first.
 	 */
 	@Test(expected = IllegalStateException.class)
 	public void testMissingPath() {
-		ResourceMount b = new ResourceMount();
+		final ResourceMount b = new ResourceMount();
 		b.addResourceSpec(CSS_COMPONENT_B);
 		b.mount(new WicketTester().getApplication());
 		fail("mount must throw exception");
 	}
 
 	/**
-	 * Verify that an exception is thrown if we execute build() without
-	 * specifying a resource first.
+	 * Verify that an exception is thrown if we execute build() without specifying a resource first.
 	 */
 	@Test
 	public void testMissingResource() {
-		ResourceMount b = new ResourceMount();
+		final ResourceMount b = new ResourceMount();
 		b.setPath("/styles/all.css");
 		assertNull(b.build(new WicketTester().getApplication()));
 	}
@@ -162,7 +152,7 @@ public class ResourceMountTest {
 	 * Render the HomePage in either DEVELOPMENT or DEPLOYMENT mode.
 	 */
 	private WicketTester doRender(final String mode) {
-		WicketTester tester = new WicketTester(new MergedApp() {
+		final WicketTester tester = new WicketTester(new MergedApp() {
 			@Override
 			public String getConfigurationType() {
 				return mode;
@@ -173,8 +163,8 @@ public class ResourceMountTest {
 		return tester;
 	}
 
-	private void assertDownloaded(WicketTester tester, String uri, ResourceReference... refs) throws IOException {
-		ResourceSpec[] specs = new ResourceSpec[refs.length];
+	private void assertDownloaded(final WicketTester tester, final String uri, final ResourceReference... refs) throws IOException {
+		final ResourceSpec[] specs = new ResourceSpec[refs.length];
 		for (int i = 0; i < refs.length; i++) {
 			specs[i] = new ResourceSpec(refs[i]);
 		}
@@ -182,20 +172,20 @@ public class ResourceMountTest {
 	}
 
 	/**
-	 * Download the resource at the given URI and make sure its contents are
-	 * identical to a merged list of files from the test fixture.
+	 * Download the resource at the given URI and make sure its contents are identical to a merged list of files from
+	 * the test fixture.
 	 */
-	private void assertDownloaded(WicketTester tester, String uri, ResourceSpec... specs) throws IOException {
-		StringList expected = new StringList();
-		for (ResourceSpec spec : specs) {
-			InputStream is = spec.getScope().getResourceAsStream(spec.getFile());
+	private void assertDownloaded(final WicketTester tester, final String uri, final ResourceSpec... specs) throws IOException {
+		final StringList expected = new StringList();
+		for (final ResourceSpec spec : specs) {
+			final InputStream is = spec.getScope().getResourceAsStream(spec.getFile());
 			try {
 				expected.add(IOUtils.toString(is, "UTF-8"));
 			} finally {
 				IOUtils.closeQuietly(is);
 			}
 		}
-		WebRequestCycle wrc = tester.setupRequestAndResponse(false);
+		final WebRequestCycle wrc = tester.setupRequestAndResponse(false);
 		tester.getServletRequest().setURL(uri);
 		tester.processRequestCycle(wrc);
 
@@ -216,7 +206,7 @@ public class ResourceMountTest {
 		protected void init() {
 			super.init();
 
-			ResourceMount mount = new ResourceMount(Application.DEVELOPMENT.equals(getConfigurationType()));
+			final ResourceMount mount = new ResourceMount(Application.DEVELOPMENT.equals(getConfigurationType()));
 			mount.setMinifyCss(false).setMinifyJs(false);
 
 			ResourceMount.mountWicketResourcesMerged("/wicket", this, mount);

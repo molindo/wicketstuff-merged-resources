@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources;
-
-import junit.framework.TestCase;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.util.tester.WicketTester;
-import org.wicketstuff.mergedresources.HomePage;
-import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
+
+import junit.framework.TestCase;
 
 /**
  * Simple test using the WicketTester
@@ -29,6 +26,7 @@ import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
 public class TestNewInterfaceHomePageUnmerged extends TestCase {
 	private WicketTester tester;
 
+	@Override
 	public void setUp() {
 		tester = new WicketTester(new NewInterfaceTestApplication() {
 			@Override

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.util.Locale;
@@ -23,9 +22,9 @@ import org.apache.wicket.ResourceReference;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.IResourcePreProcessor;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient")
+@SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient")
 public class MergedResourceReference extends ResourceReference {
 
 	private static final long serialVersionUID = 1L;
@@ -34,18 +33,15 @@ public class MergedResourceReference extends ResourceReference {
 	private final IResourcePreProcessor _preProcessor;
 
 	@Deprecated
-	public MergedResourceReference(Class<?> scope, String path, Locale locale, String style, Class<?>[] scopes,
-			String[] files, int cacheDuration) {
+	public MergedResourceReference(final Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, final int cacheDuration) {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public MergedResourceReference(String name, Locale locale, String style, ResourceSpec[] specs, int cacheDuration,
-			IResourcePreProcessor preProcessor) {
+	public MergedResourceReference(final String name, final Locale locale, final String style, final ResourceSpec[] specs, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		this(MergedResourceReference.class, name, locale, style, specs, cacheDuration, preProcessor);
 	}
 
-	public MergedResourceReference(Class<?> scope, String name, Locale locale, String style, ResourceSpec[] specs,
-			int cacheDuration, IResourcePreProcessor preProcessor) {
+	public MergedResourceReference(final Class<?> scope, final String name, final Locale locale, final String style, final ResourceSpec[] specs, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		super(scope, name, locale, style);
 		_specs = specs;
 		_cacheDuration = cacheDuration;

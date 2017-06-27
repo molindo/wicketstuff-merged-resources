@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources;
-
-import junit.framework.TestCase;
 
 import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.components.ComponentB;
@@ -24,12 +21,13 @@ import org.wicketstuff.mergedresources.components.MyForm;
 import org.wicketstuff.mergedresources.components.PanelOne;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import junit.framework.TestCase;
 
 /**
  * Simple test using the WicketTester
  */
-@SuppressWarnings(value = "SE_BAD_FIELD", justification = "no serialization in test case")
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "no serialization in test case")
 public class ResourcePreProcessorTest extends TestCase {
 	private int _preProcessInvocations = 0;
 	private int _preProcessInvocationsMerged = 0;
@@ -39,13 +37,13 @@ public class ResourcePreProcessorTest extends TestCase {
 
 			@Override
 			protected void mountResources() {
-				ResourceMount m = new ResourceMount();
+				final ResourceMount m = new ResourceMount();
 				m.setPreProcessor(new StringResourcePreProcessor() {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					protected String preProcess(ResourceSpec resourceSpec, String string) {
+					protected String preProcess(final ResourceSpec resourceSpec, final String string) {
 						if (resourceSpec != null) {
 							_preProcessInvocations++;
 						} else {

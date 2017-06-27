@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.preprocess;
 
 import javax.annotation.CheckForNull;
@@ -25,7 +24,7 @@ public abstract class StringResourcePreProcessor implements IResourcePreProcesso
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public byte[] preProcess(ResourceSpec resourceSpec, byte[] content) {
+	public byte[] preProcess(final ResourceSpec resourceSpec, final byte[] content) {
 		return preProcess(resourceSpec, new String(content)).getBytes();
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * 
+ *
  */
 package org.wicketstuff.mergedresources.annotations;
 
@@ -25,11 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
+ *
  * @author stf
- * 
- *         Use CssMultiContribution if you need to add CssContributions for
- *         different media types for instance
+ *
+ *         Use CssMultiContribution if you need to add CssContributions for different media types for instance
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.nio.charset.Charset;
@@ -22,15 +21,14 @@ import org.wicketstuff.mergedresources.ResourceMount;
 
 /**
  * interface to add your preferred CSS compressor. Use
- * {@link ResourceMount#setCssCompressor(org.apache.wicket.Application, ICssCompressor)}
- * to use a CSS compressor
+ * {@link ResourceMount#setCssCompressor(org.apache.wicket.Application, ICssCompressor)} to use a CSS compressor
  */
 public interface ICssCompressor {
 	public static final Charset UTF_8 = Charset.forName("utf-8");
 	public static final Charset EXPECTED_CHARSET = UTF_8;
 
 	/**
-	 * 
+	 *
 	 * @param original
 	 *            byte array of original content
 	 * @param charset

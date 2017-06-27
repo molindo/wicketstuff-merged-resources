@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.versioning;
 
 import org.apache.wicket.IClusterable;
@@ -25,15 +24,18 @@ public abstract class AbstractResourceVersion implements IClusterable {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public String getVersion() {
 			return "";
 		}
 
+		@Override
 		public boolean isValid() {
 			return false;
 		}
 
-		public int compareValid(AbstractResourceVersion o) {
+		@Override
+		public int compareValid(final AbstractResourceVersion o) {
 			// shouldn't ever be called
 			return -1;
 		}
@@ -47,11 +49,11 @@ public abstract class AbstractResourceVersion implements IClusterable {
 	/**
 	 * @param o
 	 *            the object to be compared.
-	 * @return a negative integer, zero, or a positive integer as this object is
-	 *         less than, equal to, or greater than the specified object.
+	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than
+	 *         the specified object.
 	 * @throws IncompatibleVersionsException
 	 */
-	public final int compareTo(AbstractResourceVersion o) throws IncompatibleVersionsException {
+	public final int compareTo(final AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (!o.isValid()) {
 			return isValid() ? 1 : 0;
 		} else {
@@ -64,7 +66,7 @@ public abstract class AbstractResourceVersion implements IClusterable {
 
 	public static final class IncompatibleVersionsException extends Exception {
 
-		public IncompatibleVersionsException(AbstractResourceVersion v1, AbstractResourceVersion v2) {
+		public IncompatibleVersionsException(final AbstractResourceVersion v1, final AbstractResourceVersion v2) {
 			super(v1 + " and " + v2 + " are incompatible");
 		}
 

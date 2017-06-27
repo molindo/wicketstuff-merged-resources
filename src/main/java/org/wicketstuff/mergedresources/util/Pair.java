@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.util;
 
 import java.io.Serializable;
@@ -128,7 +127,7 @@ public class Pair<A, B> implements Serializable {
 	}
 
 	public static <K, V> HashMap<K, V> toHashMap(final List<Pair<K, V>> pairs) {
-		final HashMap<K, V> map = new HashMap<K, V>();
+		final HashMap<K, V> map = new HashMap<>();
 		for (final Pair<K, V> pair : pairs) {
 			map.put(pair.getKey(), pair.getValue());
 		}

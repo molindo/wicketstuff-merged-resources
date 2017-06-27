@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.annotations;
 
 import java.util.ArrayList;
@@ -30,50 +29,49 @@ public class HeaderContribution extends AbstractHeaderContributor {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<IHeaderContributor> _headerContributors = new ArrayList<IHeaderContributor>(5);
+	private final List<IHeaderContributor> _headerContributors = new ArrayList<>(5);
 
 	/**
-	 * Reads contributions from {@link JsContribution} and
-	 * {@link CssContribution} annotations.
+	 * Reads contributions from {@link JsContribution} and {@link CssContribution} annotations.
 	 */
-	public HeaderContribution(Class<? extends Component> scope) {
+	public HeaderContribution(final Class<? extends Component> scope) {
 		addJsContributions(scope, scope.getAnnotation(JsContribution.class));
 		addCssContributions(scope, scope.getAnnotation(CssContribution.class));
 
-		CssContributions cssMulti = scope.getAnnotation(CssContributions.class);
+		final CssContributions cssMulti = scope.getAnnotation(CssContributions.class);
 		if (cssMulti != null) {
-			for (CssContribution css : cssMulti.value()) {
+			for (final CssContribution css : cssMulti.value()) {
 				addCssContributions(scope, css);
 			}
 		}
 	}
 
-	private void addCssContributions(Class<? extends Component> scope, CssContribution css) {
+	private void addCssContributions(final Class<? extends Component> scope, final CssContribution css) {
 		if (css != null) {
-			String[] stylesheets = replaceDefault(css.value(),
-					ContributionScanner.getDefaultCssFile(scope.getSimpleName(), css.media()));
-			String stylesheetsMedia = Strings.isEmpty(css.media()) ? null : css.media();
-			for (String stylesheet : stylesheets) {
+			final String[] stylesheets = replaceDefault(css.value(), ContributionScanner
+					.getDefaultCssFile(scope.getSimpleName(), css.media()));
+			final String stylesheetsMedia = Strings.isEmpty(css.media()) ? null : css.media();
+			for (final String stylesheet : stylesheets) {
 				if (stylesheetsMedia == null) {
 					_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet));
 				} else {
-					_headerContributors.add(CSSPackageResource.getHeaderContribution(scope, stylesheet,
-							stylesheetsMedia));
+					_headerContributors
+							.add(CSSPackageResource.getHeaderContribution(scope, stylesheet, stylesheetsMedia));
 				}
 			}
 		}
 	}
 
-	private void addJsContributions(Class<? extends Component> scope, JsContribution js) {
+	private void addJsContributions(final Class<? extends Component> scope, final JsContribution js) {
 		if (js != null) {
-			String[] scripts = replaceDefault(js.value(), scope.getSimpleName() + ".js");
-			for (String script : scripts) {
+			final String[] scripts = replaceDefault(js.value(), scope.getSimpleName() + ".js");
+			for (final String script : scripts) {
 				_headerContributors.add(JavascriptPackageResource.getHeaderContribution(scope, script));
 			}
 		}
 	}
 
-	private String[] replaceDefault(String[] files, String defaulFile) {
+	private String[] replaceDefault(final String[] files, final String defaulFile) {
 		for (int i = 0; i < files.length; i++) {
 			if (Strings.isEmpty(files[i])) {
 				files[i] = defaulFile;

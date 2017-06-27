@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.util.Locale;
@@ -25,10 +24,9 @@ public class CachedResource extends MergedResource {
 
 	private static final long serialVersionUID = 1L;
 
-	public CachedResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
-			IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration,
-				preProcessor);
+	public CachedResource(final Class<?> scope, final String path, final Locale locale, final String style, final int cacheDuration, final IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, new ResourceSpec[] {
+				new ResourceSpec(scope, path) }, cacheDuration, preProcessor);
 	}
 
 }

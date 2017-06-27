@@ -4,7 +4,7 @@
 language: java
 
 jdk:
-  - openjdk6
+  - openjdk7
 
 # whitelist
 branches:
@@ -12,7 +12,7 @@ branches:
     - master
 
 # checkout settings
-before_install: 
+before_install:
   - "git clone -b master https://github.com/molindo/travis-settings.git target/travis-settings"
   - "target/travis-settings/tasks/before_install.sh"
 
@@ -23,7 +23,7 @@ script:  "target/travis-settings/tasks/script.sh"
 # travis encrypt 'token@room'
 notifications:
   email: false
-  hipchat: 
+  hipchat:
     rooms:
       - secure: "dJo84cFtd8DGGEMmf6LmeynDkpcP9SubfV9Z6mjV73JgxCNHWOdpelCrwLpO21J9BcJO7YUYQk34JALmSVO3pHkMNlf0h4xTVz+KCuXCpPwCB2ChxVSJ9hxDcW9tDNvPcMw6gSZBjYT2Ty4duevUVOz6DiCBQqUJLML0s/hrWt0="
     template:

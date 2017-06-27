@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.wicketstuff.mergedresources.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class YuiCompressorUtilTest {
 
 		// yui should replace 0em with 0
 		{
-			String toCompress = ".fooClass {\n\tfont-size: 0em;\n}\n";
+			final String toCompress = ".fooClass {\n\tfont-size: 0em;\n}\n";
 
 			// also strips whitespace and last semicolon
 			assertEquals(".fooClass{font-size:0}", YuiCompressorUtil.compress(toCompress));
@@ -34,7 +34,7 @@ public class YuiCompressorUtilTest {
 
 		// it should work however if it's 1.0em
 		{
-			String toCompress = ".fooClass {\n\tfont-size: 1.0em;\n}\n";
+			final String toCompress = ".fooClass {\n\tfont-size: 1.0em;\n}\n";
 
 			// also strips whitespace and last semicolon
 			assertEquals(".fooClass{font-size:1.0em}", YuiCompressorUtil.compress(toCompress));

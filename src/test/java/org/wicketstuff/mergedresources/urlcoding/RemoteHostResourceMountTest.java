@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.urlcoding;
 
 import org.apache.wicket.util.tester.WicketTester;
@@ -26,7 +25,7 @@ public class RemoteHostResourceMountTest {
 
 	@Test
 	public void renderRemoteHostResourcePage() throws Exception {
-		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
+		final WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
 
 			@Override
 			protected ResourceMount newResourceMount() {
@@ -42,7 +41,7 @@ public class RemoteHostResourceMountTest {
 
 	@Test
 	public void renderRemoteHostResourcePageSchemless() throws Exception {
-		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
+		final WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
 
 			@Override
 			protected ResourceMount newResourceMount() {
@@ -53,7 +52,6 @@ public class RemoteHostResourceMountTest {
 
 		tester.startPage(HomePage.class);
 		tester.assertRenderedPage(HomePage.class);
-		tester.assertResultPage(RemoteHostResourceMountTest.class,
-				"RemoteHostResourceMountTest-expected-schemeless.html");
+		tester.assertResultPage(RemoteHostResourceMountTest.class, "RemoteHostResourceMountTest-expected-schemeless.html");
 	}
 }

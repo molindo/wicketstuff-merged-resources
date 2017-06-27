@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.versioning;
 
 public class StaticResourceVersionProvider implements IResourceVersionProvider {
 
 	private final int _value;
 
-	public StaticResourceVersionProvider(int value) {
+	public StaticResourceVersionProvider(final int value) {
 		// validate value
 		new SimpleResourceVersion(value);
 		_value = value;
 	}
 
 	@Override
-	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+	public AbstractResourceVersion getVersion(final Class<?> scope, final String file) throws VersionException {
 		return new SimpleResourceVersion(_value);
 	}
 

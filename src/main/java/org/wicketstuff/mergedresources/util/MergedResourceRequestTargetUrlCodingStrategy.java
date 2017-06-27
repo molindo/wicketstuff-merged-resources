@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * 
+ *
  */
 package org.wicketstuff.mergedresources.util;
 
@@ -28,8 +27,7 @@ import org.apache.wicket.request.target.resource.ISharedResourceRequestTarget;
 public final class MergedResourceRequestTargetUrlCodingStrategy extends SharedResourceRequestTargetUrlCodingStrategy {
 	private final ArrayList<String> _mergedKeys;
 
-	public MergedResourceRequestTargetUrlCodingStrategy(String mountPath, String resourceKey,
-			ArrayList<String> mergedKeys) {
+	public MergedResourceRequestTargetUrlCodingStrategy(final String mountPath, final String resourceKey, final ArrayList<String> mergedKeys) {
 		super(mountPath, resourceKey);
 		_mergedKeys = mergedKeys;
 	}

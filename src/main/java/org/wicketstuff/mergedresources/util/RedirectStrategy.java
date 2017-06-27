@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.util;
 
 import org.apache.wicket.IRequestTarget;
@@ -34,7 +33,7 @@ public class RedirectStrategy extends BookmarkablePageRequestTargetUrlCodingStra
 		_redirectPath = redirectPath;
 	}
 
-	public RedirectStrategy(String mountPath, String redirectPath) {
+	public RedirectStrategy(final String mountPath, final String redirectPath) {
 		this(mountPath, null, redirectPath);
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.urlcoding;
 
 import java.net.MalformedURLException;
@@ -30,52 +29,49 @@ public class RemoteHostResourceMount extends ResourceMount {
 	private final boolean _enabled;
 	private final boolean _schemeless;
 
-	private static URL toURL(String root) {
+	private static URL toURL(final String root) {
 		try {
 			return root == null ? null : new URL(root);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			throw new WicketRuntimeException(e);
 		}
 	}
 
-	public RemoteHostResourceMount(String root) throws WicketRuntimeException {
+	public RemoteHostResourceMount(final String root) throws WicketRuntimeException {
 		this(toURL(root), true);
 	}
 
-	public RemoteHostResourceMount(String root, boolean enabled) throws WicketRuntimeException {
+	public RemoteHostResourceMount(final String root, final boolean enabled) throws WicketRuntimeException {
 		this(toURL(root), enabled);
 	}
 
-	public RemoteHostResourceMount(String root, boolean enabled, boolean schemeless) throws WicketRuntimeException {
+	public RemoteHostResourceMount(final String root, final boolean enabled, final boolean schemeless) throws WicketRuntimeException {
 		this(toURL(root), enabled, schemeless);
 	}
 
-	public RemoteHostResourceMount(URL root) {
+	public RemoteHostResourceMount(final URL root) {
 		this(root, true);
 	}
 
-	public RemoteHostResourceMount(URL root, boolean enabled) {
+	public RemoteHostResourceMount(final URL root, final boolean enabled) {
 		this(root, enabled, false);
 	}
 
-	public RemoteHostResourceMount(URL root, boolean enabled, boolean schemeless) {
+	public RemoteHostResourceMount(final URL root, final boolean enabled, final boolean schemeless) {
 		_enabled = enabled;
 		_root = root;
 		_schemeless = schemeless;
 	}
 
 	@Override
-	protected IRequestTargetUrlCodingStrategy newStrategy(String mountPath, final ResourceReference ref,
-			final boolean merge) {
+	protected IRequestTargetUrlCodingStrategy newStrategy(final String mountPath, final ResourceReference ref, final boolean merge) {
 		if (!_enabled) {
 			return super.newStrategy(mountPath, ref, merge);
 		} else {
 			return new RemoteHostUrlCodingStrategy(_root, mountPath, ref) {
 				@Override
-				protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
-						final String sharedResourceKey) {
-					return (SharedResourceRequestTargetUrlCodingStrategy) RemoteHostResourceMount.super.newStrategy(
-							mountPath, ref, merge);
+				protected SharedResourceRequestTargetUrlCodingStrategy newStrategy(final String mountPath, final String sharedResourceKey) {
+					return (SharedResourceRequestTargetUrlCodingStrategy) RemoteHostResourceMount.super.newStrategy(mountPath, ref, merge);
 				}
 			}.setUseSchemelessUrl(_schemeless);
 		}

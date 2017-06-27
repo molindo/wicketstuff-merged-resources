@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.versioning;
 
 import java.net.URL;
@@ -22,7 +21,8 @@ import org.apache.wicket.util.string.Strings;
 
 public abstract class AbstractClasspathResourceVersionProvider implements IResourceVersionProvider {
 
-	public final AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+	@Override
+	public final AbstractResourceVersion getVersion(final Class<?> scope, final String file) throws VersionException {
 
 		final URL url = toURL(scope, file);
 		if (url == null) {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.components;
 
 import org.apache.wicket.markup.html.CSSPackageResource;
@@ -25,12 +24,13 @@ public class ComponentB extends Panel {
 
 	private static final long serialVersionUID = 1L;
 
-	public ComponentB(String id) {
+	public ComponentB(final String id) {
 		super(id);
 		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".css"));
-		add(CSSPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css",
-				"print"));
-		add(JavascriptPackageResource.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
+		add(CSSPackageResource
+				.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + "-print.css", "print"));
+		add(JavascriptPackageResource
+				.getHeaderContribution(ComponentB.class, ComponentB.class.getSimpleName() + ".js"));
 		add(new Label("label", "Wicket!"));
 	}
 

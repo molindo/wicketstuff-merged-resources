@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.resources;
 
 import java.util.Locale;
@@ -31,26 +30,23 @@ public class CompressedMergedResource extends CompressedPackageResource {
 
 	private final IResourceStream _mergedResourceStream;
 
-	private int _cacheDuration;
+	private final int _cacheDuration;
 
 	/**
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final Class<?>[] scopes, final String[] files, int cacheDuration) {
+	public CompressedMergedResource(final Class<?> scope, final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, final int cacheDuration) {
 		this(scope, path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedResource(Class<?> scope, final String path, final Locale locale, final String style,
-			final ResourceSpec[] specs, int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedResource(final Class<?> scope, final String path, final Locale locale, final String style, final ResourceSpec[] specs, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 		_cacheDuration = cacheDuration;
 		_mergedResourceStream = newResourceStream(locale, style, specs, preProcessor);
 	}
 
-	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs,
-			IResourcePreProcessor preProcessor) {
+	protected IResourceStream newResourceStream(final Locale locale, final String style, final ResourceSpec[] specs, final IResourcePreProcessor preProcessor) {
 		return new MergedResourceStream(specs, locale, style, preProcessor);
 	}
 
@@ -64,7 +60,8 @@ public class CompressedMergedResource extends CompressedPackageResource {
 		return _cacheDuration;
 	}
 
-	protected void setHeaders(WebResponse response) {
+	@Override
+	protected void setHeaders(final WebResponse response) {
 		super.setHeaders(response);
 		if (!Application.get().getResourceSettings().getDisableGZipCompression()) {
 			response.setHeader("Vary", "Accept-Encoding");
