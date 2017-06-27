@@ -3,7 +3,7 @@ Releases are available from Maven Central:
     <dependency>
       <groupId>at.molindo</groupId>
       <artifactId>wicketstuff-merged-resources</artifactId>
-      <version>3.1.1</version>
+      <version>4.0.0</version>
     </dependency>
 
 Current snapshots are available from Sonatype OSS:
@@ -19,11 +19,10 @@ Current snapshots are available from Sonatype OSS:
     <dependency>
       <groupId>at.molindo</groupId>
       <artifactId>wicketstuff-merged-resources</artifactId>
-      <version>3.1.2-SNAPSHOT</version>
+      <version>4.0.1-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
 
 Builds are performed by Travis CI:
 
 [![Build Status](https://travis-ci.org/molindo/wicketstuff-merged-resources.png?branch=master)](https://travis-ci.org/molindo/wicketstuff-merged-resources)
-
