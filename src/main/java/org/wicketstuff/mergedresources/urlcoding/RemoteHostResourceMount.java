@@ -28,6 +28,7 @@ import org.wicketstuff.mergedresources.ResourceMount;
 public class RemoteHostResourceMount extends ResourceMount {
 	private final URL _root;
 	private final boolean _enabled;
+	private final boolean _schemeless;
 
 	private static URL toURL(String root) {
 		try {
@@ -45,13 +46,22 @@ public class RemoteHostResourceMount extends ResourceMount {
 		this(toURL(root), enabled);
 	}
 
+	public RemoteHostResourceMount(String root, boolean enabled, boolean schemeless) throws WicketRuntimeException {
+		this(toURL(root), enabled, schemeless);
+	}
+
 	public RemoteHostResourceMount(URL root) {
 		this(root, true);
 	}
 
 	public RemoteHostResourceMount(URL root, boolean enabled) {
+		this(root, enabled, false);
+	}
+
+	public RemoteHostResourceMount(URL root, boolean enabled, boolean schemeless) {
 		_enabled = enabled;
 		_root = root;
+		_schemeless = schemeless;
 	}
 
 	@Override
@@ -67,7 +77,7 @@ public class RemoteHostResourceMount extends ResourceMount {
 					return (SharedResourceRequestTargetUrlCodingStrategy) RemoteHostResourceMount.super.newStrategy(
 							mountPath, ref, merge);
 				}
-			};
+			}.setUseSchemelessUrl(_schemeless);
 		}
 	}
 }

@@ -16,7 +16,8 @@
 
 package org.wicketstuff.mergedresources.urlcoding;
 
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.wicket.IRequestTarget;
@@ -32,8 +33,8 @@ import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 import at.molindo.utils.data.StringUtils;
 import at.molindo.wicketutils.utils.WicketUtils;
 
-public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrategy,
-		IMountableRequestTargetUrlCodingStrategy {
+public class RemoteHostUrlCodingStrategy
+		implements IRequestTargetUrlCodingStrategy, IMountableRequestTargetUrlCodingStrategy {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RemoteHostUrlCodingStrategy.class);
 
@@ -46,6 +47,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 	private final String _path;
 	private boolean _useRequestProtocol = true;
 	private boolean _useRequestPort = true;
+	private boolean _useSchemelessUrl = false;
 
 	public RemoteHostUrlCodingStrategy(URL root, final String mountPath, final ResourceReference ref) {
 		if (ref == null) {
@@ -65,7 +67,8 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		}
 	}
 
-	protected AbstractRequestTargetUrlCodingStrategy newStrategy(final String mountPath, final String sharedResourceKey) {
+	protected AbstractRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
+			final String sharedResourceKey) {
 		return new SharedResourceRequestTargetUrlCodingStrategy(mountPath, sharedResourceKey);
 	}
 
@@ -104,6 +107,7 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		}
 
 		String protocol = !isUseRequestProtocol() ? _protocol : WicketUtils.getHttpServletRequest().getScheme();
+
 		Integer port = !isUseRequestPort() ? _port : WicketUtils.getHttpServletRequest().getServerPort();
 		if (port != null) {
 			if (port == 80 && "http".equals(protocol)) {
@@ -114,9 +118,16 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		}
 
 		try {
-			return new URL(protocol, _host, port == null ? -1 : port, _path
-					+ StringUtils.stripLeading(encoded.toString(), "/")).toString();
-		} catch (MalformedURLException e) {
+
+			URI uri = new URI(protocol, null, _host, port == null ? -1 : port,
+					_path + StringUtils.stripLeading(encoded.toString(), "/"), null, null);
+
+			if (_useSchemelessUrl) {
+				return uri.getRawSchemeSpecificPart();
+			} else {
+				return uri.toString();
+			}
+		} catch (URISyntaxException e) {
 			log.error("failed to build URL, balling back to default", e);
 			return encoded;
 		}
@@ -152,6 +163,11 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 
 	public RemoteHostUrlCodingStrategy setUseRequestPort(boolean useRequestPort) {
 		_useRequestPort = useRequestPort;
+		return this;
+	}
+
+	public RemoteHostUrlCodingStrategy setUseSchemelessUrl(boolean useSchemelessUrl) {
+		_useSchemelessUrl = useSchemelessUrl;
 		return this;
 	}
 

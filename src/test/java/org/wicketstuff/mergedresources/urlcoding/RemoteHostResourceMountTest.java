@@ -39,4 +39,21 @@ public class RemoteHostResourceMountTest {
 		tester.assertRenderedPage(HomePage.class);
 		tester.assertResultPage(RemoteHostResourceMountTest.class, "RemoteHostResourceMountTest-expected.html");
 	}
+
+	@Test
+	public void renderRemoteHostResourcePageSchemless() throws Exception {
+		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
+
+			@Override
+			protected ResourceMount newResourceMount() {
+				return new RemoteHostResourceMount("http://cdn.example.com/test", true, true);
+			}
+
+		});
+
+		tester.startPage(HomePage.class);
+		tester.assertRenderedPage(HomePage.class);
+		tester.assertResultPage(RemoteHostResourceMountTest.class,
+				"RemoteHostResourceMountTest-expected-schemeless.html");
+	}
 }
