@@ -123,7 +123,7 @@ public class RemoteHostUrlCodingStrategy
 					_path + StringUtils.stripLeading(encoded.toString(), "/"), null, null);
 
 			if (_useSchemelessUrl) {
-				return uri.getSchemeSpecificPart();
+				return uri.getRawSchemeSpecificPart();
 			} else {
 				return uri.toString();
 			}
