@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.annotations;
-
-import junit.framework.TestCase;
 
 import org.apache.wicket.util.tester.WicketTester;
 import org.wicketstuff.mergedresources.ResourceMount;
 import org.wicketstuff.mergedresources.ResourceSpec;
 import org.wicketstuff.mergedresources.preprocess.StringResourcePreProcessor;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import junit.framework.TestCase;
 
 /**
  * Simple test using the WicketTester
  */
-@SuppressWarnings(value = "SE_BAD_FIELD", justification = "no serialization in test case")
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "no serialization in test case")
 public class ResourceMergeOrderTest extends TestCase {
 	private boolean _testedPanelOneCss = false;
 

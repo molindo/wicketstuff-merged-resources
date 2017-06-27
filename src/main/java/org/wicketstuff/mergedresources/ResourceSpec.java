@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources;
 
 import java.util.Arrays;
@@ -24,13 +23,13 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.util.string.Strings;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class ResourceSpec implements IClusterable {
 	private static final long serialVersionUID = 1L;
 
 	private final String _scopeName;
-	@SuppressWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "set from scopeName on demand")
+	@SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "set from scopeName on demand")
 	private transient Class<?> _scope;
 	private final String _file;
 	private final ResourceReference _ref;
@@ -40,8 +39,8 @@ public class ResourceSpec implements IClusterable {
 
 	public static ResourceSpec[] toResourceSpecs(Class<?>[] scopes, String[] files) {
 		if (scopes.length != files.length) {
-			throw new IllegalArgumentException("arrays must be of equal length: " + Arrays.toString(scopes) + ", "
-					+ Arrays.toString(files));
+			throw new IllegalArgumentException(
+					"arrays must be of equal length: " + Arrays.toString(scopes) + ", " + Arrays.toString(files));
 		}
 		ResourceSpec[] resourceSpecs = new ResourceSpec[scopes.length];
 		for (int i = 0; i < scopes.length; i++) {

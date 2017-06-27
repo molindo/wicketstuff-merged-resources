@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.annotations;
 
 import java.util.Collections;
@@ -28,12 +27,12 @@ import org.apache.wicket.util.string.Strings;
 import org.wicketstuff.config.MatchingResources;
 import org.wicketstuff.mergedresources.ResourceSpec;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Gather page resources to merge, depends on {@link CssContribution} and
  * {@link JsContribution} annotations.
- * 
+ *
  * Helper to make using wicketstuff-merged-resources easier.
  */
 public class ContributionScanner {
@@ -137,8 +136,8 @@ public class ContributionScanner {
 			Map<String, SortedSet<WeightedResourceSpec>> contributions) {
 		for (String file : resource.value()) {
 			if (Strings.isEmpty(file)) {
-				throw new WicketRuntimeException("empty file name not allowed for @ResourceContributions at class "
-						+ scope.getName());
+				throw new WicketRuntimeException(
+						"empty file name not allowed for @ResourceContributions at class " + scope.getName());
 			}
 
 			// don't merge resources by default
@@ -164,7 +163,7 @@ public class ContributionScanner {
 	/**
 	 * Get the Spring search pattern given a package name or part of a package
 	 * name
-	 * 
+	 *
 	 * @param packageName
 	 *            a package name
 	 * @return a Spring search pattern for the given package
@@ -181,7 +180,7 @@ public class ContributionScanner {
 		return "classpath*:" + packageName + "**/*.class";
 	}
 
-	@SuppressWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient, ignore weight")
+	@SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "super type is sufficient, ignore weight")
 	public static final class WeightedResourceSpec extends ResourceSpec {
 
 		private static final long serialVersionUID = 1L;

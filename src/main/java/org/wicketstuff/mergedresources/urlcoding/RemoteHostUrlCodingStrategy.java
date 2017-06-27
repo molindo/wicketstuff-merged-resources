@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Molindo GmbH
+ * Copyright 2016 Molindo GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wicketstuff.mergedresources.urlcoding;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.IMountableRequestTargetUrlCodingStrategy;
@@ -31,7 +33,6 @@ import org.apache.wicket.request.target.coding.SharedResourceRequestTargetUrlCod
 import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 
 import at.molindo.utils.data.StringUtils;
-import at.molindo.wicketutils.utils.WicketUtils;
 
 public class RemoteHostUrlCodingStrategy
 		implements IRequestTargetUrlCodingStrategy, IMountableRequestTargetUrlCodingStrategy {
@@ -106,9 +107,11 @@ public class RemoteHostUrlCodingStrategy
 			return encoded;
 		}
 
-		String protocol = !isUseRequestProtocol() ? _protocol : WicketUtils.getHttpServletRequest().getScheme();
+		HttpServletRequest request = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
 
-		Integer port = !isUseRequestPort() ? _port : WicketUtils.getHttpServletRequest().getServerPort();
+		String protocol = !isUseRequestProtocol() ? _protocol : request.getScheme();
+
+		Integer port = !isUseRequestPort() ? _port : request.getServerPort();
 		if (port != null) {
 			if (port == 80 && "http".equals(protocol)) {
 				port = null;
