@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- * Copied from Apache Maven 3.0.5
- * Path: maven-artifact/src/main/java/org/apache/maven/artifact/versioning/
+ * Copied from Apache Maven 3.0.5 Path: maven-artifact/src/main/java/org/apache/maven/artifact/versioning/
  */
 package at.molindo.thirdparty.org.apache.maven.artifact.versioning;

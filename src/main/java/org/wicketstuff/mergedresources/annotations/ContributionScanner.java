@@ -30,8 +30,7 @@ import org.wicketstuff.mergedresources.ResourceSpec;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Gather page resources to merge, depends on {@link CssContribution} and
- * {@link JsContribution} annotations.
+ * Gather page resources to merge, depends on {@link CssContribution} and {@link JsContribution} annotations.
  *
  * Helper to make using wicketstuff-merged-resources easier.
  */
@@ -42,55 +41,54 @@ public class ContributionScanner {
 
 	private final Map<String, SortedSet<WeightedResourceSpec>> _contributions;
 
-	public ContributionScanner(String packageName) {
-		MatchingResources resources = new MatchingResources(getPatternForPackage(packageName));
+	public ContributionScanner(final String packageName) {
+		final MatchingResources resources = new MatchingResources(getPatternForPackage(packageName));
 
 		_contributions = scan(resources);
 	}
 
-	private Map<String, SortedSet<WeightedResourceSpec>> scan(MatchingResources resources) {
-		Map<String, SortedSet<WeightedResourceSpec>> contributions = new HashMap<String, SortedSet<WeightedResourceSpec>>();
+	private Map<String, SortedSet<WeightedResourceSpec>> scan(final MatchingResources resources) {
+		final Map<String, SortedSet<WeightedResourceSpec>> contributions = new HashMap<>();
 
-		for (Class<?> cls : resources.getAnnotatedMatches(JsContribution.class)) {
-			JsContribution a = cls.getAnnotation(JsContribution.class);
+		for (final Class<?> cls : resources.getAnnotatedMatches(JsContribution.class)) {
+			final JsContribution a = cls.getAnnotation(JsContribution.class);
 			addJsContributions(cls, a, contributions);
 		}
 
-		for (Class<?> cls : resources.getAnnotatedMatches(CssContribution.class)) {
-			CssContribution a = cls.getAnnotation(CssContribution.class);
+		for (final Class<?> cls : resources.getAnnotatedMatches(CssContribution.class)) {
+			final CssContribution a = cls.getAnnotation(CssContribution.class);
 			addCssContributions(cls, a, contributions);
 		}
 
-		for (Class<?> cls : resources.getAnnotatedMatches(CssContributions.class)) {
-			CssContributions cssMulti = cls.getAnnotation(CssContributions.class);
-			for (CssContribution css : cssMulti.value()) {
+		for (final Class<?> cls : resources.getAnnotatedMatches(CssContributions.class)) {
+			final CssContributions cssMulti = cls.getAnnotation(CssContributions.class);
+			for (final CssContribution css : cssMulti.value()) {
 				addCssContributions(cls, css, contributions);
 			}
 		}
 
-		for (Class<?> cls : resources.getAnnotatedMatches(ResourceContribution.class)) {
-			ResourceContribution resource = cls.getAnnotation(ResourceContribution.class);
+		for (final Class<?> cls : resources.getAnnotatedMatches(ResourceContribution.class)) {
+			final ResourceContribution resource = cls.getAnnotation(ResourceContribution.class);
 			addResourceContributions(cls, resource, contributions);
 		}
 
-		for (Map.Entry<String, SortedSet<WeightedResourceSpec>> e : contributions.entrySet()) {
+		for (final Map.Entry<String, SortedSet<WeightedResourceSpec>> e : contributions.entrySet()) {
 			e.setValue(Collections.unmodifiableSortedSet(e.getValue()));
 		}
 
 		return Collections.unmodifiableMap(contributions);
 	}
 
-	private void addJsContributions(Class<?> scope, JsContribution js,
-			Map<String, SortedSet<WeightedResourceSpec>> contributions) {
+	private void addJsContributions(final Class<?> scope, final JsContribution js, final Map<String, SortedSet<WeightedResourceSpec>> contributions) {
 		for (String file : js.value()) {
 			if (Strings.isEmpty(file)) {
 				file = scope.getSimpleName() + ".js";
 			}
 
-			String path = Strings.isEmpty(js.path()) ? DEFAULT_PATH_JS : js.path();
+			final String path = Strings.isEmpty(js.path()) ? DEFAULT_PATH_JS : js.path();
 			SortedSet<WeightedResourceSpec> specs = contributions.get(path);
 			if (specs == null) {
-				specs = new TreeSet<WeightedResourceSpec>(WeightedResourceSpecComparator.INSTANCE);
+				specs = new TreeSet<>(WeightedResourceSpecComparator.INSTANCE);
 				contributions.put(path, specs);
 			}
 			if (!specs.add(new WeightedResourceSpec(scope, file, js.order()))) {
@@ -99,17 +97,16 @@ public class ContributionScanner {
 		}
 	}
 
-	private void addCssContributions(Class<?> scope, CssContribution css,
-			Map<String, SortedSet<WeightedResourceSpec>> contributions) {
+	private void addCssContributions(final Class<?> scope, final CssContribution css, final Map<String, SortedSet<WeightedResourceSpec>> contributions) {
 		for (String file : css.value()) {
 			if (Strings.isEmpty(file)) {
 				file = getDefaultCssFile(scope.getSimpleName(), css.media());
 			}
 
-			String path = Strings.isEmpty(css.path()) ? getDefaultCssPath(css.media()) : css.path();
+			final String path = Strings.isEmpty(css.path()) ? getDefaultCssPath(css.media()) : css.path();
 			SortedSet<WeightedResourceSpec> specs = contributions.get(path);
 			if (specs == null) {
-				specs = new TreeSet<WeightedResourceSpec>(WeightedResourceSpecComparator.INSTANCE);
+				specs = new TreeSet<>(WeightedResourceSpecComparator.INSTANCE);
 				contributions.put(path, specs);
 			}
 			if (!specs.add(new WeightedResourceSpec(scope, file, css.order()))) {
@@ -118,33 +115,32 @@ public class ContributionScanner {
 		}
 	}
 
-	static String getDefaultCssFile(String simpleName, String media) {
+	static String getDefaultCssFile(final String simpleName, final String media) {
 		if (!Strings.isEmpty(media) && !"all".equals(media)) {
 			return simpleName + "-" + media + ".css";
 		}
 		return simpleName + ".css";
 	}
 
-	static String getDefaultCssPath(String media) {
+	static String getDefaultCssPath(final String media) {
 		if (!Strings.isEmpty(media)) {
 			return media + ".css";
 		}
 		return DEFAULT_PATH_CSS;
 	}
 
-	private void addResourceContributions(Class<?> scope, ResourceContribution resource,
-			Map<String, SortedSet<WeightedResourceSpec>> contributions) {
-		for (String file : resource.value()) {
+	private void addResourceContributions(final Class<?> scope, final ResourceContribution resource, final Map<String, SortedSet<WeightedResourceSpec>> contributions) {
+		for (final String file : resource.value()) {
 			if (Strings.isEmpty(file)) {
-				throw new WicketRuntimeException(
-						"empty file name not allowed for @ResourceContributions at class " + scope.getName());
+				throw new WicketRuntimeException("empty file name not allowed for @ResourceContributions at class "
+						+ scope.getName());
 			}
 
 			// don't merge resources by default
-			String path = Strings.isEmpty(resource.path()) ? file : resource.path();
+			final String path = Strings.isEmpty(resource.path()) ? file : resource.path();
 			SortedSet<WeightedResourceSpec> specs = contributions.get(path);
 			if (specs == null) {
-				specs = new TreeSet<WeightedResourceSpec>(WeightedResourceSpecComparator.INSTANCE);
+				specs = new TreeSet<>(WeightedResourceSpecComparator.INSTANCE);
 				contributions.put(path, specs);
 			}
 			if (!specs.add(new WeightedResourceSpec(scope, file))) {
@@ -161,8 +157,7 @@ public class ContributionScanner {
 	}
 
 	/**
-	 * Get the Spring search pattern given a package name or part of a package
-	 * name
+	 * Get the Spring search pattern given a package name or part of a package name
 	 *
 	 * @param packageName
 	 *            a package name
@@ -187,12 +182,12 @@ public class ContributionScanner {
 
 		private final int _weight;
 
-		public WeightedResourceSpec(Class<?> scope, String file, int weight) {
+		public WeightedResourceSpec(final Class<?> scope, final String file, final int weight) {
 			super(scope, file);
 			_weight = weight;
 		}
 
-		public WeightedResourceSpec(Class<?> scope, String file) {
+		public WeightedResourceSpec(final Class<?> scope, final String file) {
 			this(scope, file, 0);
 		}
 
@@ -206,7 +201,7 @@ public class ContributionScanner {
 		INSTANCE;
 
 		@Override
-		public int compare(WeightedResourceSpec o1, WeightedResourceSpec o2) {
+		public int compare(final WeightedResourceSpec o1, final WeightedResourceSpec o2) {
 			if (o1 == null) {
 				return o2 == null ? 0 : -1;
 			} else if (o2 == null) {

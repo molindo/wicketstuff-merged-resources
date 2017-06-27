@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package org.wicketstuff.mergedresources.util;
 
@@ -27,8 +27,7 @@ import org.apache.wicket.request.target.resource.ISharedResourceRequestTarget;
 public final class MergedResourceRequestTargetUrlCodingStrategy extends SharedResourceRequestTargetUrlCodingStrategy {
 	private final ArrayList<String> _mergedKeys;
 
-	public MergedResourceRequestTargetUrlCodingStrategy(String mountPath, String resourceKey,
-			ArrayList<String> mergedKeys) {
+	public MergedResourceRequestTargetUrlCodingStrategy(final String mountPath, final String resourceKey, final ArrayList<String> mergedKeys) {
 		super(mountPath, resourceKey);
 		_mergedKeys = mergedKeys;
 	}

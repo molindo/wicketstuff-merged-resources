@@ -25,8 +25,9 @@ import java.util.regex.Pattern;
 public class RevisionVersionProvider extends AbstractClasspathResourceVersionProvider {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RevisionVersionProvider.class);
 
-	public AbstractResourceVersion getVersion(URL url) throws VersionException {
-		String line = readFirstLine(url);
+	@Override
+	public AbstractResourceVersion getVersion(final URL url) throws VersionException {
+		final String line = readFirstLine(url);
 
 		final Matcher m = Pattern.compile("Revision: ([0-9]+)").matcher(line);
 		if (m.find()) {
@@ -40,7 +41,7 @@ public class RevisionVersionProvider extends AbstractClasspathResourceVersionPro
 		}
 	}
 
-	protected String readFirstLine(URL url) throws VersionException {
+	protected String readFirstLine(final URL url) throws VersionException {
 		String line;
 		BufferedReader r = null;
 		try {

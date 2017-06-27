@@ -29,19 +29,16 @@ public class CompressedMergedCssResourceReference extends MergedResourceReferenc
 	 * @deprecated use ResourceSpec[] instead of scopes[] and files[]
 	 */
 	@Deprecated
-	public CompressedMergedCssResourceReference(String path, Locale locale, String style, Class<?>[] scopes,
-			String[] files, int cacheDuration) {
+	public CompressedMergedCssResourceReference(final String path, final Locale locale, final String style, final Class<?>[] scopes, final String[] files, final int cacheDuration) {
 		this(path, locale, style, ResourceSpec.toResourceSpecs(scopes, files), cacheDuration, null);
 	}
 
-	public CompressedMergedCssResourceReference(String name, Locale locale, String style, ResourceSpec[] specs,
-			int cacheDuration, IResourcePreProcessor preProcessor) {
+	public CompressedMergedCssResourceReference(final String name, final Locale locale, final String style, final ResourceSpec[] specs, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		super(CompressedMergedCssResourceReference.class, name, locale, style, specs, cacheDuration, preProcessor);
 	}
 
 	@Override
 	protected Resource newResource() {
-		return new CompressedMergedCssResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(),
-				getCacheDuration(), getPreProcessor());
+		return new CompressedMergedCssResource(getScope(), getName(), getLocale(), getStyle(), getMergedSpecs(), getCacheDuration(), getPreProcessor());
 	}
 }

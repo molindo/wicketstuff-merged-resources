@@ -32,10 +32,12 @@ public class AnnotationTestApplication extends AbstractTestApplication {
 	/**
 	 * @see wicket.Application#getHomePage()
 	 */
+	@Override
 	public Class<? extends WebPage> getHomePage() {
 		return AnnotationHomePage.class;
 	}
 
+	@Override
 	protected boolean merge() {
 		return true;
 	}
@@ -53,12 +55,12 @@ public class AnnotationTestApplication extends AbstractTestApplication {
 	@Override
 	protected void mountResources() {
 		ResourceMount.mountWicketResources("script", this);
-		ResourceMount mount = newResourceMount();
+		final ResourceMount mount = newResourceMount();
 		ResourceMount.mountAnnotatedPackageResources("/files", TestAnnotationHomePage.class, this, mount);
 	}
 
 	protected ResourceMount newResourceMount() {
-		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
+		final IResourceVersionProvider p = new StaticResourceVersionProvider(42);
 		return new ResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
 	}
 }

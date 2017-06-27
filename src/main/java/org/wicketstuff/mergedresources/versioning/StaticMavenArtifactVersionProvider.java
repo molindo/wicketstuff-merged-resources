@@ -22,11 +22,11 @@ public class StaticMavenArtifactVersionProvider implements IResourceVersionProvi
 
 	private final MavenResourceVersion _version;
 
-	public StaticMavenArtifactVersionProvider(String version) {
+	public StaticMavenArtifactVersionProvider(final String version) {
 		this(new DefaultArtifactVersion(version));
 	}
 
-	public StaticMavenArtifactVersionProvider(ArtifactVersion version) {
+	public StaticMavenArtifactVersionProvider(final ArtifactVersion version) {
 		if (version == null) {
 			throw new NullPointerException("version");
 		}
@@ -34,7 +34,7 @@ public class StaticMavenArtifactVersionProvider implements IResourceVersionProvi
 	}
 
 	@Override
-	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+	public AbstractResourceVersion getVersion(final Class<?> scope, final String file) throws VersionException {
 		return _version;
 	}
 

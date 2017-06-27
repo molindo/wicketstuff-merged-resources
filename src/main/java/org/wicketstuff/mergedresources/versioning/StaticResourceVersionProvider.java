@@ -19,14 +19,14 @@ public class StaticResourceVersionProvider implements IResourceVersionProvider {
 
 	private final int _value;
 
-	public StaticResourceVersionProvider(int value) {
+	public StaticResourceVersionProvider(final int value) {
 		// validate value
 		new SimpleResourceVersion(value);
 		_value = value;
 	}
 
 	@Override
-	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+	public AbstractResourceVersion getVersion(final Class<?> scope, final String file) throws VersionException {
 		return new SimpleResourceVersion(_value);
 	}
 

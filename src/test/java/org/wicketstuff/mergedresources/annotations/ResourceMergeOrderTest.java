@@ -40,13 +40,13 @@ public class ResourceMergeOrderTest extends TestCase {
 
 			@Override
 			protected ResourceMount newResourceMount() {
-				ResourceMount mount = super.newResourceMount();
+				final ResourceMount mount = super.newResourceMount();
 				mount.setPreProcessor(new StringResourcePreProcessor() {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					protected String preProcess(ResourceSpec reference, String string) {
+					protected String preProcess(final ResourceSpec reference, final String string) {
 						if (string.contains(".panelOne")) {
 							String s = string.trim();
 							s = s.substring(s.lastIndexOf('\n'));

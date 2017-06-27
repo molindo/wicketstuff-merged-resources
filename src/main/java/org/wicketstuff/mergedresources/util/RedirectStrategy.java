@@ -33,7 +33,7 @@ public class RedirectStrategy extends BookmarkablePageRequestTargetUrlCodingStra
 		_redirectPath = redirectPath;
 	}
 
-	public RedirectStrategy(String mountPath, String redirectPath) {
+	public RedirectStrategy(final String mountPath, final String redirectPath) {
 		this(mountPath, null, redirectPath);
 	}
 

@@ -20,7 +20,7 @@ public final class SimpleResourceVersion extends AbstractResourceVersion {
 	private static final long serialVersionUID = 1L;
 	private int _value;
 
-	public SimpleResourceVersion(int value) {
+	public SimpleResourceVersion(final int value) {
 		setValue(value);
 	}
 
@@ -28,22 +28,25 @@ public final class SimpleResourceVersion extends AbstractResourceVersion {
 		return _value;
 	}
 
-	private void setValue(int value) {
+	private void setValue(final int value) {
 		if (value < 0) {
 			throw new IllegalArgumentException("value must be > 0 (valid) or 0 (invalid)");
 		}
 		_value = value;
 	}
 
+	@Override
 	public boolean isValid() {
 		return _value > 0;
 	}
 
+	@Override
 	public String getVersion() {
 		return Integer.toString(_value);
 	}
 
-	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
+	@Override
+	protected int compareValid(final AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (o instanceof SimpleResourceVersion) {
 			return ((Integer) getValue()).compareTo(((SimpleResourceVersion) o).getValue());
 		} else {

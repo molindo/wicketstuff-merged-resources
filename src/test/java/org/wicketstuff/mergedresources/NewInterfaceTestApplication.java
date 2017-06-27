@@ -32,9 +32,10 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 	protected void mountResources() {
 		ResourceMount.mountWicketResources("script", this, newResourceMount());
 
-		IResourceVersionProvider p = new StaticResourceVersionProvider(42);
+		final IResourceVersionProvider p = new StaticResourceVersionProvider(42);
 
-		ResourceMount mount = newResourceMount().setResourceVersionProvider(p).setDefaultAggressiveCacheDuration();
+		final ResourceMount mount = newResourceMount().setResourceVersionProvider(p)
+				.setDefaultAggressiveCacheDuration();
 
 		initMount(mount);
 
@@ -53,7 +54,7 @@ public class NewInterfaceTestApplication extends AbstractTestApplication {
 		return new ResourceMount();
 	}
 
-	protected void initMount(ResourceMount mount) {
+	protected void initMount(final ResourceMount mount) {
 	}
 
 	public AbstractHeaderContributor getCssContributor() {

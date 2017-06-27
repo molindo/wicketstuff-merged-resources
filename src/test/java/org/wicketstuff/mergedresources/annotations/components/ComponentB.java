@@ -26,7 +26,7 @@ public class ComponentB extends Panel {
 
 	private static final long serialVersionUID = 1L;
 
-	public ComponentB(String id) {
+	public ComponentB(final String id) {
 		super(id);
 		add(new Label("label", "Wicket!"));
 	}

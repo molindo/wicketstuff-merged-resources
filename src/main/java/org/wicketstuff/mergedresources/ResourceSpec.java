@@ -37,72 +37,71 @@ public class ResourceSpec implements IClusterable {
 	private final String _style;
 	private final Integer _cacheDuration;
 
-	public static ResourceSpec[] toResourceSpecs(Class<?>[] scopes, String[] files) {
+	public static ResourceSpec[] toResourceSpecs(final Class<?>[] scopes, final String[] files) {
 		if (scopes.length != files.length) {
-			throw new IllegalArgumentException(
-					"arrays must be of equal length: " + Arrays.toString(scopes) + ", " + Arrays.toString(files));
+			throw new IllegalArgumentException("arrays must be of equal length: " + Arrays.toString(scopes) + ", "
+					+ Arrays.toString(files));
 		}
-		ResourceSpec[] resourceSpecs = new ResourceSpec[scopes.length];
+		final ResourceSpec[] resourceSpecs = new ResourceSpec[scopes.length];
 		for (int i = 0; i < scopes.length; i++) {
 			resourceSpecs[i] = new ResourceSpec(scopes[i], files[i]);
 		}
 		return resourceSpecs;
 	}
 
-	public static Class<?>[] toScopes(ResourceSpec[] specs) {
-		Class<?>[] scopes = new Class<?>[specs.length];
+	public static Class<?>[] toScopes(final ResourceSpec[] specs) {
+		final Class<?>[] scopes = new Class<?>[specs.length];
 		for (int i = 0; i < specs.length; i++) {
 			scopes[i] = specs[i].getScope();
 		}
 		return scopes;
 	}
 
-	public static String[] toFiles(ResourceSpec[] specs) {
-		String[] files = new String[specs.length];
+	public static String[] toFiles(final ResourceSpec[] specs) {
+		final String[] files = new String[specs.length];
 		for (int i = 0; i < specs.length; i++) {
 			files[i] = specs[i].getFile();
 		}
 		return files;
 	}
 
-	public ResourceSpec(Class<?> scope, String file) {
+	public ResourceSpec(final Class<?> scope, final String file) {
 		this(scope, file, null, null, null, null);
 	}
 
-	public ResourceSpec(Class<?> scope, String file, Locale locale) {
+	public ResourceSpec(final Class<?> scope, final String file, final Locale locale) {
 		this(scope, file, locale, null, null, null);
 	}
 
-	public ResourceSpec(Class<?> scope, String file, String style) {
+	public ResourceSpec(final Class<?> scope, final String file, final String style) {
 		this(scope, file, null, style, null, null);
 	}
 
-	public ResourceSpec(Class<?> scope, String file, Locale locale, String style) {
+	public ResourceSpec(final Class<?> scope, final String file, final Locale locale, final String style) {
 		this(scope, file, locale, style, null, null);
 	}
 
-	public ResourceSpec(Class<?> scope, String file, Integer cacheDuration) {
+	public ResourceSpec(final Class<?> scope, final String file, final Integer cacheDuration) {
 		this(scope, file, null, null, cacheDuration, null);
 	}
 
-	public ResourceSpec(Class<?> scope, String file, Locale locale, Integer cacheDuration) {
+	public ResourceSpec(final Class<?> scope, final String file, final Locale locale, final Integer cacheDuration) {
 		this(scope, file, locale, null, cacheDuration, null);
 	}
 
-	public ResourceSpec(Class<?> scope, String file, String style, Integer cacheDuration) {
+	public ResourceSpec(final Class<?> scope, final String file, final String style, final Integer cacheDuration) {
 		this(scope, file, null, style, cacheDuration, null);
 	}
 
-	public ResourceSpec(Class<?> scope, String file, Locale locale, String style, Integer cacheDuration) {
+	public ResourceSpec(final Class<?> scope, final String file, final Locale locale, final String style, final Integer cacheDuration) {
 		this(scope, file, locale, style, cacheDuration, null);
 	}
 
-	public ResourceSpec(ResourceReference ref) {
+	public ResourceSpec(final ResourceReference ref) {
 		this(ref.getScope(), ref.getName(), ref.getLocale(), ref.getStyle(), null, ref);
 	}
 
-	private ResourceSpec(Class<?> scope, String file, Locale locale, String style, Integer cacheDuration,
-			ResourceReference ref) {
+	private ResourceSpec(final Class<?> scope, final String file, final Locale locale, final String style, final Integer cacheDuration, final ResourceReference ref) {
 		if (scope == null) {
 			throw new NullPointerException("scope");
 		}
@@ -129,7 +128,7 @@ public class ResourceSpec implements IClusterable {
 		if (_scope == null) {
 			try {
 				_scope = Class.forName(_scopeName);
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				throw new WicketRuntimeException("failed to get scope class by name", e);
 			}
 		}
@@ -165,8 +164,7 @@ public class ResourceSpec implements IClusterable {
 	}
 
 	/**
-	 * @return {@link ResourceReference} that was used to construct this spec or
-	 *         null
+	 * @return {@link ResourceReference} that was used to construct this spec or null
 	 */
 	public ResourceReference getRef() {
 		return _ref;
@@ -184,7 +182,7 @@ public class ResourceSpec implements IClusterable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -194,7 +192,7 @@ public class ResourceSpec implements IClusterable {
 		if (!(obj instanceof ResourceSpec)) {
 			return false;
 		}
-		ResourceSpec other = (ResourceSpec) obj;
+		final ResourceSpec other = (ResourceSpec) obj;
 		if (!_file.equals(other._file)) {
 			return false;
 		}
@@ -220,7 +218,7 @@ public class ResourceSpec implements IClusterable {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("ResourceSpec [");
 		if (_ref != null) {
 			builder.append("ref=").append(_ref);

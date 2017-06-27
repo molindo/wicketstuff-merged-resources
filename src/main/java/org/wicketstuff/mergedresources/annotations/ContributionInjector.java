@@ -23,15 +23,16 @@ import org.apache.wicket.application.IComponentInstantiationListener;
 
 public class ContributionInjector implements IComponentInstantiationListener {
 
-	private HashMap<Class<? extends Component>, HeaderContribution> _contributions = new HashMap<Class<? extends Component>, HeaderContribution>();
+	private final HashMap<Class<? extends Component>, HeaderContribution> _contributions = new HashMap<>();
 
-	public void onInstantiation(Component component) {
+	@Override
+	public void onInstantiation(final Component component) {
 		if (eligible(component)) {
 			asMarkupContainer(component).add(getHeaderContribution(component.getClass()));
 		}
 	}
 
-	private HeaderContribution getHeaderContribution(Class<? extends Component> cls) {
+	private HeaderContribution getHeaderContribution(final Class<? extends Component> cls) {
 		HeaderContribution hc = _contributions.get(cls);
 		if (hc == null) {
 			synchronized (_contributions) {
@@ -42,16 +43,16 @@ public class ContributionInjector implements IComponentInstantiationListener {
 		return hc;
 	}
 
-	private MarkupContainer asMarkupContainer(Component component) {
+	private MarkupContainer asMarkupContainer(final Component component) {
 		return (MarkupContainer) component;
 	}
 
-	private boolean hasResourceAnnotation(Component component) {
+	private boolean hasResourceAnnotation(final Component component) {
 		return component.getClass().getAnnotation(JsContribution.class) != null
 				|| component.getClass().getAnnotation(CssContribution.class) != null;
 	}
 
-	private boolean eligible(Component component) {
+	private boolean eligible(final Component component) {
 		return MarkupContainer.class.isAssignableFrom(component.getClass()) && hasResourceAnnotation(component);
 	}
 

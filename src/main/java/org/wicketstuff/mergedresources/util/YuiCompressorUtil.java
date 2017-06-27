@@ -43,8 +43,8 @@ public class YuiCompressorUtil {
 		return writer.toString();
 	}
 
-	public static byte[] compress(final byte[] toCompress, Charset charset) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream(toCompress.length);
+	public static byte[] compress(final byte[] toCompress, final Charset charset) {
+		final ByteArrayOutputStream out = new ByteArrayOutputStream(toCompress.length);
 
 		final OutputStreamWriter writer = new OutputStreamWriter(out);
 		try {

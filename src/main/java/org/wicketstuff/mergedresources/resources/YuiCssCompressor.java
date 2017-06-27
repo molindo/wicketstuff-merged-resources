@@ -21,7 +21,8 @@ import org.wicketstuff.mergedresources.util.YuiCompressorUtil;
 
 public class YuiCssCompressor implements ICssCompressor {
 
-	public byte[] compress(byte[] original, Charset charset) {
+	@Override
+	public byte[] compress(final byte[] original, final Charset charset) {
 		return YuiCompressorUtil.compress(original, charset);
 	}
 

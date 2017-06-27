@@ -19,13 +19,14 @@ import org.apache.wicket.Application;
 
 public class WicketVersionProvider implements IResourceVersionProvider {
 
-	private Application _application;
+	private final Application _application;
 
-	public WicketVersionProvider(Application application) {
+	public WicketVersionProvider(final Application application) {
 		_application = application;
 	}
 
-	public AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+	@Override
+	public AbstractResourceVersion getVersion(final Class<?> scope, final String file) throws VersionException {
 		return new WicketVersion(_application);
 	}
 

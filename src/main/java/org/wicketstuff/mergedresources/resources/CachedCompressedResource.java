@@ -24,9 +24,8 @@ public class CachedCompressedResource extends CompressedMergedResource {
 
 	private static final long serialVersionUID = 1L;
 
-	public CachedCompressedResource(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
-			IResourcePreProcessor preProcessor) {
-		super(scope, path, locale, style, new ResourceSpec[] { new ResourceSpec(scope, path) }, cacheDuration,
-				preProcessor);
+	public CachedCompressedResource(final Class<?> scope, final String path, final Locale locale, final String style, final int cacheDuration, final IResourcePreProcessor preProcessor) {
+		super(scope, path, locale, style, new ResourceSpec[] {
+				new ResourceSpec(scope, path) }, cacheDuration, preProcessor);
 	}
 }

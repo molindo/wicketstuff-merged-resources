@@ -15,12 +15,10 @@
  */
 package org.wicketstuff.mergedresources;
 
-import junit.framework.TestCase;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.util.tester.WicketTester;
-import org.wicketstuff.mergedresources.HomePage;
-import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
+
+import junit.framework.TestCase;
 
 /**
  * Simple test using the WicketTester
@@ -28,6 +26,7 @@ import org.wicketstuff.mergedresources.NewInterfaceTestApplication;
 public class TestNewInterfaceHomePageUnmerged extends TestCase {
 	private WicketTester tester;
 
+	@Override
 	public void setUp() {
 		tester = new WicketTester(new NewInterfaceTestApplication() {
 			@Override

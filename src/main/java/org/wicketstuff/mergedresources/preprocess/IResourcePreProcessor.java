@@ -24,12 +24,11 @@ import org.wicketstuff.mergedresources.ResourceSpec;
 public interface IResourcePreProcessor extends Serializable {
 
 	/**
-	 * 
+	 *
 	 * @param resourceSpec
-	 *            null when processing complete merged resource, non-null for
-	 *            each part of a merged resource
+	 *            null when processing complete merged resource, non-null for each part of a merged resource
 	 * @param content
-	 * 
+	 *
 	 * @return processed content, may be <code>content</code>
 	 */
 	byte[] preProcess(@CheckForNull ResourceSpec resourceSpec, byte[] content);

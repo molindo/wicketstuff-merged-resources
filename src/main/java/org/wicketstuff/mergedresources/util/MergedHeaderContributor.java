@@ -27,20 +27,21 @@ import org.apache.wicket.util.string.Strings;
 public class MergedHeaderContributor extends AbstractHeaderContributor {
 	private static final long serialVersionUID = 1L;
 	public IHeaderContributor _contributor;
-	private ArrayList<ResourceReference> _refs;
-	private String _cssMediaType;
+	private final ArrayList<ResourceReference> _refs;
+	private final String _cssMediaType;
 
 	public MergedHeaderContributor(final List<ResourceReference> refs) {
 		this(refs, null);
 	}
 
-	public MergedHeaderContributor(List<ResourceReference> refs, String cssMediaType) {
-		_refs = new ArrayList<ResourceReference>(refs);
+	public MergedHeaderContributor(final List<ResourceReference> refs, final String cssMediaType) {
+		_refs = new ArrayList<>(refs);
 		_cssMediaType = cssMediaType;
 		_contributor = new IHeaderContributor() {
 
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void renderHead(final IHeaderResponse response) {
 				for (final ResourceReference ref : _refs) {
 					final String name = ref.getName();

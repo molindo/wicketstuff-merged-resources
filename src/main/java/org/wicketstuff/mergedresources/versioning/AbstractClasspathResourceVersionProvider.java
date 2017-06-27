@@ -21,7 +21,8 @@ import org.apache.wicket.util.string.Strings;
 
 public abstract class AbstractClasspathResourceVersionProvider implements IResourceVersionProvider {
 
-	public final AbstractResourceVersion getVersion(Class<?> scope, String file) throws VersionException {
+	@Override
+	public final AbstractResourceVersion getVersion(final Class<?> scope, final String file) throws VersionException {
 
 		final URL url = toURL(scope, file);
 		if (url == null) {

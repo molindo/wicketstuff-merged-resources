@@ -25,7 +25,7 @@ public class RemoteHostResourceMountTest {
 
 	@Test
 	public void renderRemoteHostResourcePage() throws Exception {
-		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
+		final WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
 
 			@Override
 			protected ResourceMount newResourceMount() {
@@ -41,7 +41,7 @@ public class RemoteHostResourceMountTest {
 
 	@Test
 	public void renderRemoteHostResourcePageSchemless() throws Exception {
-		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
+		final WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
 
 			@Override
 			protected ResourceMount newResourceMount() {
@@ -52,7 +52,6 @@ public class RemoteHostResourceMountTest {
 
 		tester.startPage(HomePage.class);
 		tester.assertRenderedPage(HomePage.class);
-		tester.assertResultPage(RemoteHostResourceMountTest.class,
-				"RemoteHostResourceMountTest-expected-schemeless.html");
+		tester.assertResultPage(RemoteHostResourceMountTest.class, "RemoteHostResourceMountTest-expected-schemeless.html");
 	}
 }

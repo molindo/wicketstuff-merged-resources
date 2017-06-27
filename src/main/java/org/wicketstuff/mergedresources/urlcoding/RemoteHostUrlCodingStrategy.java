@@ -34,8 +34,7 @@ import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 
 import at.molindo.utils.data.StringUtils;
 
-public class RemoteHostUrlCodingStrategy
-		implements IRequestTargetUrlCodingStrategy, IMountableRequestTargetUrlCodingStrategy {
+public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrategy, IMountableRequestTargetUrlCodingStrategy {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RemoteHostUrlCodingStrategy.class);
 
@@ -50,7 +49,7 @@ public class RemoteHostUrlCodingStrategy
 	private boolean _useRequestPort = true;
 	private boolean _useSchemelessUrl = false;
 
-	public RemoteHostUrlCodingStrategy(URL root, final String mountPath, final ResourceReference ref) {
+	public RemoteHostUrlCodingStrategy(final URL root, final String mountPath, final ResourceReference ref) {
 		if (ref == null) {
 			throw new NullPointerException("sharedResourceKey");
 		}
@@ -68,8 +67,7 @@ public class RemoteHostUrlCodingStrategy
 		}
 	}
 
-	protected AbstractRequestTargetUrlCodingStrategy newStrategy(final String mountPath,
-			final String sharedResourceKey) {
+	protected AbstractRequestTargetUrlCodingStrategy newStrategy(final String mountPath, final String sharedResourceKey) {
 		return new SharedResourceRequestTargetUrlCodingStrategy(mountPath, sharedResourceKey);
 	}
 
@@ -107,9 +105,9 @@ public class RemoteHostUrlCodingStrategy
 			return encoded;
 		}
 
-		HttpServletRequest request = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
+		final HttpServletRequest request = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
 
-		String protocol = !isUseRequestProtocol() ? _protocol : request.getScheme();
+		final String protocol = !isUseRequestProtocol() ? _protocol : request.getScheme();
 
 		Integer port = !isUseRequestPort() ? _port : request.getServerPort();
 		if (port != null) {
@@ -122,15 +120,15 @@ public class RemoteHostUrlCodingStrategy
 
 		try {
 
-			URI uri = new URI(protocol, null, _host, port == null ? -1 : port,
-					_path + StringUtils.stripLeading(encoded.toString(), "/"), null, null);
+			final URI uri = new URI(protocol, null, _host, port == null ? -1 : port, _path
+					+ StringUtils.stripLeading(encoded.toString(), "/"), null, null);
 
 			if (_useSchemelessUrl) {
 				return uri.getRawSchemeSpecificPart();
 			} else {
 				return uri.toString();
 			}
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			log.error("failed to build URL, balling back to default", e);
 			return encoded;
 		}
@@ -155,7 +153,7 @@ public class RemoteHostUrlCodingStrategy
 		return _useRequestProtocol;
 	}
 
-	public RemoteHostUrlCodingStrategy setUseRequestProtocol(boolean useRequestProtocol) {
+	public RemoteHostUrlCodingStrategy setUseRequestProtocol(final boolean useRequestProtocol) {
 		_useRequestProtocol = useRequestProtocol;
 		return this;
 	}
@@ -164,12 +162,12 @@ public class RemoteHostUrlCodingStrategy
 		return _useRequestPort;
 	}
 
-	public RemoteHostUrlCodingStrategy setUseRequestPort(boolean useRequestPort) {
+	public RemoteHostUrlCodingStrategy setUseRequestPort(final boolean useRequestPort) {
 		_useRequestPort = useRequestPort;
 		return this;
 	}
 
-	public RemoteHostUrlCodingStrategy setUseSchemelessUrl(boolean useSchemelessUrl) {
+	public RemoteHostUrlCodingStrategy setUseSchemelessUrl(final boolean useSchemelessUrl) {
 		_useSchemelessUrl = useSchemelessUrl;
 		return this;
 	}

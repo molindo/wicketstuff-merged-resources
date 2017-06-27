@@ -58,8 +58,7 @@ public class MergedResourceStream implements IResourceStream {
 		this(ResourceSpec.toResourceSpecs(scopes, files), locale, style, null);
 	}
 
-	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style,
-			IResourcePreProcessor preProcessor) {
+	public MergedResourceStream(final ResourceSpec[] specs, final Locale locale, final String style, final IResourcePreProcessor preProcessor) {
 		_specs = specs.clone();
 		_locale = locale;
 		_style = style;
@@ -119,9 +118,9 @@ public class MergedResourceStream implements IResourceStream {
 		private LocalizedMergedResourceStream() {
 			Time max = null;
 			// final StringWriter w = new StringWriter(4096);
-			ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+			final ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
 
-			final ArrayList<IResourceStream> resourceStreams = new ArrayList<IResourceStream>(_specs.length);
+			final ArrayList<IResourceStream> resourceStreams = new ArrayList<>(_specs.length);
 
 			String contentType = null;
 			for (int i = 0; i < _specs.length; i++) {
@@ -149,7 +148,8 @@ public class MergedResourceStream implements IResourceStream {
 						writeFileSeparator(out);
 					}
 					// process content from single spec
-					byte[] preprocessed = preProcess(_specs[i], StreamUtils.bytes(resourceStream.getInputStream()));
+					final byte[] preprocessed = preProcess(_specs[i], StreamUtils
+							.bytes(resourceStream.getInputStream()));
 					writeContent(out, new ByteArrayInputStream(preprocessed));
 					resourceStreams.add(resourceStream);
 				} catch (final IOException e) {
@@ -179,8 +179,8 @@ public class MergedResourceStream implements IResourceStream {
 			final String path = Strings.beforeLast(scope.getName(), '.').replace('.', '/') + '/'
 					+ Strings.beforeLast(fileName, '.');
 			// Iterator over all the combinations
-			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _locale, Strings.afterLast(
-					fileName, '.'));
+			final ResourceNameIterator iter = new ResourceNameIterator(path, _style, _locale, Strings
+					.afterLast(fileName, '.'));
 
 			IResourceStream resourceStream = null;
 			while (resourceStream == null && iter.hasNext()) {
@@ -202,7 +202,7 @@ public class MergedResourceStream implements IResourceStream {
 			out.flush();
 		}
 
-		private void writeFileSeparator(ByteArrayOutputStream out) throws IOException {
+		private void writeFileSeparator(final ByteArrayOutputStream out) throws IOException {
 			out.write(getFileSeparator());
 		}
 
@@ -258,7 +258,7 @@ public class MergedResourceStream implements IResourceStream {
 		return true;
 	}
 
-	public byte[] preProcess(ResourceSpec resourceSpec, byte[] content) {
+	public byte[] preProcess(final ResourceSpec resourceSpec, final byte[] content) {
 		return _preProcessor != null ? _preProcessor.preProcess(resourceSpec, content) : content;
 	}
 }

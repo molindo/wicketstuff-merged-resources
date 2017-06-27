@@ -37,13 +37,13 @@ public class ResourcePreProcessorTest extends TestCase {
 
 			@Override
 			protected void mountResources() {
-				ResourceMount m = new ResourceMount();
+				final ResourceMount m = new ResourceMount();
 				m.setPreProcessor(new StringResourcePreProcessor() {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					protected String preProcess(ResourceSpec resourceSpec, String string) {
+					protected String preProcess(final ResourceSpec resourceSpec, final String string) {
 						if (resourceSpec != null) {
 							_preProcessInvocations++;
 						} else {

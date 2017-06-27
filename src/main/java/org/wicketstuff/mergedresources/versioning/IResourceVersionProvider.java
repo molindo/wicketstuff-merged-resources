@@ -34,11 +34,11 @@ public interface IResourceVersionProvider {
 			super(scope + ", " + fileName + ": " + msg);
 		}
 
-		public VersionException(String msg) {
+		public VersionException(final String msg) {
 			super(msg);
 		}
 
-		public VersionException(String msg, Throwable cause) {
+		public VersionException(final String msg, final Throwable cause) {
 			super(msg, cause);
 		}
 

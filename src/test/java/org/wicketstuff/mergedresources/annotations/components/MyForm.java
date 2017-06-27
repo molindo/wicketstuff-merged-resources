@@ -29,21 +29,21 @@ public class MyForm extends Form<Object> {
 
 	private static final long serialVersionUID = 1L;
 
-	public MyForm(String id) {
+	public MyForm(final String id) {
 		super(id);
-		add(new AttributeAppender("onsubmit", true, new Model<String>("return validateMyForm()"), ";"));
+		add(new AttributeAppender("onsubmit", true, new Model<>("return validateMyForm()"), ";"));
 		add(new AjaxFormSubmitBehavior(this, "onclick") {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onError(AjaxRequestTarget target) {
+			protected void onError(final AjaxRequestTarget target) {
 				// nothing
 
 			}
 
 			@Override
-			protected void onSubmit(AjaxRequestTarget target) {
+			protected void onSubmit(final AjaxRequestTarget target) {
 				// nothing
 			}
 

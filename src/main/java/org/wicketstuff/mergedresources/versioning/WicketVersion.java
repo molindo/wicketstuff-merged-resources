@@ -24,7 +24,7 @@ public class WicketVersion extends AbstractResourceVersion {
 
 	private String _version;
 
-	public WicketVersion(Application application) {
+	public WicketVersion(final Application application) {
 		_version = application.getFrameworkSettings().getVersion();
 		if ("n/a".equals(_version)) {
 			log.info("failed to determine wicket framework version");
@@ -33,7 +33,7 @@ public class WicketVersion extends AbstractResourceVersion {
 	}
 
 	@Override
-	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
+	protected int compareValid(final AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (o instanceof WicketVersion) {
 			return 0;
 		} else {

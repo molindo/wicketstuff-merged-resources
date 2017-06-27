@@ -23,7 +23,7 @@ public final class MavenResourceVersion extends AbstractResourceVersion {
 
 	private final ArtifactVersion _version;
 
-	public MavenResourceVersion(ArtifactVersion version) {
+	public MavenResourceVersion(final ArtifactVersion version) {
 		if (version == null) {
 			throw new NullPointerException("version");
 		}
@@ -45,7 +45,7 @@ public final class MavenResourceVersion extends AbstractResourceVersion {
 	}
 
 	@Override
-	protected int compareValid(AbstractResourceVersion o) throws IncompatibleVersionsException {
+	protected int compareValid(final AbstractResourceVersion o) throws IncompatibleVersionsException {
 		if (o instanceof MavenResourceVersion) {
 			return getArtifactVersion().compareTo(((MavenResourceVersion) o).getArtifactVersion());
 		} else {

@@ -24,7 +24,7 @@ public abstract class StringResourcePreProcessor implements IResourcePreProcesso
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public byte[] preProcess(ResourceSpec resourceSpec, byte[] content) {
+	public byte[] preProcess(final ResourceSpec resourceSpec, final byte[] content) {
 		return preProcess(resourceSpec, new String(content)).getBytes();
 	}
 

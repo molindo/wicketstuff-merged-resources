@@ -127,7 +127,7 @@ public class Pair<A, B> implements Serializable {
 	}
 
 	public static <K, V> HashMap<K, V> toHashMap(final List<Pair<K, V>> pairs) {
-		final HashMap<K, V> map = new HashMap<K, V>();
+		final HashMap<K, V> map = new HashMap<>();
 		for (final Pair<K, V> pair : pairs) {
 			map.put(pair.getKey(), pair.getValue());
 		}

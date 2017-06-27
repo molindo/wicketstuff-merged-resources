@@ -20,9 +20,8 @@ package at.molindo.thirdparty.org.apache.maven.artifact.versioning;
  */
 
 /**
- * Describes an artifact version in terms of its components, converts it to/from
- * a string and compares two versions.
- * 
+ * Describes an artifact version in terms of its components, converts it to/from a string and compares two versions.
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public interface ArtifactVersion extends Comparable<ArtifactVersion> {

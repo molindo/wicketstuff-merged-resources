@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 
 /**
  * Default implementation of artifact versioning.
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class DefaultArtifactVersion implements ArtifactVersion {
@@ -39,7 +39,7 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 
 	private ComparableVersion comparable;
 
-	public DefaultArtifactVersion(String version) {
+	public DefaultArtifactVersion(final String version) {
 		parseVersion(version);
 	}
 
@@ -49,7 +49,7 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 	}
 
 	@Override
-	public boolean equals(Object other) {
+	public boolean equals(final Object other) {
 		if (this == other) {
 			return true;
 		}
@@ -62,9 +62,9 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 	}
 
 	@Override
-	public int compareTo(ArtifactVersion otherVersion) {
+	public int compareTo(final ArtifactVersion otherVersion) {
 		if (otherVersion instanceof DefaultArtifactVersion) {
-			return this.comparable.compareTo(((DefaultArtifactVersion) otherVersion).comparable);
+			return comparable.compareTo(((DefaultArtifactVersion) otherVersion).comparable);
 		} else {
 			return compareTo(new DefaultArtifactVersion(otherVersion.toString()));
 		}
@@ -96,10 +96,10 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 	}
 
 	@Override
-	public final void parseVersion(String version) {
+	public final void parseVersion(final String version) {
 		comparable = new ComparableVersion(version);
 
-		int index = version.indexOf("-");
+		final int index = version.indexOf("-");
 
 		String part1;
 		String part2 = null;
@@ -118,7 +118,7 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 				} else {
 					qualifier = part2;
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				qualifier = part2;
 			}
 		}
@@ -126,7 +126,7 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 		if (part1.indexOf(".") < 0 && !part1.startsWith("0")) {
 			try {
 				majorVersion = Integer.valueOf(part1);
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				// qualifier is the whole version, including "-"
 				qualifier = version;
 				buildNumber = null;
@@ -134,7 +134,7 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 		} else {
 			boolean fallback = false;
 
-			StringTokenizer tok = new StringTokenizer(part1, ".");
+			final StringTokenizer tok = new StringTokenizer(part1, ".");
 			try {
 				majorVersion = getNextIntegerToken(tok);
 				if (tok.hasMoreTokens()) {
@@ -151,7 +151,7 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 				if (part1.indexOf("..") >= 0 || part1.startsWith(".") || part1.endsWith(".")) {
 					fallback = true;
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				fallback = true;
 			}
 
@@ -166,8 +166,8 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 		}
 	}
 
-	private static Integer getNextIntegerToken(StringTokenizer tok) {
-		String s = tok.nextToken();
+	private static Integer getNextIntegerToken(final StringTokenizer tok) {
+		final String s = tok.nextToken();
 		if (s.length() > 1 && s.startsWith("0")) {
 			throw new NumberFormatException("Number part has a leading 0: '" + s + "'");
 		}
@@ -176,7 +176,7 @@ public class DefaultArtifactVersion implements ArtifactVersion {
 
 	@Override
 	public String toString() {
-		StringBuilder buf = new StringBuilder();
+		final StringBuilder buf = new StringBuilder();
 		if (majorVersion != null) {
 			buf.append(majorVersion);
 		}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package org.wicketstuff.mergedresources.annotations;
 
@@ -30,20 +30,18 @@ import org.wicketstuff.mergedresources.ResourceMount;
 public @interface JsContribution {
 
 	/**
-	 * file names relative to annotated type. type.getClass().getSimpleName() +
-	 * ".js" if emtpy
+	 * file names relative to annotated type. type.getClass().getSimpleName() + ".js" if emtpy
 	 */
 	String[] value() default "";
 
 	/**
-	 * the mount path: if it starts with '/' it's treated as an absolute path,
-	 * relative to {@link ResourceMount#setPath(String)} otherwise.
+	 * the mount path: if it starts with '/' it's treated as an absolute path, relative to
+	 * {@link ResourceMount#setPath(String)} otherwise.
 	 */
 	String path() default "";
 
 	/**
-	 * merged resources are sorted by their order value, starting with the
-	 * highest, ending with the lowest
+	 * merged resources are sorted by their order value, starting with the highest, ending with the lowest
 	 */
 	int order() default 0;
 }

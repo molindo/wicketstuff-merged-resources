@@ -23,9 +23,10 @@ import org.wicketstuff.mergedresources.ResourceMount;
 public class MergedHeaderContributorTest {
 	@Test
 	public void renderJsContributorPage() throws Exception {
-		WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
+		final WicketTester tester = new WicketTester(new NewInterfaceTestApplication() {
 
-			protected void initMount(ResourceMount mount) {
+			@Override
+			protected void initMount(final ResourceMount mount) {
 				mount.setMerged(false);
 			}
 

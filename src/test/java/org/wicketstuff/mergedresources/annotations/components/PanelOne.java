@@ -28,7 +28,7 @@ public class PanelOne extends Panel {
 
 	private static final long serialVersionUID = 1L;
 
-	public PanelOne(String id) {
+	public PanelOne(final String id) {
 		super(id);
 		add(new MyForm("myForm"));
 		add(new ComponentB("componentB"));

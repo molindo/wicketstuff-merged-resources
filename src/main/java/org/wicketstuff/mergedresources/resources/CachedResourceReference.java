@@ -30,8 +30,7 @@ public class CachedResourceReference extends ResourceReference {
 	private final int _cacheDuration;
 	private final IResourcePreProcessor _preProcessor;
 
-	public CachedResourceReference(Class<?> scope, String path, Locale locale, String style, int cacheDuration,
-			IResourcePreProcessor preProcessor) {
+	public CachedResourceReference(final Class<?> scope, final String path, final Locale locale, final String style, final int cacheDuration, final IResourcePreProcessor preProcessor) {
 		super(scope, path, locale, style);
 		_cacheDuration = cacheDuration;
 		_preProcessor = preProcessor;

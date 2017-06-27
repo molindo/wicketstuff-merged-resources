@@ -20,9 +20,10 @@ import java.net.URL;
 
 public class TimestampVersionProvider extends AbstractClasspathResourceVersionProvider {
 
-	public AbstractResourceVersion getVersion(URL url) throws VersionException {
+	@Override
+	public AbstractResourceVersion getVersion(final URL url) throws VersionException {
 
-		long timestamp = getTimestamp(url);
+		final long timestamp = getTimestamp(url);
 		if (timestamp == 0) {
 			throw new VersionException("timestamp not available for " + url);
 		}
@@ -31,15 +32,15 @@ public class TimestampVersionProvider extends AbstractClasspathResourceVersionPr
 	}
 
 	/**
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 * @throws Exception
 	 */
-	protected long getTimestamp(URL url) throws VersionException {
+	protected long getTimestamp(final URL url) throws VersionException {
 		try {
 			return url.openConnection().getLastModified();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new VersionException("failed to get lastModified for " + url, e);
 		}
 	}
