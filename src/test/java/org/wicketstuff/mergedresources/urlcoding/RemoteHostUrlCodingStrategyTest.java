@@ -31,6 +31,11 @@ public class RemoteHostUrlCodingStrategyTest {
 
 	private static final ResourceReference REF = new ResourceReference(RemoteHostUrlCodingStrategyTest.class, "image");
 
+	@Test(expected = IllegalArgumentException.class)
+	public void noQuery() throws Exception {
+		new RemoteHostUrlCodingStrategy(new URL("http://cdn.example.com/files?test"), "/", REF);
+	}
+
 	@Test
 	public void encoding() throws Exception {
 		final URL url = new URL("http://cdn.example.com/files");

@@ -53,10 +53,14 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		_strategy = newStrategy(mountPath, _key);
 
 		if (root != null) {
+			if (root.getQuery() != null) {
+				throw new IllegalArgumentException("root URL must not contain a query: " + root);
+			}
+
 			_protocol = root.getProtocol();
 			_port = root.getPort();
 			_host = root.getHost();
-			_path = StringUtils.trailing(root.getFile(), "/");
+			_path = StringUtils.trailing(root.getPath(), "/");
 		} else {
 			_port = null;
 			_host = _protocol = _path = null;
