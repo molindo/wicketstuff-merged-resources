@@ -15,8 +15,6 @@
  */
 package org.wicketstuff.mergedresources.urlcoding;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +33,6 @@ import org.apache.wicket.request.target.resource.SharedResourceRequestTarget;
 import at.molindo.utils.data.StringUtils;
 
 public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrategy, IMountableRequestTargetUrlCodingStrategy {
-
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RemoteHostUrlCodingStrategy.class);
 
 	private final AbstractRequestTargetUrlCodingStrategy _strategy;
 	private final String _key;
@@ -57,10 +53,14 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 		_strategy = newStrategy(mountPath, _key);
 
 		if (root != null) {
+			if (root.getQuery() != null) {
+				throw new IllegalArgumentException("root URL must not contain a query: " + root);
+			}
+
 			_protocol = root.getProtocol();
 			_port = root.getPort();
 			_host = root.getHost();
-			_path = StringUtils.trailing(root.getFile(), "/");
+			_path = StringUtils.trailing(root.getPath(), "/");
 		} else {
 			_port = null;
 			_host = _protocol = _path = null;
@@ -118,20 +118,19 @@ public class RemoteHostUrlCodingStrategy implements IRequestTargetUrlCodingStrat
 			}
 		}
 
-		try {
-
-			final URI uri = new URI(protocol, null, _host, port == null ? -1 : port, _path
-					+ StringUtils.stripLeading(encoded.toString(), "/"), null, null);
-
-			if (_useSchemelessUrl) {
-				return uri.getRawSchemeSpecificPart();
-			} else {
-				return uri.toString();
-			}
-		} catch (final URISyntaxException e) {
-			log.error("failed to build URL, balling back to default", e);
-			return encoded;
+		final StringBuilder buf = new StringBuilder();
+		if (!_useSchemelessUrl) {
+			buf.append(protocol).append(":");
 		}
+		buf.append("//");
+		buf.append(_host);
+		if (port != null) {
+			buf.append(":").append(port);
+		}
+		buf.append(_path);
+		buf.append(StringUtils.stripLeading(encoded.toString(), "/"));
+
+		return buf.toString();
 	}
 
 	@Override
